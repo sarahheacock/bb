@@ -7,5 +7,5 @@ export const SELECT_EDIT = 'admin/SELECT_EDIT';
 export const SELECT_ADD = 'admin/SELECT_ADD';
 export const LOGOUT = 'admin/LOGOUT';
 
-export const API_SUCCESS = 'admin/API_SUCCESS';
-export const API_FAIL = 'admin/API_FAIL';
+// export const API_SUCCESS = 'admin/API_SUCCESS';
+// export const API_FAIL = 'admin/API_FAIL';

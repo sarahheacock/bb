@@ -32,8 +32,8 @@ class App extends Component {
     selectedEdit: PropTypes.object.isRequired,
     selectedAdd: PropTypes.object.isRequired,
 
-    // message: PropTypes.object.isRequired,
-    // fetching: PropTypes.bool.isRequired,
+    //message: PropTypes.object.isRequired,
+    newPage: PropTypes.bool.isRequired,
   }
 
   constructor(props) {
@@ -45,29 +45,31 @@ class App extends Component {
     }
 
     componentDidMount() {
-      fetch('/api')
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`status ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(json => {
-          this.setState({
-            message: json.message,
-            fetching: false
-          });
-        }).catch(e => {
-          this.setState({
-            message: `API call failed: ${e}`,
-            fetching: false
-          });
-        })
+      if(this.props.newPage){
+        fetch('/api')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`status ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(json => {
+            this.setState({
+              message: json.message,
+              fetching: false
+            });
+          }).catch(e => {
+            this.setState({
+              message: `API call failed: ${e}`,
+              fetching: false
+            });
+          })
+        }
     }
 
 
   render(){
-    const{ dispatch, data, modalVisible, admin, errorMessage, messageSent, selectedEdit, selectedAdd, message, fetching } = this.props;
+    const{ dispatch, data, modalVisible, admin, errorMessage, messageSent, selectedEdit, selectedAdd, message, newPage} = this.props;
     //turns an object whose values are action creators (functions)
     //and wraps in dispatch (what causes state change)
     const makeModal = bindActionCreators(AdminActionCreators.makeModal, dispatch);
@@ -90,8 +92,8 @@ class App extends Component {
     console.log("errorMessage", errorMessage);
     console.log("messageSent", messageSent);
     console.log("selectedEdit", selectedEdit);
-    // console.log("fetching", fetching);
-    // console.log("message", message);
+    console.log("newPage", newPage);
+    //console.log("fetching", this.state.fetching);
 
 
     return (
@@ -146,6 +148,7 @@ const mapStateToProps = state => (
     selectedEdit: state.selectedEdit,
     selectedAdd: state.selectedAdd,
 
+    newPage: state.newPage
     // message: state.message,
     // fetching: state.fetching
   }

@@ -39,8 +39,7 @@ import './stylesheets/index.css';
       data: {},
       section: ""
     },
-    message: "",
-    fetching: true
+    newPage: true,
   };
 
   const saveState = (state) => {
@@ -54,11 +53,11 @@ import './stylesheets/index.css';
   };
 
   const initial = (localStorage.info !== undefined) ?
-        {...JSON.parse(localStorage.info)} :
+        {...JSON.parse(localStorage.info), newPage: true} :
         initialState;
 
   const store = createStore(
-    AdminReducer, initialState, applyMiddleware(thunk)
+    AdminReducer, initial, applyMiddleware(thunk)
   );
 
   store.subscribe(() => {
