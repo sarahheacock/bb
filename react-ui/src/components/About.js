@@ -7,7 +7,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import Nancy from './aboutTabs/Nancy';
 
 
-class Authors extends React.Component {
+class About extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     fetchBlog: PropTypes.func.isRequired,
@@ -16,33 +16,33 @@ class Authors extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchBlog("authors")
+    this.props.fetchBlog("about")
   }
 
   render(){
 //names are sorted in API to ensure 'nancy' always comes first
     return (
       <div className="main-content">
-        <PageHeader>About the Authors</PageHeader>
-        <div className="text-center">
+        <PageHeader>About Us</PageHeader>
+        <div>
           <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row className="clearfix">
 
 
               <Nav bsStyle="tabs">
-                <LinkContainer to="/authors/nancy">
-                  <NavItem className="tab">Nancy Darr</NavItem>
+                <LinkContainer to="/about/inn">
+                  <NavItem className="tab">Inn</NavItem>
                 </LinkContainer>
-                <LinkContainer to="/authors/mary-rose">
-                  <NavItem className="tab">Mary Rose Franjoine</NavItem>
+                <LinkContainer to="/about/inn-keeper">
+                  <NavItem className="tab">Inn Keeper</NavItem>
                 </LinkContainer>
               </Nav>
 
 
-              <Route exact path="/authors/" render={ () =>
-                <Redirect to="/authors/nancy" /> }
+              <Route exact path="/about/" render={ () =>
+                <Redirect to="/about/inn" /> }
               />
-              <Route path="/authors/nancy" render={ () =>
+              <Route path="/about/inn" render={ () =>
                 <Nancy
                   data={this.props.data[0]}
                   admin={this.props.admin}
@@ -50,7 +50,7 @@ class Authors extends React.Component {
                 /> }
               />
 
-              <Route path="/authors/mary-rose" render={ () =>
+              <Route path="/about/inn-keeper" render={ () =>
                 <Nancy
                   data={this.props.data[1]}
                   admin={this.props.admin}
@@ -67,4 +67,4 @@ class Authors extends React.Component {
 }
 
 
-export default Authors;
+export default About;

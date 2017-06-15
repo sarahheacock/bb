@@ -23,7 +23,7 @@ class Home extends React.Component {
         <div>Loading</div>:
         homeImg["carousel"].map((image, index) => (
           <Carousel.Item key={image}>
-            <img className="carouselImg" alt="900x500" src={image}/>
+            <img className="carouselImg" alt="900x300" src={image}/>
           </Carousel.Item>
         ));
     const editButton = (this.props.admin.admin) ?

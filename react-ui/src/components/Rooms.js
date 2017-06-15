@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PageHeader, Button } from 'react-bootstrap';
+import { PageHeader, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 import EditModal from './modals/EditModal';
 
-class Publications extends React.Component {
+class Rooms extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     fetchBlog: PropTypes.func.isRequired,
@@ -15,7 +15,7 @@ class Publications extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchBlog("publications");
+    this.props.fetchBlog("rooms");
   }
 
 
@@ -25,23 +25,32 @@ class Publications extends React.Component {
       <div>Loading</div> :
       this.props.data.map((article, index) => (
         <div key={`article${index}`}>
-          <a href="#" onClick={(e) => { if(e && this.props.admin.admin) e.preventDefault(); else window.open(article.link)}}>
-            {(article.authors === undefined) ?
+          <a href="#" >
+            {(article.carousel === undefined) ?
               <div>Loading</div>:
               <div className="content">
                 <div className="well well-option">
-                  <h3>{article.title}</h3>
-                  <p>{article.description}</p>
-                  <p><b>{(Array.isArray(article.authors)) ? article.authors.join(', ') : article.authors}</b></p>
-                  <p><b>{moment(article.date).format('LL')}</b></p>
+                  <Row className="clearfix content">
+
+                    <Row className="clearfix">
+                      <Col className="text-center" sm={7}>
+                        <h3>{article.title}</h3>
+                        <p>{article.bold}</p>
+                      </Col>
+                      <Col className="text-center" sm={5}>
+                        <img src={article.image}/>
+                      </Col>
+                    </Row>
+
+                  </Row>
                   <div className="text-center">
                     {(this.props.admin.admin) ?
                       <div>
-                        <Button className="edit" bsStyle="info" onClick={() => this.props.selectEdit({data:article, section:"publications"})}>
+                        <Button className="edit" bsStyle="info" onClick={() => this.props.selectEdit({data:article, section:"rooms"})}>
                           Edit
                         </Button>
                         <Button className="edit" bsStyle="danger" onClick={() => {
-                          if(this.props.data.length > 1) this.props.deleteBlog({sectionID:article._id, section:"publications", id:this.props.admin.id});
+                          if(this.props.data.length > 1) this.props.deleteBlog({sectionID:article._id, section:"rooms", id:this.props.admin.id});
                           else alert("You cannot delete all entries. Deleting all entries will cause errors");
                         }}>
                           Delete
@@ -60,7 +69,7 @@ class Publications extends React.Component {
 
     return (
       <div className="main-content">
-        <PageHeader>Publications and Presentations</PageHeader>
+        <PageHeader>Rooms</PageHeader>
         {pubs}
         <div className="text-center">
           {(this.props.admin.admin) ?
@@ -74,4 +83,4 @@ class Publications extends React.Component {
   }
 }
 
-export default Publications;
+export default Rooms;

@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 import Home from '../components/Home';
-import Authors from '../components/Authors';
-import Publications from '../components/Publications';
-import News from '../components/News';
+import About from '../components/About';
+import Rooms from '../components/Rooms';
+import LocalGuide from '../components/LocalGuide';
+import Book from '../components/Book';
 import Login from '../components/Login';
 import NotFound from '../components/NotFound';
 
@@ -22,8 +23,8 @@ const Routes = (props) => {
           selectEdit={props.selectEdit}
         />) }
       />
-      <Route path="/authors" render={ () => (
-        <Authors
+      <Route path="/about" render={ () => (
+        <About
           fetchBlog={props.fetchBlog}
           data={props.data}
           admin={props.admin}
@@ -31,8 +32,8 @@ const Routes = (props) => {
         />) }
       />
 
-      <Route path="/news" render={ () => (
-        <News
+      <Route path="/rooms" render={ () => (
+        <Rooms
           fetchBlog={props.fetchBlog}
           data={props.data}
           admin={props.admin}
@@ -41,8 +42,8 @@ const Routes = (props) => {
           selectAdd={props.selectAdd}
         />) }
       />
-      <Route path="/publications" render={ () => (
-        <Publications
+      <Route path="/local-guide" render={ () => (
+        <LocalGuide
           fetchBlog={props.fetchBlog}
           data={props.data}
           admin={props.admin}
@@ -60,8 +61,16 @@ const Routes = (props) => {
         />) }
       />
 
+      <Route path="/book-now" render={ () => (
+        <Book
+
+        />) }
+      />
+
       <Route render={ () => (
-        <Redirect to="/" />
+        <NotFound
+
+        />
       )} />
 
     </Switch>

@@ -5,28 +5,29 @@ import EditModal from '../modals/EditModal';
 
 const Nancy = (props) => {
   const editButton = (props.admin.admin) ?
-    <Button bsStyle="info" onClick={() => props.selectEdit({data:props.data, section:"authors"})}>
+    <Button bsStyle="info" onClick={() => props.selectEdit({data:props.data, section:"about"})}>
       Edit
     </Button> :
     <div></div>;
 
   return (
     <div className="main-content">
-      <Row className="clearfix content">
-        <Col sm={8}>
-          {(props.data === undefined) ?
-            <div>Loading</div> :
-            <div className="about">
-              <h3>{props.data.name}</h3>
-              <p><b>{props.data.education}</b></p>
+
+      {(props.data === undefined) ?
+        <div>Loading</div> :
+        <Row className="clearfix content">
+          <h3>{props.data.title}</h3>
+          <Row className="clearfix ">
+            <Col sm={7}>
+              <p><b>{props.data.bold}</b></p>
               <p>{props.data.summary}</p>
-            </div>
-          }
-        </Col>
-        <Col sm={4}>
-          {(props.data === undefined) ? <div>Loading</div> : <img src={props.data.image}/>}
-        </Col>
-      </Row>
+            </Col>
+            <Col sm={5}>
+              <img src={props.data.image}/>
+            </Col>
+          </Row>
+        </Row>
+      }
       {editButton}
     </div>
   );

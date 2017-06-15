@@ -1,23 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { NavLink } from 'react-router-dom'
 import { Nav, Navbar, NavItem, Image } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import slide from './slider.svg';
+import icon from './icon.svg';
 
 //navigation bar
+// <Image
+//   style={{width: 60, height: 60}}
+//   src={icon}
+// />
 const Header = (props) => {
-  // <Image
-  //   style={{width: 70, height: 70}}
-  //   src={slide}
-  // />
+
 
     return (
       <div>
         <Navbar inverse className="navigation">
           <Navbar.Header>
             <Navbar.Brand>
-              {"PBS"}
+              <NavLink to="/book-now"><div className="book">BOOK NOW</div></NavLink>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
@@ -28,15 +30,16 @@ const Header = (props) => {
               <LinkContainer exact to="/" >
                 <NavItem>Home</NavItem>
               </LinkContainer>
-              <LinkContainer to="/authors" >
-                <NavItem>Authors</NavItem>
+              <LinkContainer to="/about" >
+                <NavItem>About</NavItem>
               </LinkContainer>
-              <LinkContainer to="/publications" >
-                <NavItem>Publications</NavItem>
+              <LinkContainer to="/rooms" >
+                <NavItem>Rooms</NavItem>
               </LinkContainer>
-              <LinkContainer to="/news" >
-                <NavItem>News</NavItem>
+              <LinkContainer to="/local-guide" >
+                <NavItem>Local Guide</NavItem>
               </LinkContainer>
+
 
             </Nav>
             <Nav pullRight>

@@ -46,7 +46,7 @@ class EditModal extends React.Component {
     let results = {};
     (Object.keys(this.state.input)).forEach((k) => {
       if(k === "carousel" && Array.isArray(this.state["input"][k]) && this.state["input"][k].length === 1) results[k] = this.state["input"][k][0].split(',');
-      else if(k === "carousel" && Array.isArray(this.state["input"][k]) === false) results[k] = this.state["input"][k][0].split(',');
+      else if(k === "carousel" && Array.isArray(this.state["input"][k]) === false) results[k] = this.state["input"][k].split(',');
       else if(k !== "_id") results[k] = this.state["input"][k]
     });
     this.props.editBlog({...this.state, input:results});

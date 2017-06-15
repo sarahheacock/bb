@@ -1,50 +1,9 @@
 import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
-const url = "https://peaceful-shelf-12195.herokuapp.com";
-const blogID = "593d5eca1e17e126ddff6d0a";
+const url = "https://fathomless-meadow-60353.herokuapp.com";
+const blogID = "59403bd95f36f802df04179b";
 
-
-// export const fetchApiSuccess = (mess) => {
-//   return {
-//     type: AdminActionTypes.API_SUCCESS,
-//     mess
-//   }
-//   // this.setState({
-//   //   message: json.message,
-//   //   fetching: false
-//   // });
-// }
-//
-// export const fetchApiFail = (mess) => {
-//   return {
-//     type: AdminActionTypes.API_FAIL,
-//     mess
-//   }
-//   // this.setState({
-//   //   message: `API call failed: ${e}`,
-//   //   fetching: false
-//   // });
-// }
-//
-// export const fetchApi = (action) => {
-//   return (dispatch) => {
-//     //return dispatch(sendMessageSuccess(data));
-//     return fetch('/api')
-//       .then(response => {
-//         if (!response.ok) {
-//           throw new Error(`status ${response.status}`);
-//         }
-//         return response.json();
-//       })
-//       .then(json => {
-//         dispatch(fetchApiSuccess(json.message))
-//       }).catch(e => {
-//         dispatch(fetchApiFail(e))
-//       })
-//   }
-//
-// }
 
 //=======================================================
 export const makeModal = (vis) => {

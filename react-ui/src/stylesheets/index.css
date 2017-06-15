@@ -27,17 +27,17 @@ body {
 }
 
 /*nabar styling*/
-.navbar-default .navbar-nav > li > a {
+/*.navbar-default .navbar-nav > li > a {
     color: DimGray;
     text-align: center;
 }
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
     color: black;
-}
+}*/
 
-.nav-tabs > li.active > a:focus {
+/*.nav-tabs > li.active > a:focus {
     outline: 0;
-}
+}*/
 
 .navigation {
   left: 0;
@@ -46,7 +46,8 @@ body {
 }
 
 .carousel-content {
-  height: 100%;
+  height: 80vh;
+
 }
 
 .carousel-control.left {
@@ -59,19 +60,53 @@ body {
 
 header {
   position: sticky;
-  width: 90%;
-  height: 70vh;
-  top: 0;
+
+
+  /*top: 0px;
   left: 0px;
   right: 0px;
-  margin: auto;
-  z-index: -1;
-  overflow-x: hidden;
+  margin: auto;*/
+  margin: 0 auto;
+  max-width: 1000px;
+
+  /*z-index: -1;
+
+  height: 70vh;*/
+  overflow:hidden;
+  /*position: relative;*/
 }
 
 .carouselImg {
-  margin: 0 auto;
+  /*height: 70vh;*/
+  /*margin: 0 auto;*/
 
+  /*max-height: 70vh;*/
+  /*display: block;
+  margin: auto;
+  /*width: 1200px;*/
+  /*max-width: 900px;
+  height: 70vh;
+  text-align: center;
+  overflow-x: hidden;
+  overflow-y: auto;*/
+  /*width: auto;*/
+  /*position: block;
+      /*float: left;*/
+      /*height: 60vh;*/
+      /*width: auto;*/
+    /*object-fit: cover;*/
+    height:50%;
+
+    /*width: auto;*/
+
+      /*float: none;*/
+
+      /*background-position: 50% 50%;
+      background-repeat:   no-repeat;
+      background-size:     cover;*/
+
+
+  /*transform: translateX(-50%);*/
 }
 
 .summary {
@@ -181,4 +216,9 @@ footer {
 
 nav > li {
   color: DarkSlateGray
+}
+
+.book {
+  padding: 2px;
+  border: 3px double;
 }
