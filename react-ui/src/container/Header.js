@@ -11,6 +11,9 @@ import icon from './icon.svg';
 //   style={{width: 60, height: 60}}
 //   src={icon}
 // />
+// <LinkContainer to="/book-now">
+//   <NavItem><div className="book">Book Now!</div></NavItem>
+// </LinkContainer>
 const Header = (props) => {
 
 
@@ -19,7 +22,7 @@ const Header = (props) => {
         <Navbar inverse className="navigation">
           <Navbar.Header>
             <Navbar.Brand>
-              <NavLink to="/book-now"><div className="book">BOOK NOW</div></NavLink>
+              <NavLink to="/book-now"><div className="book">Book Now!</div></NavLink>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
@@ -41,10 +44,11 @@ const Header = (props) => {
               </LinkContainer>
 
 
+
             </Nav>
             <Nav pullRight>
               <LinkContainer to="/login">
-                <NavItem>{(props.admin) ? "Nancy" : "Login"}</NavItem>
+                <NavItem>{(props.admin) ? <div className="book">"Nancy"</div> : <div className="book">Login</div>}</NavItem>
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>

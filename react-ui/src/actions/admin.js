@@ -2,7 +2,7 @@ import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
 const url = "https://fathomless-meadow-60353.herokuapp.com";
-const blogID = "59403bd95f36f802df04179b";
+const blogID = "594314b2e79fd106a010a955";
 
 
 //=======================================================
@@ -75,7 +75,7 @@ export const fetchBlogSuccess = (results) => {
 export const fetchBlog = (data) => {
   return (dispatch) => {
 
-    return axios.get(`${url}/user/${blogID}/${data}`)
+    return axios.get(`${url}/page/${blogID}/${data}`)
       .then(response => {
         console.log("response data", response.data);
         dispatch(fetchBlogSuccess(response.data));

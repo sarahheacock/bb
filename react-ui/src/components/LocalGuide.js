@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PageHeader, Col, Row, Button } from 'react-bootstrap';
+import { Nav, NavItem, PageHeader, Row, Button, Tab } from 'react-bootstrap';
 import moment from 'moment';
+import { Route, Redirect } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+import Place from './localGuideTabs/Place';
 
 class LocalGuide extends React.Component {
   static propTypes = {
@@ -13,60 +16,113 @@ class LocalGuide extends React.Component {
     selectAdd: PropTypes.func.isRequired
   }
 
+  constructor(props){
+    super(props);
+    this.state = {
+      categories: []
+    }
+  }
+
   componentDidMount(){
     this.props.fetchBlog("localGuide");
   }
 
-  render(){
-    const events = (this.props.data === undefined) ?
-      <div>Loading</div> :
-      this.props.data.map((event, index) => (
-        <div key={`localGuide${index}`}>
-          <div className="content">
-            <Row className="clearfix">
-              <h3>{event.title}</h3>
-              <Row className="clearfix">
-                <Col sm={7}>
-                  <p>{event.description}</p>
-                  <p><b>{event.address}</b></p>
-                </Col>
-                <Col sm={5}>
-                  <img src={event.image}/>
-                </Col>
-              </Row>
+  componentDidUpdate(){
+    if(this.props.data[0]["category"] !== undefined && this.state.categories.length === 0){
+      let cat = [];
+      this.props.data.forEach((event, index) => {
+          let create = {
+            "title": event.category,
+            "link": `/local-guide/${event.category.trim().replace(/\s/g, "-")}`
+          };
 
-            </Row>
-            <div className="text-center">
-              {(this.props.admin.admin) ?
-                <div>
-                <Button className="edit" bsStyle="info" onClick={() => this.props.selectEdit({data:event, section:"localGuide", id:this.props.admin.id})}>
-                  Edit
-                </Button>
-                <Button className="edit" bsStyle="danger" onClick={() => {
-                  if(this.props.data.length > 1) this.props.deleteBlog({sectionID:event._id, section:"localGuide"});
-                  else alert("You cannot delete all entries. Deleting all entries will cause errors.");
-                }}>
-                  Delete
-                </Button>
-                </div> :
-                <div></div>}
-            </div>
-            <hr />
-          </div>
-        </div>
+          const titles = cat.map((c) => c.title);
+          //console.log(titles);
+
+          if (titles.indexOf(create.title) === -1) cat.push({...create, data: [event]});
+          else cat[titles.indexOf(create.title)]["data"].push(event);
+        });
+
+      this.setState({categories: cat})
+    }
+  }
+
+  render(){
+    console.log(this.state.categories);
+
+    //create tabs from categories
+    const tabs = (this.state.categories.length === 0) ?
+      <div>Loading</div> :
+      this.state.categories.map((c, index) => (
+        <LinkContainer to={c.link}>
+          <NavItem className="tab">{c.title}</NavItem>
+        </LinkContainer>
       ));
 
+    const defaultRoute = (this.state.categories.length === 0) ?
+       <div></div>:
+       <Route exact path="/local-guide/" render={ () =>
+         <Redirect to={this.state.categories[0]["link"]} /> }
+       />;
+
+    const routes = (this.state.categories.length === 0) ?
+      <div></div> :
+      this.state.categories.map((c, index) => (
+        <Route path={c.link} render={ () =>
+          <Place
+            data={c.data}
+            admin={this.props.admin}
+            selectEdit={this.props.selectEdit}
+            deleteBlog={this.props.deleteBlog}
+            selectEdit={this.props.selectEdit}
+            selectAdd={this.props.selectAdd}
+          /> }
+        />
+      ));
+
+    //put data in appropiate categories
+    // const events = (this.props.data === undefined) ?
+    //   <div>Loading</div> :
+    //   this.props.data.map((event, index) => (
+    //
+    //   ));
+
+
+
+      // <Route path="/about/inn" render={ () =>
+      //   <Nancy
+      //     data={this.props.data[0]}
+      //     admin={this.props.admin}
+      //     selectEdit={this.props.selectEdit}
+      //   /> }
+      // />
+      //
+      // <Route path="/about/inn-keeper" render={ () =>
+      //   <Nancy
+      //     data={this.props.data[1]}
+      //     admin={this.props.admin}
+      //     selectEdit={this.props.selectEdit}
+      //   /> }
+      // />
     return (
       <div className="main-content">
         <PageHeader>Local Guide</PageHeader>
-        {events}
-        <div className="text-center">
-          {(this.props.admin.admin) ?
-          <Button className="add" bsStyle="primary" onClick={() => this.props.selectAdd({section:"localGuide", data:this.props.data[0]})}>
-            Add
-          </Button>:
-          <div></div>}
-        </div>
+        <div>
+          <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+          <Row className="clearfix">
+
+              <Nav bsStyle="tabs">
+                {tabs}
+              </Nav>
+
+              {defaultRoute}
+              {routes}
+
+
+
+          </Row>
+          </Tab.Container>
+          </div>
       </div>
     );
   }

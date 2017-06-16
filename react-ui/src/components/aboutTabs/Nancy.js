@@ -28,7 +28,9 @@ const Nancy = (props) => {
           </Row>
         </Row>
       }
-      {editButton}
+      <div className="text-center">
+        {editButton}
+      </div>
     </div>
   );
 };
