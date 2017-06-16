@@ -9,6 +9,7 @@ import axios from 'axios';
 
 import AdminReducer from './reducers/admin';
 
+import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import './stylesheets/index.css';
@@ -18,6 +19,8 @@ import './stylesheets/index.css';
 
 //=============================================================\
 //const Render = () => {
+const temp = new Date().toString().split(' ');
+let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 10:00:00").getTime();
 
   const data = {current: []};
   const initialState = {
@@ -25,7 +28,8 @@ import './stylesheets/index.css';
     modalVisible: {
       add: false,
       edit: false,
-      message: false
+      message: false,
+      client: false
     },
     messageSent: false,
     //CHANGE BACK LATER
@@ -40,6 +44,19 @@ import './stylesheets/index.css';
       section: ""
     },
     newPage: true,
+    checkout: {
+      selected: false,
+      verify: false,
+      payment: false,
+      confirmation: false
+    },
+    select: {
+      roomID: '',
+      arrive: NOW,
+      depart: NOW + 24*60*60*1000,
+      guests: 2
+    },
+    //searchResults: []
   };
 
   const saveState = (state) => {
@@ -57,7 +74,7 @@ import './stylesheets/index.css';
         initialState;
 
   const store = createStore(
-    AdminReducer, initial, applyMiddleware(thunk)
+    AdminReducer, initialState, applyMiddleware(thunk)
   );
 
   store.subscribe(() => {

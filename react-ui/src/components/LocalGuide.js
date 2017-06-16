@@ -37,7 +37,6 @@ class LocalGuide extends React.Component {
           };
 
           const titles = cat.map((c) => c.title);
-          //console.log(titles);
 
           if (titles.indexOf(create.title) === -1) cat.push({...create, data: [event]});
           else cat[titles.indexOf(create.title)]["data"].push(event);
@@ -80,30 +79,6 @@ class LocalGuide extends React.Component {
         />
       ));
 
-    //put data in appropiate categories
-    // const events = (this.props.data === undefined) ?
-    //   <div>Loading</div> :
-    //   this.props.data.map((event, index) => (
-    //
-    //   ));
-
-
-
-      // <Route path="/about/inn" render={ () =>
-      //   <Nancy
-      //     data={this.props.data[0]}
-      //     admin={this.props.admin}
-      //     selectEdit={this.props.selectEdit}
-      //   /> }
-      // />
-      //
-      // <Route path="/about/inn-keeper" render={ () =>
-      //   <Nancy
-      //     data={this.props.data[1]}
-      //     admin={this.props.admin}
-      //     selectEdit={this.props.selectEdit}
-      //   /> }
-      // />
     return (
       <div className="main-content">
         <PageHeader>Local Guide</PageHeader>
@@ -117,8 +92,6 @@ class LocalGuide extends React.Component {
 
               {defaultRoute}
               {routes}
-
-
 
           </Row>
           </Tab.Container>

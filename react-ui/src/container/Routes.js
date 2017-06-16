@@ -63,7 +63,10 @@ const Routes = (props) => {
 
       <Route path="/book-now" render={ () => (
         <Book
-
+          data={props.data}
+          fetchSearch={props.fetchSearch}
+          select={props.select}
+          checkout={props.checkout}
         />) }
       />
 
@@ -83,10 +86,13 @@ Routes.propsTypes = {
   fetchBlog: PropTypes.func.isRequired,
   data: PropTypes.object.isRequired,
   admin: PropTypes.object.isRequired,
+  select: PropTypes.object.isRequired,
   selectEdit: PropTypes.func.isRequired,
   selectAdd: PropTypes.func.isRequired,
   deleteBlog: PropTypes.func.isRequired,
   errorMessage: PropTypes.object.isRequired,
   verifyEmail: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
+  fetchSearch: PropTypes.func.isRequired,
+  checkout: PropTypes.object.isRequired
 };

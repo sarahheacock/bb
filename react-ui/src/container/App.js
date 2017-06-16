@@ -14,14 +14,6 @@ import Header from './Header';
 import Footer from './Footer';
 
 
-
-
-//var FontAwesome = require('react-fontawesome');
-//import FaBeer from 'react-icons/fa/beer';
-
-
-
-
 class App extends Component {
   static propTypes = {
     data: PropTypes.object.isRequired,
@@ -31,8 +23,10 @@ class App extends Component {
     messageSent: PropTypes.bool.isRequired,
     selectedEdit: PropTypes.object.isRequired,
     selectedAdd: PropTypes.object.isRequired,
+    //searchResults: PropTypes.object.isRequired,
+    select: PropTypes.object.isRequired,
+    checkout: PropTypes.object.isRequired,
 
-    //message: PropTypes.object.isRequired,
     newPage: PropTypes.bool.isRequired,
   }
 
@@ -69,7 +63,7 @@ class App extends Component {
 
 
   render(){
-    const{ dispatch, data, modalVisible, admin, errorMessage, messageSent, selectedEdit, selectedAdd, message, newPage} = this.props;
+    const{ dispatch, data, modalVisible, admin, errorMessage, messageSent, selectedEdit, selectedAdd, message, newPage, searchResults, select, checkout} = this.props;
     //turns an object whose values are action creators (functions)
     //and wraps in dispatch (what causes state change)
     const makeModal = bindActionCreators(AdminActionCreators.makeModal, dispatch);
@@ -82,7 +76,7 @@ class App extends Component {
     const selectEdit = bindActionCreators(AdminActionCreators.selectEdit, dispatch);
     const selectAdd = bindActionCreators(AdminActionCreators.selectAdd, dispatch);
     const logout = bindActionCreators(AdminActionCreators.logout, dispatch);
-    //const fetchApi = bindActionCreators(AdminActionCreators.fetchApi, dispatch);
+    const fetchSearch = bindActionCreators(AdminActionCreators.fetchSearch, dispatch);
 
 
     console.log(this.state.message);
@@ -93,7 +87,8 @@ class App extends Component {
     console.log("messageSent", messageSent);
     console.log("selectedEdit", selectedEdit);
     console.log("newPage", newPage);
-    //console.log("fetching", this.state.fetching);
+    //console.log("searchResults", searchResults);
+    console.log("select", select);
 
 
     return (
@@ -114,6 +109,9 @@ class App extends Component {
             errorMessage={errorMessage}
             verifyEmail={verifyEmail}
             logout={logout}
+            fetchSearch={fetchSearch}
+            select={select}
+            checkout={checkout}
           />
 
           <Footer
@@ -147,18 +145,14 @@ const mapStateToProps = state => (
     messageSent: state.messageSent,
     selectedEdit: state.selectedEdit,
     selectedAdd: state.selectedAdd,
+    //searchResults: state.searchResults,
+    select: state.select,
+    checkout: state.checkout,
 
     newPage: state.newPage
-    // message: state.message,
-    // fetching: state.fetching
+
   }
 );
 
 
 export default connect(mapStateToProps)(App);
-
-// <Fetch
-//   fetchApi={fetchApi}
-//   message={message}
-//   fetching={fetching}
-// />

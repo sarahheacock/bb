@@ -107,6 +107,13 @@ export default function Admin(state={}, action){
       }
     }
 
+    // case AdminActionTypes.FETCH_SEARCH_SUCCESS: {
+    //   return {
+    //     ...state,
+    //     searchResults: action.results
+    //   }
+    // }
+
     default:
       return state;
   }

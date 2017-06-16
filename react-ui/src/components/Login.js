@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PageHeader, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
+import { PageHeader, Button, Form, FormControl, ControlLabel, FormGroup, Alert, Checkbox } from 'react-bootstrap';
 
 class Login extends React.Component {
   static propTypes = {
@@ -14,7 +14,8 @@ class Login extends React.Component {
     super(props);
     this.state = {
       username: '',
-      password: ''
+      password: '',
+      admin: false
     };
   }
 
@@ -23,15 +24,22 @@ class Login extends React.Component {
     this.setState(this.state);
   }
 
+  onCheckboxChange = (e) => {
+    //const current = this.state.admin;
+    this.state.admin = !this.state.admin;
+    this.setState(this.state);
+  }
+
   verify = (e) => {
     if(e) e.preventDefault();
-    this.props.verifyEmail({username: this.state.username, password: this.state.password});
+    this.props.verifyEmail({username: this.state.username, password: this.state.password, admin: this.state.admin});
     this.state.username = '';
     this.state.password = '';
     this.setState(this.state);
   }
 
   render(){
+    console.log(this.state);
     const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
       <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
       (this.props.admin.admin) ?
@@ -64,6 +72,10 @@ class Login extends React.Component {
             <ControlLabel>Password *</ControlLabel>
             <FormControl name="password" type="password" value={this.state.password} onChange={this.onFormChange} required/>
           </FormGroup>
+
+          <Checkbox className="text-center" value={this.state.admin} onChange={this.onCheckboxChange}>
+            Admin
+          </Checkbox>
 
           {alert}
           <div className="text-center">

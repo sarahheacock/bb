@@ -64,6 +64,7 @@ export const sendMessage = (data) => {
 };
 
 
+
 //=====================PAGE LOADING==========================================
 export const fetchBlogSuccess = (results) => {
   return {
@@ -71,6 +72,7 @@ export const fetchBlogSuccess = (results) => {
     results
   };
 };
+
 
 export const fetchBlog = (data) => {
   return (dispatch) => {
@@ -81,7 +83,8 @@ export const fetchBlog = (data) => {
         dispatch(fetchBlogSuccess(response.data));
       })
       .catch(error => {
-        throw(error);
+        console.log(error);
+        alert("Unable to load content at this time.")
       });
   }
 };
@@ -100,7 +103,8 @@ export const editBlog = (data) => {
         else dispatch(fetchBlogSuccess(response.data));
       })
       .catch(error => {
-        throw(error);
+        console.log(error);
+        dispatch(fail({"error": "Unable to edit content at this time."}));
       });
   }
 };
@@ -119,7 +123,8 @@ export const addBlog = (data) => {
         else dispatch(fetchBlogSuccess(response.data));
       })
       .catch(error => {
-        throw(error);
+        console.log(error);
+        dispatch(fail({"error": "Unable to add content at this time"}));
       });
   }
 };
@@ -134,7 +139,8 @@ export const deleteBlog = (data) => {
         else dispatch(fetchBlogSuccess(response.data));
       })
       .catch(error => {
-        throw(error);
+        console.log(error);
+        dispatch(fail({"error": "Unable to delete content at this time."}));
       });
   }
 };
@@ -159,18 +165,151 @@ export const verifyEmailSuccess = (results) => {
 export const verifyEmail = (data) => {
   return (dispatch) => {
 
-    return axios.post(`${url}/api/login`, {
-      username: data.username,
-      password: data.password
-    })
+    if(data.admin){
+      //admin login
+      return axios.post(`${url}/api/login`, {
+        username: data.username,
+        password: data.password
+      })
+        .then(response => {
+          console.log("response data", response.data);
+          dispatch(verifyEmailSuccess(response.data));
+        })
+        .catch(error => {
+          console.log(error);
+          dispatch(fail({"error": "username and/or password not found"}));
+          //throw(error);
+        });
+    }
+    else {
+      //user login
+      return axios.post(`${url}/locked/userlogin`, {
+        username: data.username,
+        password: data.password
+      })
+        .then(response => {
+          console.log("response data", response.data);
+          dispatch(verifyEmailSuccess(response.data));
+        })
+        .catch(error => {
+          console.log(error);
+          dispatch(fail({"error": "username and/or password not found"}));
+          //throw(error);
+        });
+    }
+  }
+};
+
+//=============GET AVAILABLE ROOMS==============================
+// Sync Action
+// (4) SUCCESS/UPDATE SEARCHRESULTS PROP
+// export const fetchSearchSuccess = (results) => {
+//   //console.log("search success");
+//   console.log(results);
+//   return {
+//     type: AdminActionTypes.FETCH_SEARCH_SUCCESS,
+//     results
+//   }
+// };
+
+
+//(2) GET THE ROOM DATA FROM THE ID
+export const filterSearch = (data, results) => {
+  //fetch rooms from page
+  console.log("FILTER", results);
+  return (dispatch) => {
+    return axios.get(`${url}/page/${blogID}/rooms`)
       .then(response => {
         console.log("response data", response.data);
-        dispatch(verifyEmailSuccess(response.data));
+        //filter rooms that have too low maximum occupancy
+        let availableRooms = [];
+
+        //filter rooms that are not available for each date
+        response.data.forEach((o,j) => {
+          //with date[0] find the index with the correct roomID
+          const i = results[0].map((f, index) => {if(o._id === f.roomID) return index; });
+          const index = i[0];
+          //for each date at index...
+          //determine if reserved < o.available
+          let lookup = false;
+          if(o.maximumOccupancy >= data.guests) {
+
+            lookup = results.reduce((a,b) => {
+              return ((b[index]["reserved"] < o.available) && a);
+            }, true);
+
+          }
+
+          if(lookup){
+            availableRooms.push(o);
+          }
+        });
+        dispatch(fetchBlogSuccess(availableRooms));
+
       })
       .catch(error => {
         console.log(error);
-        dispatch(fail({"error": "username and/or password not found"}));
-        //throw(error);
+        alert("Unable to load content at this time.")
       });
   }
+}
+
+//Async Action
+//(1) GET ROOMS FROM DB USING DATES
+export const fetchSearch = (data) => {
+
+  // Returns a dispatcher function
+  // that dispatches an action at a later time
+  return (dispatch) => {
+    //CREATE AN ARRAY OF DATES OBJECTS
+    let end = data.depart - (24*60*60*1000);
+    const begin = data.arrive;
+    let dateArr = [];
+    let results = [];
+
+    while(end >= begin){
+      dateArr.push(end);
+      end = end - (24*60*60*1000);
+    }
+    console.log("FETCH", dateArr);
+
+    //USE ARRAY TO CALL AVAILABILITY FOR THAT DAY
+    return dateArr.forEach((date) => {
+      //returns a promise
+      axios.get(`${url}/rooms/${blogID}&${date}`)
+      .then(response => {
+
+        results.push(response.data.free);
+        //dispatch another action
+        //to consume data
+        if(results.length === dateArr.length){
+          dispatch(filterSearch(data, results));
+        }
+      })
+      .catch((error) => {
+        if(error.message.includes("404")){
+          axios.post(`${url}/rooms/`,{
+            pageID: blogID,
+            date: new Date(date)
+          })
+          .then(res => {
+
+            results.push(res.data.free);
+            //dispatch another action
+            //to consume data
+            if(results.length === dateArr.length){
+              dispatch(filterSearch(data, results));
+            }
+          })
+          .catch((error) => {
+            console.log(error.message);
+            alert("Unable to check availability at this time")
+          });
+        }
+        else {
+          alert("Unable to check availability")
+        }
+      });
+    });
+  };
 };

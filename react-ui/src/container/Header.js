@@ -21,8 +21,8 @@ const Header = (props) => {
       <div>
         <Navbar inverse className="navigation">
           <Navbar.Header>
-            <Navbar.Brand>
-              <NavLink to="/book-now"><div className="book">Book Now!</div></NavLink>
+            <Navbar.Brand >
+            
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
@@ -41,6 +41,9 @@ const Header = (props) => {
               </LinkContainer>
               <LinkContainer to="/local-guide" >
                 <NavItem>Local Guide</NavItem>
+              </LinkContainer>
+              <LinkContainer to="/book-now" >
+                <NavItem><div className="book">Book Now</div></NavItem>
               </LinkContainer>
 
 
