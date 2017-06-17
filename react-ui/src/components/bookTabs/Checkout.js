@@ -14,14 +14,14 @@ class Checkout extends React.Component {
   }
 
   // componentDidMount(){
-  //   this.props.fetchSearch(this.props.select);
+  //
   // }
 
   render(){
 
     return (
       <div className="main-content">
-
+        Checkout
 
 
       </div>

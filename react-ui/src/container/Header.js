@@ -22,7 +22,7 @@ const Header = (props) => {
         <Navbar inverse className="navigation">
           <Navbar.Header>
             <Navbar.Brand >
-            
+
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>
@@ -46,12 +46,10 @@ const Header = (props) => {
                 <NavItem><div className="book">Book Now</div></NavItem>
               </LinkContainer>
 
-
-
             </Nav>
             <Nav pullRight>
               <LinkContainer to="/login">
-                <NavItem>{(props.admin) ? <div className="book">"Nancy"</div> : <div className="book">Login</div>}</NavItem>
+                <NavItem>{(props.admin.username) ? <div className="book">{`Welcome, ${props.admin.username}`}</div> : <div className="book">Login</div>}</NavItem>
               </LinkContainer>
             </Nav>
           </Navbar.Collapse>
@@ -63,5 +61,5 @@ const Header = (props) => {
 export default Header;
 
 Header.propTypes = {
-  admin: PropTypes.bool.isRequired
+  admin: PropTypes.object.isRequired
 }

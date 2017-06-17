@@ -2,22 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
-import { ControlLabel, FormGroup, Row, Col } from 'react-bootstrap';
+import { ControlLabel, FormGroup, Row, Col, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 
 class Available extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    // fetchBlog: PropTypes.func.isRequired,
-    // admin: PropTypes.object.isRequired,
-    // selectEdit: PropTypes.func.isRequired,
+    updateCheckout: PropTypes.func.isRequired,
     fetchSearch: PropTypes.func.isRequired,
-    //select: PropTypes.object.isRequired
+    select: PropTypes.object.isRequired,
+    checkout: PropTypes.object.isRequired
   }
-
-  // componentDidMount(){
-  //   this.props.fetchSearch(this.props.select);
-  // }
 
   constructor(props) {
     super(props);
@@ -29,7 +24,7 @@ class Available extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchSearch(this.props.select);
+    if(this.props.checkout.selected === false) this.props.fetchSearch(this.props.select);
   }
 
   handleStart = (date) => {
@@ -56,6 +51,8 @@ class Available extends React.Component {
     }, () => this.props.fetchSearch(this.state));
   }
 
+
+
 //selected determined by moment(millisecond).
 //This millisecond was initialized in reducer to current date or moment().toDate().getTime()
   render() {
@@ -70,13 +67,26 @@ class Available extends React.Component {
         <img className="room-img round" src={room.image} alt={room.name} />
         <h3>{room.title}</h3>
 
-        <button className="btn btn-primary">
-          <NavLink onClick={(e) => {
-
-          }} className="select" to="/book-now/billing">
+        <Button bsStyle="primary">
+          <NavLink className="select" onClick={(e) => {
+            console.log("hello");
+            //if(e) e.preventDefault();
+            this.props.updateCheckout(
+              {
+                "roomID": room._id,
+                "guests":this.state.guests,
+                "arrive":new Date(this.state.arrive).getTime(),
+                "depart":new Date(this.state.depart).getTime()
+              },
+              {
+                ...this.props.checkout,
+                "selected": true
+              }
+            );
+          }} to="/book-now/billing">
             Select
           </NavLink>
-        </button>
+        </Button>
       </div>
     ));
 
@@ -146,10 +156,3 @@ class Available extends React.Component {
 }
 
 export default Available;
-
-// props.updateRoom({
-//   "room":true,
-//   "name":room,
-//   "guests":this.state.guests,
-//   "arrive":new Date(this.state.arrive).getTime(),
-//   "depart":new Date(this.state.depart).getTime()})

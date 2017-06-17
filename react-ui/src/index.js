@@ -33,7 +33,12 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
     },
     messageSent: false,
     //CHANGE BACK LATER
-    admin: {admin: false, id: "a"},
+    admin: {
+      admin: false,
+      id: "",
+      user: "",
+      username: "",
+    },
     errorMessage: {},
     selectedEdit: {
       data: {},
@@ -47,6 +52,7 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
     checkout: {
       selected: false,
       verify: false,
+      billing: false,
       payment: false,
       confirmation: false
     },

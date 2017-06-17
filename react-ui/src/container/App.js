@@ -77,6 +77,8 @@ class App extends Component {
     const selectAdd = bindActionCreators(AdminActionCreators.selectAdd, dispatch);
     const logout = bindActionCreators(AdminActionCreators.logout, dispatch);
     const fetchSearch = bindActionCreators(AdminActionCreators.fetchSearch, dispatch);
+    const updateCheckout = bindActionCreators(AdminActionCreators.updateCheckout, dispatch);
+    const createEmail = bindActionCreators(AdminActionCreators.createEmail, dispatch);
 
 
     console.log(this.state.message);
@@ -87,7 +89,7 @@ class App extends Component {
     console.log("messageSent", messageSent);
     console.log("selectedEdit", selectedEdit);
     console.log("newPage", newPage);
-    //console.log("searchResults", searchResults);
+    console.log("checkout", checkout);
     console.log("select", select);
 
 
@@ -96,7 +98,7 @@ class App extends Component {
         <div className="container-fluid">
 
           <Header
-            admin={admin.admin}
+            admin={admin}
           />
 
           <Routes
@@ -112,6 +114,10 @@ class App extends Component {
             fetchSearch={fetchSearch}
             select={select}
             checkout={checkout}
+            updateCheckout={updateCheckout}
+            createEmail={createEmail}
+            modalVisible={modalVisible}
+            makeModal={makeModal}
           />
 
           <Footer

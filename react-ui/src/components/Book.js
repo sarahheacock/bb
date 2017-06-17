@@ -125,13 +125,14 @@ class Book extends React.Component {
     // admin: PropTypes.object.isRequired,
     // selectEdit: PropTypes.func.isRequired,
     fetchSearch: PropTypes.func.isRequired,
-    select: PropTypes.object.isRequired
+    select: PropTypes.object.isRequired,
+    checkout: PropTypes.object.isRequired,
+    updateCheckout: PropTypes.func.isRequired
   }
 
 
 
   render(){
-    const dis = true;
     return (
       <div className="main-content">
         <PageHeader>Book Now</PageHeader>
@@ -144,13 +145,13 @@ class Book extends React.Component {
             <LinkContainer to="/book-now/availability">
               <NavItem className="tab">I.  Check Availability</NavItem>
             </LinkContainer>
-            <LinkContainer to="/book-now/checkout" disabled={dis}>
+            <LinkContainer to="/book-now/billing" disabled={!(this.props.checkout.selected)}>
               <NavItem className="tab" >II.  Billing</NavItem>
             </LinkContainer>
-            <LinkContainer to="/book-now/payment">
+            <LinkContainer to="/book-now/payment" disabled={!(this.props.checkout.billing)}>
               <NavItem className="tab">III.  Payment</NavItem>
             </LinkContainer>
-            <LinkContainer to="/book-now/confirmation">
+            <LinkContainer to="/book-now/confirmation" disabled={!(this.props.checkout.payment)}>
               <NavItem className="tab">IV.  Confirmation</NavItem>
             </LinkContainer>
 
@@ -166,9 +167,11 @@ class Book extends React.Component {
               data={this.props.data}
               fetchSearch={this.props.fetchSearch}
               select={this.props.select}
+              checkout={this.props.checkout}
+              updateCheckout={this.props.updateCheckout}
             /> }
           />
-          <Route path="/book-now/checkout/" render={ () =>
+          <Route path="/book-now/billing/" render={ () =>
             <Checkout
 
             /> }

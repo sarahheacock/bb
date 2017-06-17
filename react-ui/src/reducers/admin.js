@@ -75,7 +75,7 @@ export default function Admin(state={}, action){
       return {
         ...state,
         data: Data,
-        modalVisible: {"edit": false, "add": false, "message": false},
+        modalVisible: {"edit": false, "add": false, "message": false, "client": false},
         newPage: false
       }
     }
@@ -91,7 +91,9 @@ export default function Admin(state={}, action){
     case AdminActionTypes.LOGOUT: {
       const newAdmin = {
         admin: false,
-        id: "a"
+        id: "",
+        user: "",
+        username: "",
       };
       return {
         ...state,
@@ -107,12 +109,13 @@ export default function Admin(state={}, action){
       }
     }
 
-    // case AdminActionTypes.FETCH_SEARCH_SUCCESS: {
-    //   return {
-    //     ...state,
-    //     searchResults: action.results
-    //   }
-    // }
+    case AdminActionTypes.UPDATE_CHECKOUT: {
+      return {
+        ...state,
+        select: action.select,
+        checkout: action.checkout
+      }
+    }
 
     default:
       return state;

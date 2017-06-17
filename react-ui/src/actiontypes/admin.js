@@ -6,6 +6,7 @@ export const SEND_MESSAGE_SUCCESS = 'admin/SEND_MESSAGE_SUCCESS';
 export const SELECT_EDIT = 'admin/SELECT_EDIT';
 export const SELECT_ADD = 'admin/SELECT_ADD';
 export const LOGOUT = 'admin/LOGOUT';
+export const UPDATE_CHECKOUT = 'admin/UPDATE_CHECKOUT';
 
 //export const FETCH_SEARCH_SUCCESS = 'admin/FETCH_SEARCH_SUCCESS';
 

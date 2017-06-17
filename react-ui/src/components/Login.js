@@ -1,13 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Button, Form, FormControl, ControlLabel, FormGroup, Alert, Checkbox } from 'react-bootstrap';
+import SignUpModal from './modals/SignUpModal';
 
+
+//this.props.admin.username === undefined determines layout
 class Login extends React.Component {
   static propTypes = {
     verifyEmail: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
     errorMessage: PropTypes.object.isRequired,
-    admin: PropTypes.object.isRequired
+    admin: PropTypes.object.isRequired,
+    createEmail: PropTypes.func.isRequired,
+    modalVisible: PropTypes.object.isRequired,
+    makeModal: PropTypes.func.isRequired,
+    checkoutSelected: PropTypes.bool.isRequired
   }
 
   constructor(props){
@@ -39,24 +46,36 @@ class Login extends React.Component {
   }
 
   render(){
-    console.log(this.state);
+    //if there is an errorMessage, give errorMessage
+    //if there is no errorMessage and username is not undefined, welcome
     const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
       <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      (this.props.admin.admin) ?
-        <Alert className="content text-center alertMessage" bsStyle="success">"Welcome, Nancy"</Alert>:
+      (this.props.admin.username) ?
+        <Alert className="content text-center alertMessage" bsStyle="success">{`Welcome, ${this.props.admin.username}`}</Alert>:
         <div></div>;
 
-    const logoutButton = (this.props.admin.admin) ?
+    const logoutButton = (this.props.admin.username) ?
       <Button bsStyle="primary" onClick={() => this.props.logout("You are logged out.")}>
         Logout
       </Button>:
       <div></div>;
 
-    const loginButton = (this.props.admin.admin) ?
+    const loginButton = (this.props.admin.username) ?
       <div></div>:
-      <Button bsStyle="primary" type="submit">
-        Login
-      </Button>;
+      <div>
+        <Button bsStyle="primary" type="submit">
+          Login
+        </Button>
+        <Button onClick={(e) => {
+          this.props.makeModal({
+            ...this.props.modalVisible,
+            client: true
+          })
+        }}>
+          Sign Up
+        </Button>
+      </div>;
+
 
     return (
       <div className="main-content">
@@ -81,8 +100,19 @@ class Login extends React.Component {
           <div className="text-center">
             {logoutButton}
             {loginButton}
+
           </div>
         </Form>
+
+        <SignUpModal
+          makeModal={this.props.makeModal}
+          modalVisible={this.props.modalVisible}
+          createEmail={this.props.createEmail}
+          errorMessage={this.props.errorMessage}
+          admin={this.props.admin}
+          checkoutSelected={this.props.checkoutSelected}
+        />
+
 
       </div>
     );

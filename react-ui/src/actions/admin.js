@@ -34,6 +34,15 @@ export const fail = (results) => {
   };
 };
 
+//===================CHECKOUT=================================
+export const updateCheckout = (select, checkout) => {
+  return {
+    type: AdminActionTypes.UPDATE_CHECKOUT,
+    select,
+    checkout
+  }
+}
+
 //===============MESSAGING===============================================
 export const sendMessageSuccess = () => {
   return {
@@ -184,7 +193,7 @@ export const verifyEmail = (data) => {
     else {
       //user login
       return axios.post(`${url}/locked/userlogin`, {
-        username: data.username,
+        email: data.username,
         password: data.password
       })
         .then(response => {
@@ -199,6 +208,29 @@ export const verifyEmail = (data) => {
     }
   }
 };
+
+//==============CREATE CLIENT=====================================
+// (3) VERIFY_EMAIL_SUCCESS
+// (2) SIGN IN
+// (1) UPDATE CLIENT'S ACCOUNT
+export const createEmail = (formData) => {
+  return (dispatch) => {
+    //post("/:userID/:password/upcoming"
+      return axios.post(`${url}/page/user-setup`, {
+        "email": formData.email,
+        "password": formData.password,
+        "billing": formData.billing,
+        "pageID": blogID
+      })
+      .then(response => {
+        console.log(response.data);
+        dispatch(verifyEmail({admin: false, username: response.data.email, password: formData.password }))
+      })
+      .catch(error => {
+        dispatch(fail({"error": "Unable to create new account"}));
+      });
+  };
+}
 
 //=============GET AVAILABLE ROOMS==============================
 // Sync Action
@@ -295,8 +327,6 @@ export const fetchSearch = (data) => {
           .then(res => {
 
             results.push(res.data.free);
-            //dispatch another action
-            //to consume data
             if(results.length === dateArr.length){
               dispatch(filterSearch(data, results));
             }
