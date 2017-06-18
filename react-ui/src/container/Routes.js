@@ -72,6 +72,14 @@ const Routes = (props) => {
           select={props.select}
           checkout={props.checkout}
           updateCheckout={props.updateCheckout}
+          admin={props.admin}
+          makeModal={props.makeModal}
+          modalVisible={props.modalVisible}
+          verifyEmail={props.verifyEmail}
+          logout={props.logout}
+          createEmail={props.createEmail}
+          errorMessage={props.errorMessage}
+          fetchClient={props.fetchClient}
         />) }
       />
 
@@ -103,5 +111,6 @@ Routes.propsTypes = {
   checkout: PropTypes.object.isRequired,
   createEmail: PropTypes.func.isRequired,
   makeModal: PropTypes.func.isRequired,
-  modalVisible: PropTypes.object.isRequired
+  modalVisible: PropTypes.object.isRequired,
+  fetchClient: PropTypes.func.isRequired
 };

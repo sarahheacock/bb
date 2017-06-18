@@ -29,7 +29,7 @@ class Rooms extends React.Component {
             {(article.carousel === undefined) ?
               <div>Loading</div>:
               <div className="content">
-                <div className="well well-option">
+                <div className="well">
                   <Row className="clearfix content">
 
                     <Row className="clearfix">

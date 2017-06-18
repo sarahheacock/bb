@@ -5,19 +5,6 @@ import * as AdminActionTypes from '../actiontypes/admin';
 //state={} is overwritten by initialState provided in index.js
 export default function Admin(state={}, action){
   switch (action.type) {
-    // case AdminActionTypes.API_SUCCESS: {
-    //   return {
-    //     message: action.mess,
-    //     fetching: false
-    //   }
-    // }
-    //
-    // case AdminActionTypes.API_FAIL: {
-    //   return {
-    //     message: `API call failed: ${action.mess}`,
-    //     fetching: false
-    //   }
-    // }
 
     case AdminActionTypes.MAKE_MODAL: {
       const newVis = {
@@ -75,7 +62,7 @@ export default function Admin(state={}, action){
       return {
         ...state,
         data: Data,
-        modalVisible: {"edit": false, "add": false, "message": false, "client": false},
+        modalVisible: {"edit": false, "add": false, "message": false, "client": false, "login": false},
         newPage: false
       }
     }

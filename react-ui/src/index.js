@@ -29,7 +29,8 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
       add: false,
       edit: false,
       message: false,
-      client: false
+      client: false,
+      login: false
     },
     messageSent: false,
     //CHANGE BACK LATER
@@ -51,13 +52,12 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
     newPage: true,
     checkout: {
       selected: false,
-      verify: false,
       billing: false,
       payment: false,
       confirmation: false
     },
     select: {
-      roomID: '',
+      roomID: {},
       arrive: NOW,
       depart: NOW + 24*60*60*1000,
       guests: 2

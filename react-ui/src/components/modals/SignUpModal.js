@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+//import { NavLink } from 'react-router-dom';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert, Checkbox } from 'react-bootstrap';
 import { Countries } from '../data/options';
+import SignUpForm from '../forms/SignUpForm';
 
 //SignUp is a modal that update login and billing state
 class SignUpModal extends React.Component {
@@ -17,7 +18,8 @@ class SignUpModal extends React.Component {
 
   constructor(props){
     super(props);
-    this.state = {
+    this.state =
+     {
       email: '',
       password: '',
       billing: {
@@ -26,7 +28,7 @@ class SignUpModal extends React.Component {
         city: '',
         state: '',
         zip: '',
-        country: ''
+        country: 'United States'
       },
     }
   }
@@ -44,64 +46,38 @@ class SignUpModal extends React.Component {
   pop = (e) => {
     if(e) e.preventDefault();
     this.props.makeModal({
-      ...this.props.modalVisible,
-      "client": false
+      "client": false,
+      "login": false
     });
   }
 
   render() {
+    //console.log("state", this.state.billing.country);
     const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
       <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
       (this.props.admin.username) ?
-        <Alert className="content text-center alertMessage" bsStyle="success">`Welcome, ${this.props.admin.username}`</Alert>:
+        <Alert className="content text-center alertMessage" bsStyle="success">{`Welcome, ${this.props.admin.username}`}</Alert>:
         <div></div>;
 
 
-    const options = Countries.map((country) => (
-      <option
-      key={country}
-      value={country}
-      >
-        {country}
-      </option>
-    ));
+    const submitButton = <button className="btn btn-primary" onClick={this.verify} onClick={() => {
+        this.props.createEmail({
+          password: this.state.password,
+          email: this.state.email,
+          billing: `${this.state.billing.line1}/${this.state.billing.line2}/${this.state.billing.city}/${this.state.billing.state}/${this.state.billing.zip}/${this.state.billing.country}`
+        });
 
-    const properties = [
-      {
-        label: "Address Line 1 *",
-        name: "line1",
-        placeholder: "Street Address",
-        value: this.state.billing.line1,
-      },
-      {
-        label: "Address Line 2",
-        name: "line2",
-        placeholder: "Street Address",
-        value: this.state.billing.line2,
-      },
-      {
-        label: "City *",
-        name: "city",
-        value: this.state.billing.city,
-      },
-      {
-        label: "State *",
-        name: "state",
-        value: this.state.billing.state,
-      },
-      {
-        label: "Zip *",
-        name: "zip",
-        value: this.state.billing.zip,
-      }
-    ];
+        this.props.makeModal({
+          client: false,
+          login: true
+        });
+      }}>
+        Submit
+    </button>;
 
-    const inputs = properties.map((p) => (
-      <FormGroup controlId="formInlineName">
-        <ControlLabel>{p.label}</ControlLabel>
-        <FormControl name={p.name} type="text" value={p.value} onChange={this.onAddressChange} required={p.label.includes("*")}/>
-      </FormGroup>
-    ));
+    const closeButton = <button className="btn btn-danger" onClick={this.pop}>
+      {(this.props.admin.username) ? "Close" : "Cancel"}
+    </button>;
 
     return (
       <div className="main-content not-found">
@@ -120,35 +96,24 @@ class SignUpModal extends React.Component {
                 <ControlLabel>Password *</ControlLabel>
                 <FormControl name="password" type="password" value={this.state.password} onChange={this.onFormChange} required/>
               </FormGroup>
-
-              {inputs}
-
-              <FormGroup>
-                <ControlLabel>Country *</ControlLabel>
-                <FormControl name="country" componentClass="select" onChange={this.onAddressChange}>
-                  {options}
-                </FormControl>
-              </FormGroup>
-
-              {alert}
-
             </Form>
+
+            <SignUpForm
+              line1Value={this.state.billing.line1}
+              line2Value={this.state.billing.line2}
+              cityValue={this.state.billing.city}
+              stateValue={this.state.billing.state}
+              zipValue={this.state.billing.zip}
+              countryValue={this.state.billing.country}
+              addressChange={this.onAddressChange}
+            />
+
           </Modal.Body>
           <Modal.Footer>
-            <button type="submit" className="btn btn-primary" onClick={this.pop}>
-              <NavLink className="select" to={(this.props.checkoutSelected) ? "/book-now/billing" : "/login"} onClick={() => {
-                this.props.createEmail({
-                  password: this.state.password,
-                  email: this.state.email,
-                  billing: `${this.state.billing.line1} ${this.state.billing.line2}, ${this.state.billing.city}, ${this.state.billing.state} ${this.state.billing.zip} ${this.state.billing.country}`
-                });
-              }}>
-                Submit
-              </NavLink>
-            </button>
-            <button className="btn btn-danger" onClick={this.pop}>
-              {(this.props.admin.username) ? "Close" : "Cancel"}
-            </button>
+            <div className="text-center">
+              {alert}
+              {submitButton}{closeButton}
+            </div>
           </Modal.Footer>
         </Modal>
       </div>

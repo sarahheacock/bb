@@ -155,6 +155,24 @@ export const deleteBlog = (data) => {
 };
 
 
+//=================FETCH CLIENT INFO==============================================
+// (2) MAKE RESULT DATA CURRENT
+// (1) FETCH CLIENT INFO
+export const fetchClient = (user) => {
+  return (dispatch) => {
+    //get("/locked/user/:userID/"
+    console.log(`${url}/locked/user/${user.user}?token=${user.id}`);
+      return axios.get(`${url}/locked/user/${user.user}?token=${user.id}`)
+      .then(response => {
+        console.log(response.data);
+        dispatch(fetchBlogSuccess([response.data]))
+      })
+      .catch(error => {
+        dispatch(fail({"error": "Unable to fetch account information"}));
+      });
+  };
+};
+
 //=================AUTHENTICATION==================================================
 export const logout = (message) => {
   if(message === "Session expired. You are now logged out. Log back in again to continue editing.") alert("Session expired");
@@ -234,17 +252,7 @@ export const createEmail = (formData) => {
 
 //=============GET AVAILABLE ROOMS==============================
 // Sync Action
-// (4) SUCCESS/UPDATE SEARCHRESULTS PROP
-// export const fetchSearchSuccess = (results) => {
-//   //console.log("search success");
-//   console.log(results);
-//   return {
-//     type: AdminActionTypes.FETCH_SEARCH_SUCCESS,
-//     results
-//   }
-// };
-
-
+//(3) SUCCESS/UPDATE SEARCHRESULTS PROP
 //(2) GET THE ROOM DATA FROM THE ID
 export const filterSearch = (data, results) => {
   //fetch rooms from page
@@ -273,7 +281,7 @@ export const filterSearch = (data, results) => {
           }
 
           if(lookup){
-            availableRooms.push(o);
+            availableRooms.push({...o, cost: o.cost * data.days});
           }
         });
         dispatch(fetchBlogSuccess(availableRooms));
@@ -315,7 +323,7 @@ export const fetchSearch = (data) => {
         //dispatch another action
         //to consume data
         if(results.length === dateArr.length){
-          dispatch(filterSearch(data, results));
+          dispatch(filterSearch({...data, days: dateArr.length}, results));
         }
       })
       .catch((error) => {

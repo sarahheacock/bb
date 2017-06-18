@@ -79,6 +79,7 @@ class App extends Component {
     const fetchSearch = bindActionCreators(AdminActionCreators.fetchSearch, dispatch);
     const updateCheckout = bindActionCreators(AdminActionCreators.updateCheckout, dispatch);
     const createEmail = bindActionCreators(AdminActionCreators.createEmail, dispatch);
+    const fetchClient = bindActionCreators(AdminActionCreators.fetchClient, dispatch);
 
 
     console.log(this.state.message);
@@ -118,6 +119,7 @@ class App extends Component {
             createEmail={createEmail}
             modalVisible={modalVisible}
             makeModal={makeModal}
+            fetchClient={fetchClient}
           />
 
           <Footer
