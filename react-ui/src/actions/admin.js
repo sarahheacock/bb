@@ -80,22 +80,21 @@ export const sendMessage = (data) => {
 
 
 //=====================PAGE LOADING==========================================
-export const fetchBlogSuccess = (results, page) => {
+export const fetchBlogSuccess = (results) => {
   return {
     type: AdminActionTypes.FETCH_BLOG_SUCCESS,
-    results,
-    page
+    results
   };
 };
 
 
-export const fetchBlog = (data) => {
+export const fetchBlog = (page) => {
   return (dispatch) => {
 
-    return axios.get(`/page/${blogID}/${data}`)
+    return axios.get(`/page/${blogID}/${page}`)
       .then(json => {
         console.log("response", json);
-        dispatch(fetchBlogSuccess(json.data, data));
+        dispatch(fetchBlogSuccess(json.data));
       })
       .catch(error => {
         console.log(error);

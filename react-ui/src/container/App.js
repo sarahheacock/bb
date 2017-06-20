@@ -104,7 +104,6 @@ class App extends Component {
           <Routes
             fetchBlog={fetchBlog}
             data={data.current}
-            page={data.page}
             admin={admin}
             selectEdit={selectEdit}
             selectAdd={selectAdd}

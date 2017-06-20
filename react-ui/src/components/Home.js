@@ -11,14 +11,8 @@ class Home extends React.Component {
     selectEdit: PropTypes.func.isRequired
   }
 
-  componentDiMount(){
+  componentDidMount(){
     this.props.fetchBlog("home");
-  }
-
-  componentDidUpdate(){
-    if (this.props.page !== "home"){
-      this.props.fetchBlog("home");
-    }
   }
 
   render(){

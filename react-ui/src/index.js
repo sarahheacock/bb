@@ -80,7 +80,7 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
         initialState;
 
   const store = createStore(
-    AdminReducer, initial, applyMiddleware(thunk)
+    AdminReducer, initialState, applyMiddleware(thunk)
   );
 
   store.subscribe(() => {

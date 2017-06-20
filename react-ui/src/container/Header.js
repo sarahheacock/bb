@@ -30,7 +30,7 @@ const Header = (props) => {
           <Navbar.Collapse>
             <Nav className="ml-auto" navbar>
 
-              <LinkContainer to="/home" >
+              <LinkContainer to="/" >
                 <NavItem>Home</NavItem>
               </LinkContainer>
               <LinkContainer to="/about" >

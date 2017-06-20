@@ -207,7 +207,7 @@ app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
 app.use('/locked/user', lockedUserRoutes);
 
-app.use('/', refreshRoutes);
+app.use(refreshRoutes);
 
 // All remaining requests return the React app, so it can handle routing.
 // app.get('*', function(request, response) {

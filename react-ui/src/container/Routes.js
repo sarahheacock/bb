@@ -10,23 +10,24 @@ import Book from '../components/Book';
 import Login from '../components/Login';
 import NotFound from '../components/NotFound';
 
+
+
+// <Route path="/home" render={ () => (
+//   ) }
+// />
 const Routes = (props) => {
 
   return (
     <Switch>
-
       <Route exact path="/" render={ () => (
-        <Redirect to="/home" />) }
-      />
-      <Route path="/home" render={ () => (
         <Home
           fetchBlog={props.fetchBlog}
           data={props.data}
           admin={props.admin}
           selectEdit={props.selectEdit}
-          page={props.page}
         />) }
       />
+
       <Route path="/about" render={ () => (
         <About
           fetchBlog={props.fetchBlog}
@@ -89,9 +90,7 @@ const Routes = (props) => {
       />
 
       <Route render={ () => (
-        <NotFound
-
-        />
+        <NotFound />
       )} />
 
     </Switch>
