@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
-
+import axios from 'axios';
 
 //redux
 import { bindActionCreators } from 'redux';
@@ -30,36 +30,32 @@ class App extends Component {
     newPage: PropTypes.bool.isRequired,
   }
 
-  constructor(props) {
-      super(props);
-      this.state = {
-        message: null,
-        fetching: true
-      };
-    }
-
-    componentDidlMount() {
-      if(this.props.newPage){
-        fetch('/setup')
-          .then(response => {
-            if (!response.ok) {
-              throw new Error(`status ${response.status}`);
-            }
-            return response.json();
-          })
-          .then(json => {
-            this.setState({
-              message: json.message,
-              fetching: false
-            });
-          }).catch(e => {
-            this.setState({
-              message: `API call failed: ${e}`,
-              fetching: false
-            });
-          })
-        }
-   }
+  // constructor(props) {
+  //     super(props);
+  //     this.state = {
+  //       message: null,
+  //       fetching: true
+  //     };
+  //   }
+  //
+  //   componentDidUpdate() {
+  //     if(this.props.newPage){
+  //       axios.get('/')
+  //         .then(json => {
+  //           //console.log("json", json);
+  //           this.setState({
+  //             message: json,
+  //             fetching: false
+  //           });
+  //         })
+  //         .catch(e => {
+  //           this.setState({
+  //             message: `API call failed: ${e}`,
+  //             fetching: false
+  //           });
+  //         })
+  //       }
+  //  }
 
 
   render(){
@@ -85,6 +81,7 @@ class App extends Component {
 
 
     //console.log(this.state.message);
+    //console.log("state", this.state);
     console.log("data", data);
     console.log("modalVisible", modalVisible);
     console.log("admin", admin);

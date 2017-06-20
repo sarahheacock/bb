@@ -11,12 +11,12 @@ class Home extends React.Component {
     selectEdit: PropTypes.func.isRequired
   }
 
-  componentDidMount(){
+  componentDiMount(){
     this.props.fetchBlog("home")
   }
 
   render(){
-  
+
     let carouselImg = <div>Loading</div>;
     let editButton = <div></div>
     let summary = <div>Loading</div>

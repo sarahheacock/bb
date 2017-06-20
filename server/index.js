@@ -44,28 +44,28 @@ db.once("open", function(){
 });
 
 
-app.use(function(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  if(req.method === "OPTIONS"){
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    return res.status(200).json({});
-  }
-  next();
-});
+// app.use(function(req, res, next){
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   if(req.method === "OPTIONS"){
+//     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
 
 
 //======ROUTES==============================================
 //5942f613d3804004f852cd4c
 //=========================================================
 // Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+refreshRoutes.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
 // Answer API requests.
-app.get('/setup', function (req, res) {
-  //res.set('Content-Type', 'application/json');
-  res.json({"message":"Hello from the custom server!"});
-});
+// app.get('/setup', function (req, res) {
+//   res.set('Content-Type', 'application/json');
+//   res.send('{"message":"Hello from the custom server!"}');
+// });
 
 
 //========================ADMIN LOGIN====================================
@@ -186,7 +186,9 @@ userAuthRoutes.use(function(req, res, next) {
 
 
 //===============================================================
-
+refreshRoutes.get('*', function(request, response) {
+  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+});
 
 //=================ROUTES=======================================
 
@@ -203,13 +205,14 @@ app.use('/api/admin', lockedAdminRoutes);
 
 app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
-app.use('/locked/user', lockedUserRoutes)
+app.use('/locked/user', lockedUserRoutes);
 
+app.use('/', refreshRoutes);
 
 // All remaining requests return the React app, so it can handle routing.
-app.get('/book-now/availability', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-});
+// app.get('*', function(request, response) {
+//   response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+// });
 //===========================================================
 //==========================================================
 //catch 404 and forward to error handler
