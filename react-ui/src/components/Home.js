@@ -12,7 +12,7 @@ class Home extends React.Component {
   }
 
   componentDiMount(){
-    this.props.fetchBlog("home")
+    this.props.fetchBlog("home");
   }
 
   render(){
