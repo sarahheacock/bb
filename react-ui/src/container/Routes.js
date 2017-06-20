@@ -16,6 +16,9 @@ const Routes = (props) => {
     <Switch>
 
       <Route exact path="/" render={ () => (
+        <Redirect to="/home" />) }
+      />
+      <Route path="/home" render={ () => (
         <Home
           fetchBlog={props.fetchBlog}
           data={props.data}
