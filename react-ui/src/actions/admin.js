@@ -83,7 +83,7 @@ export const sendMessage = (data) => {
 export const fetchBlogSuccess = (results, page) => {
   return {
     type: AdminActionTypes.FETCH_BLOG_SUCCESS,
-    results
+    results,
     page
   };
 };
