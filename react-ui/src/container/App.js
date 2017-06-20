@@ -30,36 +30,36 @@ class App extends Component {
     newPage: PropTypes.bool.isRequired,
   }
 
-  // constructor(props) {
-  //     super(props);
-  //     this.state = {
-  //       message: null,
-  //       fetching: true
-  //     };
-  //   }
-  //
-  //   componentDidlMount() {
-  //     if(this.props.newPage){
-  //       fetch('/setup')
-  //         .then(response => {
-  //           if (!response.ok) {
-  //             throw new Error(`status ${response.status}`);
-  //           }
-  //           return response.json();
-  //         })
-  //         .then(json => {
-  //           this.setState({
-  //             message: json.message,
-  //             fetching: false
-  //           });
-  //         }).catch(e => {
-  //           this.setState({
-  //             message: `API call failed: ${e}`,
-  //             fetching: false
-  //           });
-  //         })
-  //       }
-  //  }
+  constructor(props) {
+      super(props);
+      this.state = {
+        message: null,
+        fetching: true
+      };
+    }
+
+    componentDidlMount() {
+      if(this.props.newPage){
+        fetch('/setup')
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`status ${response.status}`);
+            }
+            return response.json();
+          })
+          .then(json => {
+            this.setState({
+              message: json.message,
+              fetching: false
+            });
+          }).catch(e => {
+            this.setState({
+              message: `API call failed: ${e}`,
+              fetching: false
+            });
+          })
+        }
+   }
 
 
   render(){

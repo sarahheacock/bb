@@ -62,10 +62,7 @@ app.get('/setup', function (req, res) {
   res.send('{"message":"Hello from the custom server!"}');
 });
 
-// All remaining requests return the React app, so it can handle routing.
-// app.get('*', function(request, response) {
-// response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-// });
+
 //========================ADMIN LOGIN====================================
 // POST /login
 adminAuthRoutes.post('/login', function(req, res, next) {
@@ -197,7 +194,10 @@ app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
 app.use('/locked/user', lockedUserRoutes)
 
-
+// All remaining requests return the React app, so it can handle routing.
+app.get('*', function(request, response) {
+  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+});
 //===========================================================
 //==========================================================
 //catch 404 and forward to error handler
