@@ -9,7 +9,7 @@ import axios from 'axios';
 
 import AdminReducer from './reducers/admin';
 
-import 'react-datepicker/dist/react-datepicker.css';
+//import 'react-datepicker/dist/react-datepicker.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import './stylesheets/index.css';
