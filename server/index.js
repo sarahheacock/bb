@@ -42,15 +42,15 @@ db.once("open", function(){
 });
 
 
-app.use(function(req, res, next){
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  if(req.method === "OPTIONS"){
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    return res.status(200).json({});
-  }
-  next();
-});
+// app.use(function(req, res, next){
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   if(req.method === "OPTIONS"){
+//     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
 
 
 //======ROUTES==============================================
@@ -62,7 +62,10 @@ app.get('/setup', function (req, res) {
   res.send('{"message":"Hello from the custom server!"}');
 });
 
-
+// All remaining requests return the React app, so it can handle routing.
+// app.get('*', function(request, response) {
+// response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+// });
 //========================ADMIN LOGIN====================================
 // POST /login
 adminAuthRoutes.post('/login', function(req, res, next) {
@@ -194,10 +197,7 @@ app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
 app.use('/locked/user', lockedUserRoutes)
 
-// All remaining requests return the React app, so it can handle routing.
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-});
+
 //===========================================================
 //==========================================================
 //catch 404 and forward to error handler

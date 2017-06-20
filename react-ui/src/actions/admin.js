@@ -92,16 +92,18 @@ export const fetchBlog = (data) => {
   return (dispatch) => {
 
     //return axios.get(`${url}/page/${blogID}/${data}`)
-    fetch(`/page/${blogID}/${data}`)
+    return fetch(`/page/${blogID}/${data}`)
+    //fetch('/setup')
       .then(response => {
+        //console.log(response.json())
         if (!response.ok) {
           throw new Error(`status ${response.status}`);
         }
         return response.json();
       })
       .then(json => {
-        //console.log("response", response.json());
-        dispatch(fetchBlogSuccess(json.message));
+        console.log("response", json);
+        dispatch(fetchBlogSuccess(json));
       })
       .catch(error => {
         console.log(error);

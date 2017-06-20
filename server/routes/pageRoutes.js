@@ -87,6 +87,9 @@ pageRoutes.post('/user-setup', function(req, res, next) {
 
 //get section
 pageRoutes.get("/:pageID/:section", function(req, res){
+  //res.set('Content-Type', 'application/json');
+  //res.send('{"message":"Hello from the custom server!"}');
+  //res.set('Content-Type', 'application/json');
   res.json(req.section);
 });
 
