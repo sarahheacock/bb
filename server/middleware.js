@@ -16,5 +16,6 @@ function authorizeUser(req, res, next){
   return next();
 }
 
+
 module.exports.authorizeAdmin = authorizeAdmin;
 module.exports.authorizeUser = authorizeUser;
