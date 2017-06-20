@@ -10,6 +10,7 @@ var config = require('./configure/config');
 
 var adminAuthRoutes = express.Router();
 var userAuthRoutes = express.Router();
+var refreshRoutes = express.Router();
 
 
 var Page = require("./models/page").Page;
@@ -57,15 +58,19 @@ db.once("open", function(){
 //======ROUTES==============================================
 //5942f613d3804004f852cd4c
 //=========================================================
-
-// Answer API requests.
-// app.get('/setup', function (req, res) {
-//   res.set('Content-Type', 'application/json');
-//   res.send('{"message":"Hello from the custom server!"}');
-// });
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
+// Answer API requests.
+app.get('/setup', function (req, res) {
+  //res.set('Content-Type', 'application/json');
+  res.json({"message":"Hello from the custom server!"});
+});
+
+// All remaining requests return the React app, so it can handle routing.
+app.get('*', function(request, response) {
+  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+});
 
 //========================ADMIN LOGIN====================================
 // POST /login
@@ -183,7 +188,12 @@ userAuthRoutes.use(function(req, res, next) {
   }
 });
 
+
+//===============================================================
+
+
 //=================ROUTES=======================================
+
 //ROUTES THAT DO NOT NEED AUTHENTICATION
 app.use('/page', pageRoutes);
 app.use('/rooms', roomRoutes);
@@ -198,10 +208,7 @@ app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
 app.use('/locked/user', lockedUserRoutes)
 
-// All remaining requests return the React app, so it can handle routing.
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-});
+
 //===========================================================
 //==========================================================
 //catch 404 and forward to error handler
