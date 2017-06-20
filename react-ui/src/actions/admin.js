@@ -1,7 +1,7 @@
 import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
-import {url, blogID, key} from '../config';
+import {blogID, key} from '../config';
 var CryptoJS = require("crypto-js");
 
 // const key = '0s3W7DOZkYFzEtLS';
@@ -61,7 +61,7 @@ export const sendMessage = (data) => {
   return (dispatch) => {
     console.log(data);
     //return dispatch(sendMessageSuccess(data));
-    return axios.post(`${url}/user/sayHello`,
+    return axios.post(`/user/sayHello`,
       {
         message: `<h3>Hello, from ${data.name}</h3><p><b>Message: </b>${data.message}</p><br /><p><b>Contact: </b>${data.email} ${data.phone}</p>`
       })
@@ -91,19 +91,10 @@ export const fetchBlogSuccess = (results) => {
 export const fetchBlog = (data) => {
   return (dispatch) => {
 
-    //return axios.get(`${url}/page/${blogID}/${data}`)
-    return fetch(`/page/${blogID}/${data}`)
-    //fetch('/setup')
-      .then(response => {
-        //console.log(response.json())
-        if (!response.ok) {
-          throw new Error(`status ${response.status}`);
-        }
-        return response.json();
-      })
+    return axios.get(`/page/${blogID}/${data}`)
       .then(json => {
         console.log("response", json);
-        dispatch(fetchBlogSuccess(json));
+        dispatch(fetchBlogSuccess(json.data));
       })
       .catch(error => {
         console.log(error);
@@ -116,7 +107,7 @@ export const editBlog = (data) => {
 
   return (dispatch) => {
 
-    return axios.put(`${url}/api/admin/${blogID}/${data.section}/${data.sectionID}`, {
+    return axios.put(`/api/admin/${blogID}/${data.section}/${data.sectionID}`, {
       ...data.input,
       token: data.id
     })
@@ -135,7 +126,7 @@ export const editBlog = (data) => {
 export const addBlog = (data) => {
   return (dispatch) => {
 
-    return axios.post(`${url}/api/admin/${blogID}/${data.section}`,
+    return axios.post(`/api/admin/${blogID}/${data.section}`,
       {
         ...data.input,
         token: data.id
@@ -155,7 +146,7 @@ export const addBlog = (data) => {
 export const deleteBlog = (data) => {
   return (dispatch) => {
 
-    return axios.delete(`${url}/api/admin/${blogID}/${data.section}/${data.sectionID}?token=${data.id}`)
+    return axios.delete(`/api/admin/${blogID}/${data.section}/${data.sectionID}?token=${data.id}`)
       .then(response => {
         console.log("response data", response.data);
         if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."))
@@ -175,8 +166,8 @@ export const deleteBlog = (data) => {
 export const fetchClient = (user) => {
   return (dispatch) => {
     //get("/locked/user/:userID/"
-    console.log(`${url}/locked/user/${user.user}?token=${user.id}`);
-      return axios.get(`${url}/locked/user/${user.user}?token=${user.id}`)
+    //console.log(`/locked/user/${user.user}?token=${user.id}`);
+      return axios.get(`/locked/user/${user.user}?token=${user.id}`)
       .then(response => {
         dispatch(fetchBlogSuccess([response.data]))
       })
@@ -191,7 +182,7 @@ export const fetchClient = (user) => {
 // (2) UPDATE CLIENT INFO
 export const updateEmail = (user, data) => {
   return (dispatch) => {
-      return axios.put(`${url}/locked/user/${user}`, {
+      return axios.put(`/locked/user/${user}`, {
         ...data
       })
       .then(response => {
@@ -224,7 +215,7 @@ export const verifyEmail = (data) => {
 
     if(data.admin){
       //admin login
-      return axios.post(`${url}/api/login`, {
+      return axios.post(`/api/login`, {
         username: data.username,
         password: data.password
       })
@@ -240,7 +231,7 @@ export const verifyEmail = (data) => {
     }
     else {
       //user login
-      return axios.post(`${url}/locked/userlogin`, {
+      return axios.post(`/locked/userlogin`, {
         email: data.username,
         password: data.password
       })
@@ -265,7 +256,7 @@ export const createEmail = (formData) => {
   return (dispatch) => {
     //post("/:userID/:password/upcoming"
     console.log(formData.email);
-      return axios.post(`${url}/page/user-setup`, {
+      return axios.post(`/page/user-setup`, {
         "email": formData.email,
         "password": formData.password,
         "billing": formData.billing,
@@ -289,7 +280,7 @@ export const filterSearch = (data, results) => {
   //fetch rooms from page
   console.log("FILTER", results);
   return (dispatch) => {
-    return axios.get(`${url}/page/${blogID}/rooms`)
+    return axios.get(`/page/${blogID}/rooms`)
       .then(response => {
         console.log("response data", response.data);
         //filter rooms that have too low maximum occupancy
@@ -347,7 +338,7 @@ export const fetchSearch = (data) => {
     //USE ARRAY TO CALL AVAILABILITY FOR THAT DAY
     return dateArr.forEach((date) => {
       //returns a promise
-      axios.get(`${url}/rooms/${blogID}&${date}`)
+      axios.get(`/rooms/${blogID}&${date}`)
       .then(response => {
 
         results.push(response.data.free);
@@ -359,7 +350,7 @@ export const fetchSearch = (data) => {
       })
       .catch((error) => {
         if(error.message.includes("404")){
-          axios.post(`${url}/rooms/`,{
+          axios.post(`/rooms/`,{
             pageID: blogID,
             date: new Date(date)
           })
