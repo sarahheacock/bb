@@ -80,6 +80,7 @@ const Routes = (props) => {
           createEmail={props.createEmail}
           errorMessage={props.errorMessage}
           fetchClient={props.fetchClient}
+          updateEmail={props.updateEmail}
         />) }
       />
 
@@ -112,5 +113,6 @@ Routes.propsTypes = {
   createEmail: PropTypes.func.isRequired,
   makeModal: PropTypes.func.isRequired,
   modalVisible: PropTypes.object.isRequired,
-  fetchClient: PropTypes.func.isRequired
+  fetchClient: PropTypes.func.isRequired,
+  updateEmail: PropTypes.func.isRequired,
 };

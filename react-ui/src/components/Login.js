@@ -48,7 +48,7 @@ class Login extends React.Component {
   }
 
   render(){
-    console.log("checkoutSelected", this.props.checkoutSelected);
+    //no need to check if data is defined since there is not a componentDidMount()
     //if there is an errorMessage, give errorMessage
     //if there is no errorMessage and username is not undefined, welcome
     const alert = (Object.keys(this.props.errorMessage).length !== 0) ?

@@ -51,7 +51,7 @@ const SignUpForm = (props) => {
   ));
 
   return (
-      <Form className="content">
+      <Form className="content" >
 
           {inputs}
 

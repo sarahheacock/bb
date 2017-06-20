@@ -33,7 +33,7 @@ class Available extends React.Component {
   }
 
   componentDidMount(){
-    if(this.props.checkout.selected === false) this.props.fetchSearch(this.props.select);
+    this.props.fetchSearch(this.props.select);
   }
 
   handleStart = (date) => {
@@ -78,8 +78,6 @@ class Available extends React.Component {
     });
   }
 
-//selected determined by moment(millisecond).
-//This millisecond was initialized in reducer to current date or moment().toDate().getTime()
   render() {
     const guestOptions = [...new Array(6)].map((ob, i) => (
       <option value={i} key={`guest${i}`}>
@@ -87,35 +85,39 @@ class Available extends React.Component {
       </option>
     ));
 
-    //if client is signed in, button will be navlink to billing
-    //if client is not signed in, button will be login modal
-    const available = (this.props.data) ? this.props.data.map(room => (
-      <div className="well text-center well-option">
-        <img className="room-img round" src={room.image} alt={room.name} />
-        <h3>{room.title}</h3>
-        <p>{`$${room.cost}.00`}</p>
-        {
-          (this.props.admin.username) ?
-            <NavLink name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} className="select" bsStyle="primary" to="/book-now/billing" onClick={this.handleSelect}>
-              <Button>
-                Select
-              </Button>
-            </NavLink> :
-            <Button name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} bsStyle="primary" onClick={this.handleSelect}>
-              Select
-            </Button>
-        }
-      </div>
-    )) :
-    <div>Loading</div>;
-
     const closeButton = (this.props.admin.username) ?
       <div></div> :
       <Button bsStyle="danger" onClick={(e) => this.props.makeModal({
         login: false
       })}>
         Cancel
-      </Button>
+      </Button>;
+
+    //if client is signed in, button will be navlink to billing
+    //if client is not signed in, button will be login modal
+    //make sure data is defined
+    let available = <div></div>;
+    if(this.props.data[0]){
+      //make sure correct data is fetched
+      if(this.props.data[0]["cost"]){
+        available = this.props.data.map(room => (
+          <div className="well text-center well-option" key={`available${room._id}`}>
+            <img className="room-img round" src={room.image} alt={room.name} />
+            <h3>{room.title}</h3>
+            <p>{`$${room.cost}.00`}</p>
+            {(this.props.admin.username) ?
+                <NavLink name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} className="select" bsStyle="primary" to="/book-now/billing" onClick={this.handleSelect}>
+                  <Button>
+                    Select
+                  </Button>
+                </NavLink> :
+                <Button name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} bsStyle="primary" onClick={this.handleSelect}>
+                  Select
+                </Button>}
+          </div>
+        ));
+      }
+    }
 
 
     return (

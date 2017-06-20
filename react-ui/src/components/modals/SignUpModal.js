@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert, Checkbox } from 'react-bootstrap';
 import { Countries } from '../data/options';
 import SignUpForm from '../forms/SignUpForm';
+//var CryptoJS = require("crypto-js");
 
 //SignUp is a modal that update login and billing state
 class SignUpModal extends React.Component {
@@ -60,7 +61,8 @@ class SignUpModal extends React.Component {
         <div></div>;
 
 
-    const submitButton = <button className="btn btn-primary" onClick={this.verify} onClick={() => {
+    const submitButton = <button type="submit" className="btn btn-primary" onClick={() => {
+
         this.props.createEmail({
           password: this.state.password,
           email: this.state.email,

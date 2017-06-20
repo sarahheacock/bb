@@ -28,32 +28,35 @@ class LocalGuide extends React.Component {
   }
 
   componentDidUpdate(){
-    if(this.props.data[0]["category"] !== undefined && this.state.categories.length === 0){
-      let cat = [];
-      this.props.data.forEach((event, index) => {
-          let create = {
-            "title": event.category,
-            "link": `/local-guide/${event.category.trim().replace(/\s/g, "-")}`
-          };
+    //make sure data is defined
+    if(this.props.data[0]){
+      //make sure data is fetched and categories is not already intialiazed
+      if(this.props.data[0]["category"] !== undefined && this.state.categories.length === 0){
+        let cat = [];
+        this.props.data.forEach((event, index) => {
+            let create = {
+              "title": event.category,
+              "link": `/local-guide/${event.category.trim().replace(/\s/g, "-")}`
+            };
 
-          const titles = cat.map((c) => c.title);
+            const titles = cat.map((c) => c.title);
 
-          if (titles.indexOf(create.title) === -1) cat.push({...create, data: [event]});
-          else cat[titles.indexOf(create.title)]["data"].push(event);
-        });
+            if (titles.indexOf(create.title) === -1) cat.push({...create, data: [event]});
+            else cat[titles.indexOf(create.title)]["data"].push(event);
+          });
 
-      this.setState({categories: cat})
+        this.setState({categories: cat})
+      }
     }
   }
 
   render(){
-    console.log(this.state.categories);
-
+    //component already determined data is defined and correct data is fetched
     //create tabs from categories
     const tabs = (this.state.categories.length === 0) ?
       <div>Loading</div> :
       this.state.categories.map((c, index) => (
-        <LinkContainer to={c.link}>
+        <LinkContainer to={c.link} key={c.link}>
           <NavItem className="tab">{c.title}</NavItem>
         </LinkContainer>
       ));
@@ -67,7 +70,7 @@ class LocalGuide extends React.Component {
     const routes = (this.state.categories.length === 0) ?
       <div></div> :
       this.state.categories.map((c, index) => (
-        <Route path={c.link} render={ () =>
+        <Route path={c.link} key={c.title} render={ () =>
           <Place
             data={c.data}
             admin={this.props.admin}

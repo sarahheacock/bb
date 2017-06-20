@@ -1,10 +1,15 @@
 import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
-const url = "https://fathomless-meadow-60353.herokuapp.com";
-const blogID = "594314b2e79fd106a010a955";
+import {url, blogID, key} from '../config';
+var CryptoJS = require("crypto-js");
 
-
+// const key = '0s3W7DOZkYFzEtLS';
+// const enc = CryptoJS.AES.encrypt("Message", key).toString();
+// const de = CryptoJS.AES.decrypt(enc, key).toString(CryptoJS.enc.Utf8);
+//
+// console.log("key", enc);
+// console.log("message", de);
 //=======================================================
 export const makeModal = (vis) => {
   return {
@@ -86,10 +91,17 @@ export const fetchBlogSuccess = (results) => {
 export const fetchBlog = (data) => {
   return (dispatch) => {
 
-    return axios.get(`${url}/page/${blogID}/${data}`)
+    //return axios.get(`${url}/page/${blogID}/${data}`)
+    fetch(`/page/${blogID}/${data}`)
       .then(response => {
-        console.log("response data", response.data);
-        dispatch(fetchBlogSuccess(response.data));
+        if (!response.ok) {
+          throw new Error(`status ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(json => {
+        //console.log("response", response.json());
+        dispatch(fetchBlogSuccess(json.message));
       })
       .catch(error => {
         console.log(error);
@@ -164,11 +176,27 @@ export const fetchClient = (user) => {
     console.log(`${url}/locked/user/${user.user}?token=${user.id}`);
       return axios.get(`${url}/locked/user/${user.user}?token=${user.id}`)
       .then(response => {
-        console.log(response.data);
         dispatch(fetchBlogSuccess([response.data]))
       })
       .catch(error => {
         dispatch(fail({"error": "Unable to fetch account information"}));
+      });
+  };
+};
+
+//===============UPDATE CLIENT INFO===============================================
+// (1) MAKE RESULT DATA CURRENT
+// (2) UPDATE CLIENT INFO
+export const updateEmail = (user, data) => {
+  return (dispatch) => {
+      return axios.put(`${url}/locked/user/${user}`, {
+        ...data
+      })
+      .then(response => {
+        dispatch(fetchBlogSuccess([response.data]))
+      })
+      .catch(error => {
+        dispatch(fail({"error": "Unable to update account information"}));
       });
   };
 };
@@ -234,6 +262,7 @@ export const verifyEmail = (data) => {
 export const createEmail = (formData) => {
   return (dispatch) => {
     //post("/:userID/:password/upcoming"
+    console.log(formData.email);
       return axios.post(`${url}/page/user-setup`, {
         "email": formData.email,
         "password": formData.password,

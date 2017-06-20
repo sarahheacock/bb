@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
-import EditModal from './modals/EditModal';
 
 class Rooms extends React.Component {
   static propTypes = {
@@ -20,29 +19,27 @@ class Rooms extends React.Component {
 
 
   render(){
+    let pubs = <div>Loading</div>;
+    let addButton = <div></div>;
+    //make sure data is defined
+    if(this.props.data[0]){
+      //make sure correct data is fetched
+      if (this.props.data[0]["carousel"]) {
+        pubs = this.props.data.map((article, index) => (
+            <a href="#" key={`article${index}`}>
+              <div className="well">
+                <div className="content">
 
-    const pubs = (this.props.data === undefined) ?
-      <div>Loading</div> :
-      this.props.data.map((article, index) => (
-        <div key={`article${index}`}>
-          <a href="#" >
-            {(article.carousel === undefined) ?
-              <div>Loading</div>:
-              <div className="content">
-                <div className="well">
-                  <Row className="clearfix content">
-
-                    <Row className="clearfix">
-                      <Col className="text-center" sm={7}>
-                        <h3>{article.title}</h3>
-                        <p>{article.bold}</p>
-                      </Col>
-                      <Col className="text-center" sm={5}>
-                        <img src={article.image}/>
-                      </Col>
-                    </Row>
-
+                  <Row className="clearfix">
+                    <Col className="text-center" sm={7}>
+                      <h3>{article.title}</h3>
+                      <p>{article.bold}</p>
+                    </Col>
+                    <Col className="text-center" sm={5}>
+                      <img src={article.image}/>
+                    </Col>
                   </Row>
+
                   <div className="text-center">
                     {(this.props.admin.admin) ?
                       <div>
@@ -58,25 +55,27 @@ class Rooms extends React.Component {
                       </div> :
                       <div></div>}
                   </div>
-                </div>
-              </div>
-            }
-          </a>
-        </div>
 
-      ));
-      //console.log("pub", this.props.data)
+                  </div>
+                </div>
+              </a>
+            ));
+
+        addButton = (this.props.admin.admin) ?
+          <Button className="add text-center" bsStyle="primary" onClick={() => this.props.selectAdd({section:"publications", data:this.props.data[0]})}>
+            Add
+          </Button>:
+          <div></div>;
+      }
+    }
+
 
     return (
       <div className="main-content">
         <PageHeader>Rooms</PageHeader>
-        {pubs}
-        <div className="text-center">
-          {(this.props.admin.admin) ?
-          <Button className="add" bsStyle="primary" onClick={() => this.props.selectAdd({section:"publications", data:this.props.data[0]})}>
-            Add
-          </Button>:
-          <div></div>}
+        <div>
+          {pubs}
+          {addButton}
         </div>
       </div>
     );

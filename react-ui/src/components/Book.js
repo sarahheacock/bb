@@ -25,7 +25,8 @@ class Book extends React.Component {
     logout: PropTypes.func.isRequired,
     createEmail: PropTypes.func.isRequired,
     errorMessage: PropTypes.object.isRequired,
-    fetchClient: PropTypes.func.isRequired
+    fetchClient: PropTypes.func.isRequired,
+    updateEmail: PropTypes.func.isRequired
   }
 
 
@@ -84,6 +85,8 @@ class Book extends React.Component {
                 admin={this.props.admin}
                 data={this.props.data}
                 modalVisible={this.props.modalVisible}
+                errorMessage={this.props.errorMessage}
+                updateEmail={this.props.updateEmail}
               />}
             />
             <Route path="/book-now/payment/" render={ () =>

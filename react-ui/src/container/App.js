@@ -38,9 +38,9 @@ class App extends Component {
       };
     }
 
-    componentDidMount() {
+    componentDidlMount() {
       if(this.props.newPage){
-        fetch('/api')
+        fetch('/setup')
           .then(response => {
             if (!response.ok) {
               throw new Error(`status ${response.status}`);
@@ -80,6 +80,7 @@ class App extends Component {
     const updateCheckout = bindActionCreators(AdminActionCreators.updateCheckout, dispatch);
     const createEmail = bindActionCreators(AdminActionCreators.createEmail, dispatch);
     const fetchClient = bindActionCreators(AdminActionCreators.fetchClient, dispatch);
+    const updateEmail = bindActionCreators(AdminActionCreators.updateEmail, dispatch);
 
 
     console.log(this.state.message);
@@ -120,6 +121,7 @@ class App extends Component {
             modalVisible={modalVisible}
             makeModal={makeModal}
             fetchClient={fetchClient}
+            updateEmail={updateEmail}
           />
 
           <Footer
