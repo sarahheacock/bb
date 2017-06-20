@@ -80,10 +80,11 @@ export const sendMessage = (data) => {
 
 
 //=====================PAGE LOADING==========================================
-export const fetchBlogSuccess = (results) => {
+export const fetchBlogSuccess = (results, page) => {
   return {
     type: AdminActionTypes.FETCH_BLOG_SUCCESS,
     results
+    page
   };
 };
 
@@ -94,7 +95,7 @@ export const fetchBlog = (data) => {
     return axios.get(`/page/${blogID}/${data}`)
       .then(json => {
         console.log("response", json);
-        dispatch(fetchBlogSuccess(json.data));
+        dispatch(fetchBlogSuccess(json.data, data));
       })
       .catch(error => {
         console.log(error);

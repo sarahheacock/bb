@@ -24,6 +24,7 @@ const Routes = (props) => {
           data={props.data}
           admin={props.admin}
           selectEdit={props.selectEdit}
+          page={props.page}
         />) }
       />
       <Route path="/about" render={ () => (

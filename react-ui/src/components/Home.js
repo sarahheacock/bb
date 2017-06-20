@@ -15,6 +15,12 @@ class Home extends React.Component {
     this.props.fetchBlog("home");
   }
 
+  componentDidUpdate(){
+    if (this.props.page !== "home"){
+      this.props.fetchBlog("home");
+    }
+  }
+
   render(){
 
     let carouselImg = <div>Loading</div>;

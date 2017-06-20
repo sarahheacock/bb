@@ -57,7 +57,8 @@ export default function Admin(state={}, action){
 
     case AdminActionTypes.FETCH_BLOG_SUCCESS: {
       const Data = {
-        current: action.results
+        current: action.results,
+        page: action.page
       }
       return {
         ...state,
