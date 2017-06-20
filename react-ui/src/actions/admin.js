@@ -91,7 +91,7 @@ export const fetchBlogSuccess = (results) => {
 export const fetchBlog = (data) => {
   return (dispatch) => {
 
-    return axios.get(`/page/${blogID}/${data}`)
+    return axios.get(`/setup/page/${blogID}/${data}`)
       .then(json => {
         console.log("response", json);
         dispatch(fetchBlogSuccess(json.data));
@@ -256,7 +256,7 @@ export const createEmail = (formData) => {
   return (dispatch) => {
     //post("/:userID/:password/upcoming"
     console.log(formData.email);
-      return axios.post(`/page/user-setup`, {
+      return axios.post(`/setup/page/user-setup`, {
         "email": formData.email,
         "password": formData.password,
         "billing": formData.billing,
@@ -280,7 +280,7 @@ export const filterSearch = (data, results) => {
   //fetch rooms from page
   console.log("FILTER", results);
   return (dispatch) => {
-    return axios.get(`/page/${blogID}/rooms`)
+    return axios.get(`/setup/page/${blogID}/rooms`)
       .then(response => {
         console.log("response data", response.data);
         //filter rooms that have too low maximum occupancy

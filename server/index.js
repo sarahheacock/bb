@@ -44,15 +44,15 @@ db.once("open", function(){
 });
 
 
-// app.use(function(req, res, next){
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   if(req.method === "OPTIONS"){
-//     res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-//     return res.status(200).json({});
-//   }
-//   next();
-// });
+app.use(function(req, res, next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  if(req.method === "OPTIONS"){
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    return res.status(200).json({});
+  }
+  next();
+});
 
 
 //======ROUTES==============================================
@@ -191,6 +191,7 @@ userAuthRoutes.use(function(req, res, next) {
 //=================ROUTES=======================================
 
 //ROUTES THAT DO NOT NEED AUTHENTICATION
+//app.use('/setup', refreshRoutes);
 app.use('/page', pageRoutes);
 app.use('/rooms', roomRoutes);
 
@@ -204,8 +205,9 @@ app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
 app.use('/locked/user', lockedUserRoutes)
 
+
 // All remaining requests return the React app, so it can handle routing.
-app.get('*', function(request, response) {
+app.get('/book-now/availability', function(request, response) {
   response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
 });
 //===========================================================
