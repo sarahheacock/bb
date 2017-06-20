@@ -83,6 +83,7 @@ class App extends Component {
     const updateEmail = bindActionCreators(AdminActionCreators.updateEmail, dispatch);
 
 
+
     console.log(this.state.message);
     console.log("data", data);
     console.log("modalVisible", modalVisible);
