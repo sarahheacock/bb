@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require("express");
+var path = require('path');
 var app = express();
 var jsonParser = require("body-parser").json;
 var logger = require("morgan");
@@ -56,16 +57,16 @@ db.once("open", function(){
 //======ROUTES==============================================
 //5942f613d3804004f852cd4c
 //=========================================================
-// Answer API requests.
-app.get('/setup', function (req, res) {
-  res.set('Content-Type', 'application/json');
-  res.send('{"message":"Hello from the custom server!"}');
-});
 
-// All remaining requests return the React app, so it can handle routing.
-app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
-});
+// Answer API requests.
+// app.get('/setup', function (req, res) {
+//   res.set('Content-Type', 'application/json');
+//   res.send('{"message":"Hello from the custom server!"}');
+// });
+// Priority serve any static files.
+app.use(express.static(path.resolve(__dirname, '../react-ui/build')));
+
+
 //========================ADMIN LOGIN====================================
 // POST /login
 adminAuthRoutes.post('/login', function(req, res, next) {
@@ -197,7 +198,10 @@ app.use('/locked', userAuthRoutes);
 // ROUTES THAT NEED USER AUTHENTICATION
 app.use('/locked/user', lockedUserRoutes)
 
-
+// All remaining requests return the React app, so it can handle routing.
+app.get('*', function(request, response) {
+  response.sendFile(path.resolve(__dirname, '../react-ui/build', 'index.html'));
+});
 //===========================================================
 //==========================================================
 //catch 404 and forward to error handler
