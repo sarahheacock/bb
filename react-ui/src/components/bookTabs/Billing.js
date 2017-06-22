@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Route, Redirect, NavLink } from 'react-router-dom';
 import { Form, FormControl, ControlLabel, FormGroup, Button, Col, Row, Modal, Alert } from 'react-bootstrap';
 import SignUpForm from '../forms/SignUpForm';
-//var CryptoJS = require("crypto-js");
 
 
 class Billing extends React.Component {
@@ -195,22 +194,3 @@ class Billing extends React.Component {
 
 
 export default Billing;
-
-// <div className="well">
-//   <div className="text-center">{editRoomButton}</div>
-//   <Row className="clearfix">
-//     <Col className="text-center" sm={7}>
-//       <h3>{this.props.select.roomID.title}</h3>
-//       <p>{this.props.select.roomID.cost}</p>
-//     </Col>
-//     <Col className="text-center" sm={5}>
-//       <img src={this.props.select.roomID.image}/>
-//     </Col>
-//   </Row>
-// </div>
-
-// const editRoomButton = <NavLink to="/book-now/availability" onClick={this.handleBack}>
-//   <Button bsStyle="danger">
-//     Edit
-//   </Button>
-// </NavLink>

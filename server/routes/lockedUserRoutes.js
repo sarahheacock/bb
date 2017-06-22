@@ -55,6 +55,18 @@ lockedUserRoutes.put('/:userID', mid.authorizeUser, function(req, res, next){
   })
 });
 
+//autheticate credit info
+lockedUserRoutes.post('/:userID/credit', mid.authorizeUser, function(req, res, next){
+  bcrypt.compare(req.body.cvv, req.user.credit.cvv , function(error, result) {
+    if (result === true) {
+      req.user.credit.auth = true;
+      res.json(req.user)
+    } else {
+      res.json(req.user)
+    }
+  })
+});
+
 //make new reservation
 lockedUserRoutes.post("/:userID/upcoming", mid.authorizeUser, function(req, res, next){
   req.user.upcoming.push(req.body);

@@ -45,10 +45,10 @@ class Book extends React.Component {
               <LinkContainer to="/book-now/billing" disabled={!(this.props.checkout.selected || this.props.admin.username)}>
                 <NavItem className="tab" >II.  Billing</NavItem>
               </LinkContainer>
-              <LinkContainer to="/book-now/payment" disabled={(this.props.checkout.billing)}>
+              <LinkContainer to="/book-now/payment" disabled={!(this.props.checkout.billing)}>
                 <NavItem className="tab">III.  Payment</NavItem>
               </LinkContainer>
-              <LinkContainer to="/book-now/confirmation" disabled={(this.props.checkout.payment)}>
+              <LinkContainer to="/book-now/confirmation" disabled={!(this.props.checkout.payment)}>
                 <NavItem className="tab">IV.  Confirmation</NavItem>
               </LinkContainer>
 
@@ -75,7 +75,7 @@ class Book extends React.Component {
                 errorMessage={this.props.errorMessage}
               /> }
             />
-            <Route path="/book-now/billing/" render={ () =>
+            <Route path="/book-now/billing/" render={ () => (this.props.checkout.selected && this.props.admin.username) ?
               <Billing
                 makeModal={this.props.makeModal}
                 updateCheckout={this.props.updateCheckout}
@@ -87,12 +87,23 @@ class Book extends React.Component {
                 modalVisible={this.props.modalVisible}
                 errorMessage={this.props.errorMessage}
                 updateEmail={this.props.updateEmail}
-              />}
+              />:
+              <Redirect to="/book-now/availability" />}
             />
-            <Route path="/book-now/payment/" render={ () =>
+            <Route path="/book-now/payment/" render={ () => (this.props.checkout.billing) ?
               <Payment
-
-              /> }
+                makeModal={this.props.makeModal}
+                updateCheckout={this.props.updateCheckout}
+                checkout={this.props.checkout}
+                select={this.props.select}
+                fetchClient={this.props.fetchClient}
+                admin={this.props.admin}
+                data={this.props.data}
+                modalVisible={this.props.modalVisible}
+                errorMessage={this.props.errorMessage}
+                updateEmail={this.props.updateEmail}
+              /> :
+                <Redirect to="/book-now/billing" /> }
             />
             <Route path="/book-now/confirmation/" render={ () => (this.props.checkout.payment) ?
               <Confirmation

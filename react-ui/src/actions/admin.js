@@ -358,7 +358,7 @@ export const fetchSearch = (data) => {
 
             results.push(res.data.free);
             if(results.length === dateArr.length){
-              dispatch(filterSearch(data, results));
+              dispatch(filterSearch({...data, days: dateArr.length}, results));
             }
           })
           .catch((error) => {

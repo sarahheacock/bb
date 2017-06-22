@@ -33,7 +33,7 @@ const PayForm = (props) => {
 
         <FormGroup>
           <ControlLabel>Debit/Credit Card Number *</ControlLabel>
-          <FormControl name="name" type="text" value={props.cardValue} onChange={props.creditChange} required/>
+          <FormControl name="number" type="text" value={props.cardValue} onChange={props.creditChange} required/>
         </FormGroup>
 
         <FormGroup>

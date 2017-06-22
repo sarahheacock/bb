@@ -37,6 +37,12 @@ UpcomingSchema.method("update", function(updates, callback){
   this.parent().save(callback);
 });
 
+var CreditSchema = new Schema({
+  name: {type: String, default: ''},
+  number: {type: String, default: ''},
+  cvv: {type: String, default: ''},
+  auth: {type: Boolean, default: false}
+})
 
 var UserSchema = new Schema({
   email: {
@@ -56,8 +62,8 @@ var UserSchema = new Schema({
     trim: true
   },
   credit: {
-    type: String,
-    trim: true
+    type: CreditSchema,
+    default: CreditSchema
   },
   userID: {
     type: String,
@@ -87,20 +93,30 @@ UserSchema.statics.authenticate = function(email, password, callback) {
       });
 }
 
+
 UserSchema.pre("save", function(next){
-  var page = this;
-  if(page.password.length <= 16){
-    bcrypt.hash(page.password, 10, function(err, hash) {
+  var user = this;
+  if(user.password.length <= 16){
+    bcrypt.hash(user.password, 10, function(err, hash) {
       if (err) {
         return next(err);
       }
-      page.password = hash;
+      user.password = hash;
 
       next();
     })
   }
+  else if(user.credit.cvv.length <= 16){
+    bcrypt.hash(user["credit"]["cvv"], 10, function(err, hash){
+      if (err) {
+        return next(err);
+      }
+      user["credit"]["cvv"] = hash;
+      next();
+    })
+  }
   else{
-    if(page.upcoming !== undefined) page.upcoming.sort(sortUpcoming);
+    if(user.upcoming !== undefined) user.upcoming.sort(sortUpcoming);
     next();
   }
 });
