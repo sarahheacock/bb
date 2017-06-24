@@ -73,9 +73,11 @@ class Available extends React.Component {
         "selected": true
       }
     );
-    this.props.makeModal({
-      login: true
-    });
+    if(this.props.admin.username){
+      this.props.makeModal({
+        login: true
+      });
+    }
   }
 
   render() {
@@ -106,8 +108,8 @@ class Available extends React.Component {
             <h3>{room.title}</h3>
             <p>{`$${room.cost}.00`}</p>
             {(this.props.admin.username) ?
-                <NavLink name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} className="select" bsStyle="primary" to="/book-now/billing" onClick={this.handleSelect}>
-                  <Button>
+                <NavLink className="select" bsStyle="primary" to="/book-now/billing">
+                  <Button name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} onClick={this.handleSelect}>
                     Select
                   </Button>
                 </NavLink> :

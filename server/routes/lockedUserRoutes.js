@@ -4,6 +4,7 @@ var bcrypt = require("bcrypt");
 var express = require("express");
 var lockedUserRoutes = express.Router();
 var User = require("../models/user").User;
+var Upcoming = require("../models/user").Upcoming;
 var mid = require('../middleware');
 
 lockedUserRoutes.param("userID", function(req, res, next, id){
@@ -78,12 +79,18 @@ lockedUserRoutes.put('/:userID', mid.authorizeUser, function(req, res, next){
 
 //make new reservation
 lockedUserRoutes.post("/:userID/upcoming", mid.authorizeUser, function(req, res, next){
-  req.user.upcoming.push(req.body);
-  req.user.save(function(err, user){
-    if(err) return next(err);
-    res.status(201);
-    res.json(user);
-  });
+  // var upcoming = new Upcoming(req.body);
+  // upcoming.userEmail = req.user.email;
+  //
+  // upcoming.save(function(err, upcoming){
+  //   if(err) return next(err);
+    req.user.upcoming.push(upcoming);
+    req.user.save(function(err, user){
+      if(err) return next(err);
+      res.status(201);
+      res.json(user);
+    });
+  //});
 });
 
 
@@ -93,12 +100,15 @@ lockedUserRoutes.get("/:userID/upcoming/:upcomingID", mid.authorizeUser, functio
 
 //cancel reservation
 lockedUserRoutes.delete("/:userID/upcoming/:upcomingID", mid.authorizeUser, function(req, res){
-  req.upcoming.remove(function(err){
-    req.user.save(function(err, user){
-      if(err) return next(err);
-      res.json(user);
+  // Upcoming.remove({_id: req.params.upcomingID}).exec(function(err){
+  //   if(err) return next(err);
+    req.upcoming.remove(function(err){
+      req.user.save(function(err, user){
+        if(err) return next(err);
+        res.json(user);
+      });
     });
-  });
+  //})
 });
 
 

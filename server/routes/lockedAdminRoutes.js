@@ -7,6 +7,7 @@ var lockedAdminRoutes = express.Router();
 var Page = require("../models/page").Page;
 var Available = require("../models/available").Available;
 var User = require("../models/user").User;
+var Upcoming = require("../models/user").Upcoming;
 var mid = require('../middleware');
 
 var jwt = require('jsonwebtoken');
@@ -25,16 +26,32 @@ lockedAdminRoutes.param("page", function(req, res, next, id){
       next(err);
     }
     req.users = user.map(function(u){
-      return {
-        email: u.email,
-        billing: u.billing,
-        upcoming: u.upcoming
+      if(u.upcoming.length !== 0){
+        return u.upcoming;
       }
     });
     return next();
   });
 });
 
+
+// lockedAdminRoutes.param("page", function(req, res, next, id){
+//   Upcoming.remove({ depart: {$lt: Date.now()} }).exec(function(err)){
+//     Upcoming.find({}, function(err, user){
+//       //console.log(available);
+//       if(!user){
+//         var err = new Error("No Upcoming");
+//         next(err);
+//       }
+//       else if (err){
+//         var err = new Error("Not Found");
+//         next(err);
+//       }
+//       req.upcoming = user.map((u) => u);
+//       return next();
+//     });
+//   }
+// });
 
 lockedAdminRoutes.param("pageID", function(req, res, next, id){
   Page.findById(id, function(err, doc){
@@ -71,18 +88,24 @@ lockedAdminRoutes.param("sectionID", function(req, res, next, id){
   next();
 });
 
-
-//======================EDIT SECTIONS==============================
+//=======================GET USER INFO===========================
 //get all users
 lockedAdminRoutes.get("/:pageID/:page/users", mid.authorizeAdmin, function(req, res){
   res.json(req.users)
+});
+
+//get filtered users
+lockedAdminRoutes.get("/:pageID/:page/upcoming", mid.authorizeAdmin, function(req, res){
+  res.json(req.upcoming);
+  //remove expired upcoming
+  //find upcoming that contains upcoming on month
 });
 
 // lockedAdminRoutes.get("/:available/available", mid.authorizeAdmin, function(req, res){
 //   res.json(req.available)
 // });
 
-
+//======================EDIT SECTIONS==============================
 lockedAdminRoutes.get("/:pageID/:section", mid.authorizeAdmin, function(req, res){
   res.json(req.section);
 });

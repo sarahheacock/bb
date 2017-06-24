@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Carousel, Button } from 'react-bootstrap';
-import EditModal from './modals/EditModal';
 
 class Home extends React.Component {
   static propTypes = {

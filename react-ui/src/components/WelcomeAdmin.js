@@ -4,6 +4,9 @@ import { Nav, NavItem, Tab, Row, Col, PageHeader, Button } from 'react-bootstrap
 import { Route, Redirect } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
+import Upcoming from './welcomeTabs/Upcoming';
+import GuestDirectory from './welcomeTabs/GuestDirectory';
+
 class WelcomeAdmin extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
@@ -15,51 +18,6 @@ class WelcomeAdmin extends React.Component {
     //this.props.fetchBlog("home");
   }
 
-
-  let tabs = <div>Loading</div>;
-  let defaultRoute = <div></div>;
-  let routes = <div></div>;
-
-  //create tabs from categories
-  //make sure data is defined
-  if(this.props.data[1]){
-    //make sure aboutTabs are initialized
-    tabs = (this.state.aboutTabs.length === 0 && this.props.data[1]["title"] !== undefined) ?
-      <div>Loading</div> :
-      this.state.aboutTabs.map((c, index) => (
-        <LinkContainer to={c.link}>
-          <NavItem className="tab">{c.title}</NavItem>
-        </LinkContainer>
-      ));
-
-    defaultRoute = (this.state.aboutTabs.length === 0 && this.props.data[1]["title"] !== undefined) ?
-       <div></div>:
-       <Route exact path="/about/" render={ () =>
-         <Redirect to={this.state.aboutTabs[0]["link"]} /> }
-       />;
-
-    routes = (this.state.aboutTabs.length === 0 && this.props.data[1]["title"] !== undefined) ?
-      <div></div> :
-      this.state.aboutTabs.map((c, index) => (
-        <Route path={c.link} render={ () =>
-          <Nancy
-            data={c.data}
-            admin={this.props.admin}
-            selectEdit={this.props.selectEdit}
-          /> }
-        />
-      ));
-  }
-
-  return (
-    <div className="main-content">
-      <PageHeader>About Us</PageHeader>
-      <div>
-
-        </div>
-    </div>
-  );
-
   render(){
 
     return (
@@ -68,31 +26,26 @@ class WelcomeAdmin extends React.Component {
         <div className="text-center">
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row className="clearfix">
+
             <Nav bsStyle="tabs">
-              <LinkContainer to={c.link}>
-                <NavItem className="tab">{c.title}</NavItem>
+              <LinkContainer to="/welcome/upcoming">
+                <NavItem className="tab">Upcoming Guest Stays</NavItem>
               </LinkContainer>
-              <LinkContainer to={c.link}>
-                <NavItem className="tab">{c.title}</NavItem>
+              <LinkContainer to="/welcome/guest-directory">
+                <NavItem className="tab">Guest Directory</NavItem>
               </LinkContainer>
             </Nav>
 
             <Route exact path="/welcome" render={ () =>
-              <Redirect to="/welcome/" /> }
+              <Redirect to="/welcome/upcoming" /> }
             />
-            <Route path={c.link} render={ () =>
-              <Nancy
-                data={c.data}
-                admin={this.props.admin}
-                selectEdit={this.props.selectEdit}
-              /> }
+            <Route path="/welcome/upcoming" render={ () =>
+              <Upcoming
+              />}
             />
-            <Route path={c.link} render={ () =>
-              <Nancy
-                data={c.data}
-                admin={this.props.admin}
-                selectEdit={this.props.selectEdit}
-              /> }
+            <Route path="/welcome/guest-directory" render={ () =>
+              <GuestDirectory
+              />}
             />
 
           </Row>

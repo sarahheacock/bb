@@ -29,6 +29,7 @@ var UpcomingSchema = new Schema({
   depart: Number,
   guests: Number,
   room: Schema.Types.ObjectId,
+  userEmail: String,
   createdAt: {type:Date, default:Date.now},
 });
 
@@ -120,6 +121,10 @@ UserSchema.pre("save", function(next){
   }
 });
 
+var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
 var User = mongoose.model("User", UserSchema);
 
-module.exports.User = User;
+module.exports = {
+  User: User,
+  Upcoming: Upcoming
+};
