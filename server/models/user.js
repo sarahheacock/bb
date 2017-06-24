@@ -40,8 +40,7 @@ UpcomingSchema.method("update", function(updates, callback){
 var CreditSchema = new Schema({
   name: {type: String, default: ''},
   number: {type: String, default: ''},
-  cvv: {type: String, default: ''},
-  auth: {type: Boolean, default: false}
+  //cvv: {type: String, default: ''}
 })
 
 var UserSchema = new Schema({
@@ -106,15 +105,15 @@ UserSchema.pre("save", function(next){
       next();
     })
   }
-  else if(user.credit.cvv.length <= 16){
-    bcrypt.hash(user["credit"]["cvv"], 10, function(err, hash){
-      if (err) {
-        return next(err);
-      }
-      user["credit"]["cvv"] = hash;
-      next();
-    })
-  }
+  // else if(user.credit.cvv.length <= 16){
+  //   bcrypt.hash(user["credit"]["cvv"], 10, function(err, hash){
+  //     if (err) {
+  //       return next(err);
+  //     }
+  //     user["credit"]["cvv"] = hash;
+  //     next();
+  //   })
+  // }
   else{
     if(user.upcoming !== undefined) user.upcoming.sort(sortUpcoming);
     next();

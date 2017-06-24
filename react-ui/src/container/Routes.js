@@ -8,6 +8,8 @@ import Rooms from '../components/Rooms';
 import LocalGuide from '../components/LocalGuide';
 import Book from '../components/Book';
 import Login from '../components/Login';
+import Welcome from '../components/Welcome';
+import WelcomeAdmin from '../components/WelcomeAdmin';
 import NotFound from '../components/NotFound';
 
 
@@ -19,13 +21,18 @@ const Routes = (props) => {
 
   return (
     <Switch>
-      <Route exact path="/" render={ () => (
+      <Route path="/home" render={ () => (
         <Home
           fetchBlog={props.fetchBlog}
           data={props.data}
           admin={props.admin}
           selectEdit={props.selectEdit}
         />) }
+      />
+
+      <Route exact path="/" render={() => (
+        <Redirect to="/home" />
+      )}
       />
 
       <Route path="/about" render={ () => (
@@ -57,7 +64,25 @@ const Routes = (props) => {
           deleteBlog={props.deleteBlog}
         />) }
       />
-      <Route path="/login" render={ () => (
+
+      <Route path="/welcome" render={ () => ((props.admin.username) ?
+        ((props.admin.admin) ?
+          <WelcomeAdmin
+            admin={props.admin}
+            logout={props.logout}
+          /> :
+          <Welcome
+            admin={props.admin}
+            logout={props.logout}
+            fetchClient={props.fetchClient}
+            data={props.data}
+          />) :
+        <Redirect to="/login" />
+      )}
+      />
+
+      <Route path="/login" render={ () => ((props.admin.username) ?
+        <Redirect to="/welcome" /> :
         <Login
           errorMessage={props.errorMessage}
           admin={props.admin}
@@ -67,7 +92,8 @@ const Routes = (props) => {
           modalVisible={props.modalVisible}
           makeModal={props.makeModal}
           checkoutSelected={props.checkout.selected}
-        />) }
+        />
+        ) }
       />
 
       <Route path="/book-now" render={ () => (
@@ -86,6 +112,7 @@ const Routes = (props) => {
           errorMessage={props.errorMessage}
           fetchClient={props.fetchClient}
           updateEmail={props.updateEmail}
+          verifyPayment={props.verifyPayment}
         />) }
       />
 
@@ -118,4 +145,5 @@ Routes.propsTypes = {
   modalVisible: PropTypes.object.isRequired,
   fetchClient: PropTypes.func.isRequired,
   updateEmail: PropTypes.func.isRequired,
+  verifyPayment: PropTypes.func.isRequired
 };

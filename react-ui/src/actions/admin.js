@@ -46,13 +46,34 @@ export const updateCheckout = (select, checkout) => {
     select,
     checkout
   }
-}
+};
+
+export const verifyPayment = (credit) => {
+  return {
+    type: AdminActionTypes.VERIFY_PAYMENT,
+    credit
+  }
+};
+
+// export const verifyPayment = (cvv, id) => {
+//   return (dispatch) => {
+//
+//     return axios.post(`/locked/user/id`, cvv)
+//       .then(response => {
+//         console.log("response data", response.data);
+//         dispatch(checkout(response.data));
+//       })
+//       .catch(error => {
+//         console.log(error);
+//         dispatch(fail({"error": "credit card input does not match our records"}));
+//       });
+//   }
+// };
 
 //===============MESSAGING===============================================
 export const sendMessageSuccess = () => {
   return {
     type: AdminActionTypes.SEND_MESSAGE_SUCCESS,
-
   };
 };
 
@@ -178,15 +199,22 @@ export const fetchClient = (user) => {
 };
 
 //===============UPDATE CLIENT INFO===============================================
-// (1) MAKE RESULT DATA CURRENT
+// (1) MAKE RESULT PART OF STATE.ADMIN
 // (2) UPDATE CLIENT INFO
-export const updateEmail = (user, data) => {
+export const updateEmail = (profile, credit) => {
   return (dispatch) => {
-      return axios.put(`/locked/user/${user}`, {
-        ...data
+      console.log("profile", profile);
+      console.log("credit", credit);
+      return axios.put(`/locked/user/${profile.userID}`, {
+        credit: {
+          name: credit.name,
+          number: credit.number
+        },
+        token: profile.token
       })
       .then(response => {
-        dispatch(fetchBlogSuccess([response.data]))
+        //dispatch(fetchBlogSuccess([response.data]))
+        dispatch(verifyPayment(credit));
       })
       .catch(error => {
         dispatch(fail({"error": "Unable to update account information"}));

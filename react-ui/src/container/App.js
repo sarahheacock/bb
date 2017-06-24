@@ -77,6 +77,7 @@ class App extends Component {
     const createEmail = bindActionCreators(AdminActionCreators.createEmail, dispatch);
     const fetchClient = bindActionCreators(AdminActionCreators.fetchClient, dispatch);
     const updateEmail = bindActionCreators(AdminActionCreators.updateEmail, dispatch);
+    const verifyPayment = bindActionCreators(AdminActionCreators.verifyPayment, dispatch);
 
 
 
@@ -120,6 +121,7 @@ class App extends Component {
             makeModal={makeModal}
             fetchClient={fetchClient}
             updateEmail={updateEmail}
+            verifyPayment={verifyPayment}
           />
 
           <Footer

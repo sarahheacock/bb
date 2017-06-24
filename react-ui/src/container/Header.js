@@ -48,7 +48,7 @@ const Header = (props) => {
 
             </Nav>
             <Nav pullRight>
-              <LinkContainer to="/login">
+              <LinkContainer to={(props.admin.username) ? "/welcome" : "/login"}>
                 <NavItem>{(props.admin.username) ? <div className="book">{`Welcome, ${props.admin.username}`}</div> : <div className="book">Login</div>}</NavItem>
               </LinkContainer>
             </Nav>

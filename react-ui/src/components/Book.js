@@ -26,7 +26,8 @@ class Book extends React.Component {
     createEmail: PropTypes.func.isRequired,
     errorMessage: PropTypes.object.isRequired,
     fetchClient: PropTypes.func.isRequired,
-    updateEmail: PropTypes.func.isRequired
+    updateEmail: PropTypes.func.isRequired,
+    verifyPayment: PropTypes.func.isRequired
   }
 
 
@@ -102,12 +103,19 @@ class Book extends React.Component {
                 modalVisible={this.props.modalVisible}
                 errorMessage={this.props.errorMessage}
                 updateEmail={this.props.updateEmail}
+                verifyPayment={this.props.verifyPayment}
               /> :
                 <Redirect to="/book-now/billing" /> }
             />
             <Route path="/book-now/confirmation/" render={ () => (this.props.checkout.payment) ?
               <Confirmation
-
+                select={this.props.select}
+                fetchClient={this.props.fetchClient}
+                admin={this.props.admin}
+                data={this.props.data}
+                makeModal={this.props.makeModal}
+                modalVisible={this.props.modalVisible}
+                errorMessage={this.props.errorMessage}
               /> :
               <Redirect to="/book-now/payment" /> }
             />

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Route, Redirect, NavLink } from 'react-router-dom';
 import { Form, FormControl, ControlLabel, FormGroup, Button, Col, Row, Modal, Alert } from 'react-bootstrap';
 import PayForm from '../forms/PayForm';
+import PayValidForm from '../forms/PayValidForm';
 
 //if there is no payment on file, add payment and checkout.payment === true. Confirm button will bring to next page.
 //if there is payment on file, make sure cvv and exp date matches card on file
@@ -17,16 +18,18 @@ class Payment extends React.Component {
     data: PropTypes.array.isRequired,
     modalVisible: PropTypes.object.isRequired,
     errorMessage: PropTypes.object.isRequired,
-    updateEmail: PropTypes.func.isRequired
+    updateEmail: PropTypes.func.isRequired,
+    verifyPayment: PropTypes.func.isRequired
   }
 
   constructor(props){
     super(props);
+    const y = new Date().getFullYear().toString();
     this.state = {
       name: '',
       number: '',
-      month: '',
-      year: '',
+      month: "Jan",
+      year: y,
       cvv: ''
     }
   }
@@ -36,6 +39,7 @@ class Payment extends React.Component {
   }
 
   componentDidUpdate() {
+
     if(this.props.data[0]){
       if(this.props.data[0]["credit"] !== undefined && this.state.name === ''){
         if(this.props.data[0]["credit"]["name"] !== ""){
@@ -48,20 +52,21 @@ class Payment extends React.Component {
   }
 
   handleContinue = () => {
-    this.props.updateCheckout(
-      {
-        ...this.props.select
-      },
-      {
-        ...this.props.checkout,
-        "payment": true
-      }
-    );
-
-    if(this.state.cvv === ""){
+    if(this.state.cvv === ""){ //if using pre-existing payment, updateCheckout handled by this.verify
       this.props.makeModal({
-        client: true
+        login: true
       });
+    }
+    else { //if using new payment
+      this.props.updateCheckout(
+        {
+          ...this.props.select
+        },
+        {
+          ...this.props.checkout,
+          "payment": true
+        }
+      );
     }
   }
 
@@ -82,6 +87,62 @@ class Payment extends React.Component {
     this.setState(this.state);
   }
 
+  update = (e) => {
+
+    const exp = new Date(`${this.state.month} ${this.state.year}`);
+    const today = new Date();
+
+    this.props.updateEmail(
+      {
+        userID: this.props.admin.user,
+        token: this.props.admin.id
+      },
+      {
+        ...this.state
+      });
+
+    if(this.state.name !== undefined && this.state.number !== undefined && today < exp && this.state.cvv !== undefined && Object.keys(this.props.errorMessage).length === 0){
+      this.props.makeModal({client: false, login: false});
+      this.props.updateCheckout(
+        {
+          ...this.props.select
+        },
+        {
+          ...this.props.checkout,
+          "payment": true
+        }
+      );
+    }
+    else {
+      if(e) e.preventDefault();
+    }
+  }
+
+  verify = (e) => {
+
+    const exp = new Date(`${this.state.month} ${this.state.year}`);
+    const today = new Date();
+
+    this.props.verifyPayment({
+      ...this.state
+    });
+
+    if(this.state.name !== undefined && this.state.number !== undefined && today < exp && this.state.cvv !== undefined && Object.keys(this.props.errorMessage).length === 0){
+      this.props.makeModal({client: false, login: false});
+      this.props.updateCheckout(
+        {
+          ...this.props.select
+        },
+        {
+          ...this.props.checkout,
+          "payment": true
+        }
+      );
+    }
+    else {
+      if(e) e.preventDefault();
+    }
+  }
 
   pop = (e) => {
     if(e) e.preventDefault();
@@ -95,31 +156,27 @@ class Payment extends React.Component {
     console.log(this.state);
     const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
       <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      (this.props.admin.username) ?
-        <Alert className="content text-center alertMessage" bsStyle="success">{`Welcome, ${this.props.admin.username}`}</Alert>:
-        <div></div>;
+      <div></div>;
 
+    const submitButton = <NavLink to="/book-now/confirmation" onClick={this.update}>
+        <Button bsStyle="primary">
+          Continue
+        </Button>
+      </NavLink>;
 
-    const submitButton = <button className="btn btn-primary" onClick={this.verify} onClick={() => {
-        this.props.updateEmail(this.props.admin.user, {
-          credit: {
-            name: this.state.name,
-            number: this.state.number,
-            cvv: `${this.state.cvv}/${this.state.month}/${this.state.year}`
-          },
-          token: this.props.admin.id
-        });
-      }}>
-        Submit
-    </button>;
+    const verifyButton = <NavLink to="/book-now/confirmation" onClick={this.verify}>
+        <Button bsStyle="primary">
+          Continue
+        </Button>
+      </NavLink>;
 
     const continueButton = (this.state.cvv !== "") ?
       <NavLink to="/book-now/confirmation" onClick={this.handleContinue}>
-        <Button bsStyle="primary" disabled={this.state.name === ""}>
+        <Button bsStyle="primary" disabled={this.state.name === "" || this.state.number === ""}>
           Continue
         </Button>
       </NavLink>:
-      <Button bsStyle="primary" disabled={this.state.name === ""} onClick={() => this.props.makeModal({client: true})}>
+      <Button bsStyle="primary" disabled={this.state.name === "" || this.state.number === ""} onClick={() => this.props.makeModal({login: true})}>
         Continue
       </Button>;
 
@@ -139,6 +196,53 @@ class Payment extends React.Component {
       Close
     </Button>;
 
+    //modal to add credit
+    //modal to verify credit
+    const selectModal = <Modal show={this.props.modalVisible.client} >
+        <Modal.Header>
+          <Modal.Title>Select Payment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PayForm
+            nameValue={this.state.name}
+            numberValue={this.state.number}
+            cvvValue={this.state.cvv}
+            monthValue={this.state.month}
+            yearValue={this.state.year}
+            creditChange={this.onFormChange}
+          />
+          {alert}
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="text-center">
+            {submitButton}{closeButton}
+          </div>
+        </Modal.Footer>
+      </Modal> ;
+
+    const verifyModal = <Modal show={this.props.modalVisible.login} >
+        <Modal.Header>
+          <Modal.Title>Verify Payment</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <PayValidForm
+            nameValue={this.state.name}
+            numberValue={this.state.number}
+            cvvValue={this.state.cvv}
+            monthValue={this.state.month}
+            yearValue={this.state.year}
+            creditChange={this.onFormChange}
+          />
+          {alert}
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="text-center">
+            {verifyButton}{closeButton}
+          </div>
+        </Modal.Footer>
+      </Modal>;
+
+
     return (
       <div className="main-content not-found">
         <div className="well text-center">
@@ -149,30 +253,9 @@ class Payment extends React.Component {
         </div>
 
         <div className="text-center">{continueButton}</div>
+        {selectModal}
+        {verifyModal}
 
-        <Modal show={this.props.modalVisible.client} >
-          <Modal.Header>
-            <Modal.Title>Select Payment</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <PayForm
-              nameValue={this.state.name}
-              numberValue={this.state.number}
-              cvvValue={this.state.cvv}
-              monthValue={this.state.month}
-              yearValue={this.state.year}
-              creditChange={this.onFormChange}
-            />
-
-            {alert}
-          </Modal.Body>
-          <Modal.Footer>
-            <div className="text-center">
-
-              {submitButton}{closeButton}
-            </div>
-          </Modal.Footer>
-        </Modal>
       </div>
     );
   }
@@ -180,64 +263,3 @@ class Payment extends React.Component {
 
 
 export default Payment;
-
-
-// import React from 'react';
-// import PropTypes from 'prop-types';
-// import { Route, Redirect, NavLink } from 'react-router-dom';
-// import { PageHeader } from 'react-bootstrap';
-// import PayForm from '../forms/PayForm';
-//
-// class Payment extends React.Component {
-//   static propTypes = {
-//   }
-//
-//   constructor(props){
-//     super(props);
-//     this.state = {
-//       name: '',
-//       credit: '',
-//       number: '',
-//       month: '',
-//       year: '',
-//       cvv: '',
-//     }
-//   }
-//
-//   onCreditChange = (e) => {
-//     this.state[e.target.name] = e.target.value;
-//     this.setState(this.state);
-//   }
-//
-//
-//   //makes modal disappear
-//   pop = (e) => {
-//     if(e) e.preventDefault();
-//     this.props.makeModal();
-//   }
-//
-//   //submit button turns modalVisible to false and
-//   //links back to confirmation page
-//   //link is currently unecessary
-//   render() {
-//     return (
-//       <div className="main-content not-found">
-//           <PayForm
-//             nameValue={this.state.name}
-//             numberValue={this.state.number}
-//             cvvValue={this.state.cvv}
-//             monthValue={this.state.month}
-//             yearValue={this.state.year}
-//             creditChange={this.onCreditChange}
-//           />
-//
-//
-//
-//
-//       </div>
-//     );
-//   }
-// }
-//
-//
-// export default Payment;

@@ -39,6 +39,7 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
       id: "",
       user: "",
       username: "",
+      credit: {}
     },
     errorMessage: {},
     selectedEdit: {

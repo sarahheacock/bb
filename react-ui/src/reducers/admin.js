@@ -96,11 +96,23 @@ export default function Admin(state={}, action){
       }
     }
 
+    case AdminActionTypes.VERIFY_PAYMENT: {
+      const newAdmin = {
+        ...state.admin,
+        credit: action.credit
+      };
+      return {
+        ...state,
+        admin: newAdmin
+      }
+    }
+
     case AdminActionTypes.UPDATE_CHECKOUT: {
       return {
         ...state,
         select: action.select,
-        checkout: action.checkout
+        checkout: action.checkout,
+        errorMessage: {}
       }
     }
 
