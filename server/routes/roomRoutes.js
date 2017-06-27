@@ -70,37 +70,37 @@ roomRoutes.post("/", function(req, res, next){
 });
 
 //================EDIT ROOMS====================================
-roomRoutes.put("/:date/:roomID/reserve-:dir", function(req, res, next){
-    //var arr = req.params.date.split("&");
-
-    if(req.params.dir.search(/^(reserve|cancel)$/) === -1){
-      var err = new Error("Not Found");
-      err.status = 404;
-      next(err);
-    }
-    else {
-      req.action = req.params.dir;
-      req.free = req.date.free.map(function(r){
-        if(r.roomID.equals(req.params.roomID)) return r;
-      });
-      console.log(req.free);
-      next();
-    }
-  },
-  function(req, res, next){
-    if(req.free.length === 0){
-      var err = new Error("roomID not found");
-      err.status = 404;
-      next(err);
-    }
-    else {
-      var free = req.free[0];
-      free.update(req.action, function(err, updatedRoom){
-        if(err) return next(err);
-        res.json(updatedRoom);
-      });
-    }
-});
+// roomRoutes.put("/:date/:roomID/reserve-:dir", function(req, res, next){
+//     //var arr = req.params.date.split("&");
+//
+//     if(req.params.dir.search(/^(reserve|cancel)$/) === -1){
+//       var err = new Error("Not Found");
+//       err.status = 404;
+//       next(err);
+//     }
+//     else {
+//       req.action = req.params.dir;
+//       req.free = req.date.free.map(function(r){
+//         if(r.roomID.equals(req.params.roomID)) return r;
+//       });
+//       console.log(req.free);
+//       next();
+//     }
+//   },
+//   function(req, res, next){
+//     if(req.free.length === 0){
+//       var err = new Error("roomID not found");
+//       err.status = 404;
+//       next(err);
+//     }
+//     else {
+//       var free = req.free[0];
+//       free.update(req.action, function(err, updatedRoom){
+//         if(err) return next(err);
+//         res.json(updatedRoom);
+//       });
+//     }
+// });
 
 
 module.exports = roomRoutes;

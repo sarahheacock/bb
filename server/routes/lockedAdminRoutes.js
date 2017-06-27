@@ -7,51 +7,35 @@ var lockedAdminRoutes = express.Router();
 var Page = require("../models/page").Page;
 var Available = require("../models/available").Available;
 var User = require("../models/user").User;
-var Upcoming = require("../models/user").Upcoming;
+//var Upcoming = require("../models/user").Upcoming;
 var mid = require('../middleware');
 
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 
 
-lockedAdminRoutes.param("page", function(req, res, next, id){
-  User.find({pageID: id}, function(err, user){
-    //console.log(available);
-    if(!user){
-      var err = new Error("No Users");
-      next(err);
-    }
-    else if (err){
-      var err = new Error("Not Found");
-      next(err);
-    }
-    req.users = user.map(function(u){
-      if(u.upcoming.length !== 0){
-        return u.upcoming;
-      }
-    });
-    return next();
-  });
-});
-
-
 // lockedAdminRoutes.param("page", function(req, res, next, id){
-//   Upcoming.remove({ depart: {$lt: Date.now()} }).exec(function(err)){
-//     Upcoming.find({}, function(err, user){
-//       //console.log(available);
-//       if(!user){
-//         var err = new Error("No Upcoming");
-//         next(err);
+//   User.find({pageID: id}, function(err, user){
+//     //console.log(available);
+//     if(!user){
+//       var err = new Error("No Users");
+//       next(err);
+//     }
+//     else if (err){
+//       var err = new Error("Not Found");
+//       next(err);
+//     }
+//     req.users = user.map(function(u){
+//       return {
+//         billing: u.billing,
+//         email: u.email,
+//         upcoming: u.upcoming
 //       }
-//       else if (err){
-//         var err = new Error("Not Found");
-//         next(err);
-//       }
-//       req.upcoming = user.map((u) => u);
-//       return next();
 //     });
-//   }
+//     return next();
+//   });
 // });
+
 
 lockedAdminRoutes.param("pageID", function(req, res, next, id){
   Page.findById(id, function(err, doc){
@@ -78,6 +62,7 @@ lockedAdminRoutes.param("section", function(req,res,next,id){
 });
 
 
+
 lockedAdminRoutes.param("sectionID", function(req, res, next, id){
   req.oneSection = req.section.id(id);
   if(!req.oneSection){
@@ -88,21 +73,53 @@ lockedAdminRoutes.param("sectionID", function(req, res, next, id){
   next();
 });
 
+lockedAdminRoutes.param("upcomingSection", function(req,res,next,id){
+  //upcomings
+  if(req.section.length > 0){
+    var upcoming = [];
+    var counter = 0;
+    req.section.forEach(function(s, index){
+      User.findById(s, function(err, user){
+        if(err) return next(err);
+
+        //remove user's upcoming that are out of date
+        if(user.upcoming.depart < new Date()){
+          //if user has no upcoming, remove id from page
+          counter++;
+        }
+        else {
+          upcoming.push(user.upcoming);
+          counter++;
+        }
+
+        if(req.section.length === counter){
+          //user id that have wrong dates
+          var flatten = upcoming.reduce(function(a, b){
+            return a.concat(b);
+          }, []);
+
+          //don't bother returning upcoming that does not contain month
+          // flatten.forEach(function(f){
+          //
+          // });
+          req.upcoming = flatten;
+          return next();
+        }
+      });
+    });
+  }
+  else {
+    req.upcoming = [];
+  }
+
+});
+
+
+
 //=======================GET USER INFO===========================
 //get all users
-lockedAdminRoutes.get("/:pageID/:page/users", mid.authorizeAdmin, function(req, res){
-  res.json(req.users)
-});
-
-//get filtered users
-lockedAdminRoutes.get("/:pageID/:page/upcoming", mid.authorizeAdmin, function(req, res){
-  res.json(req.upcoming);
-  //remove expired upcoming
-  //find upcoming that contains upcoming on month
-});
-
-// lockedAdminRoutes.get("/:available/available", mid.authorizeAdmin, function(req, res){
-//   res.json(req.available)
+// lockedAdminRoutes.get("/:pageID/:page/users", mid.authorizeAdmin, function(req, res){
+//   res.json(req.users)
 // });
 
 //======================EDIT SECTIONS==============================
@@ -187,6 +204,13 @@ lockedAdminRoutes.delete("/:pageID/:section/:sectionID", mid.authorizeAdmin, fun
     })
   })
 });
+
+//================EDIT USER'S UPCOMING=====================================================
+//get upcoming for month
+lockedAdminRoutes.get("/:pageID/:section/upcoming/:upcomingSection/", mid.authorizeAdmin, function(req, res){
+  res.json(req.upcoming);
+});
+
 
 
 module.exports = lockedAdminRoutes;

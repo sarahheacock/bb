@@ -180,6 +180,9 @@ export const deleteBlog = (data) => {
   }
 };
 
+//===================ADMIN PAGES=================================================
+// (1) GET ALL UPCOMING STAYS FOR THE CURRENT MONTH
+
 
 //=================FETCH CLIENT INFO==============================================
 // (2) MAKE RESULT DATA CURRENT

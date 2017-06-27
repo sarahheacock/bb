@@ -62,12 +62,6 @@ db.once("open", function(){
 refreshRoutes.use(express.static(path.resolve(__dirname, '../react-ui/build')));
 
 // Answer API requests.
-// app.get('/setup', function (req, res) {
-//   res.set('Content-Type', 'application/json');
-//   res.send('{"message":"Hello from the custom server!"}');
-// });
-
-
 //========================ADMIN LOGIN====================================
 // POST /login
 adminAuthRoutes.post('/login', function(req, res, next) {
@@ -80,7 +74,7 @@ adminAuthRoutes.post('/login', function(req, res, next) {
       }
       else {
         var token = jwt.sign({adminID: user.adminID}, app.get('superSecret'), {
-          expiresIn: '1d' //expires in one hour
+          expiresIn: '1d' //expires in one day
         });
 
         res.json({
@@ -138,7 +132,7 @@ userAuthRoutes.post('/userlogin', function(req, res, next) {
       }
       else {
         var token = jwt.sign({userID: user.userID}, app.get('superSecret'), {
-          expiresIn: '1h' //expires in one hour
+          expiresIn: '1d' //expires in one day
         });
 
         var username = user.email.split("@");

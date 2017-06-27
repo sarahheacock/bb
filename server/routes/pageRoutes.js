@@ -32,6 +32,11 @@ pageRoutes.param("section", function(req,res,next,id){
     err.status = 404;
     return next(err);
   }
+  if(req.section === 'upcomings'){
+    var err = new Error("Not Permitted");
+    err.status = 401;
+    return next(err);
+  }
   next();
 });
 

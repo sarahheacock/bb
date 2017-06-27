@@ -121,10 +121,7 @@ UserSchema.pre("save", function(next){
   }
 });
 
-var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
+//var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
 var User = mongoose.model("User", UserSchema);
 
-module.exports = {
-  User: User,
-  Upcoming: Upcoming
-};
+module.exports.User = User;
