@@ -80,7 +80,7 @@ adminAuthRoutes.post('/login', function(req, res, next) {
         res.json({
           admin: true,
           id: token,
-          user: '',
+          user: user._id,
           username: user.username
           //pageID: user._id
         });

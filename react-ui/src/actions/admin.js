@@ -229,9 +229,11 @@ export const fetchClient = (user) => {
     //console.log(`/locked/user/${user.user}?token=${user.id}`);
       return axios.get(user)
       .then(response => {
-        dispatch(fetchBlogSuccess([response.data]))
+        if(user.includes("upcoming")) dispatch(fetchBlogSuccess(response.data));
+        else dispatch(fetchBlogSuccess([response.data]))
       })
       .catch(error => {
+        console.log(error);
         dispatch(fail({"error": "Unable to fetch account information"}));
       });
   };

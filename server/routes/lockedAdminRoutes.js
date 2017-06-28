@@ -1,7 +1,7 @@
 'use strict';
 
 var express = require("express");
-
+var ObjectId = require('mongodb').ObjectID;
 var lockedAdminRoutes = express.Router();
 
 var Page = require("../models/page").Page;
@@ -29,6 +29,8 @@ lockedAdminRoutes.param("pageID", function(req, res, next, id){
 
 
 lockedAdminRoutes.param("section", function(req,res,next,id){
+  //if(parseInt(id) >= 0 || parseInt(id) <= 11) req.section = [req.page[id - 1], req.page[id], req.page[id + 1]].reduce(function(a, b){ return a.concat(b) }, []);
+  //else
   req.section = req.page[id];
   if(!req.section){
     var err = new Error("Not Found");
@@ -61,27 +63,33 @@ lockedAdminRoutes.param("upcomingSection", function(req,res,next,id){
     req.section.forEach(function(s, index){
       Upcoming.findById(s, function(err, upcoming){
         if(err) return next(err);
+        //if(!upcoming || new Date(upcoming.arrive).getYear() < new Date().getYear()){
         if(!upcoming){
-          var oldIndex = req.section.indexOf(upcoming);
+          var oldIndex = req.section.indexOf(s);
           if(oldIndex !== -1) req.section.splice(oldIndex, 1);
-
-          req.section.save(function(err, section){
-            if(err) return next(err);
-            up.push(section)
-          });
+          //console.log(oldIndex);
+          //req.section.pull({$oid: })
+          if(end === index + 1){
+            req.page.save(function(err, section){
+              if(err) return next(err);
+              req.upcoming = up;
+              return next();
+            });
+          }
         }
         else {
+          //console.log(upcoming);
           up.push(upcoming);
+          if(end === index + 1){
+            req.page.save(function(err, section){
+              if(err) return next(err);
+              req.upcoming = up;
+              return next();
+            });
+          }
         }
 
-        if(end === index + 1){
-          // var flatten = upcoming.reduce(function(a, b){
-          //   return a.concat(b);
-          // }, []);
 
-          req.upcoming = up;
-          return next();
-        }
       });
     });
   }

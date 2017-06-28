@@ -70,6 +70,8 @@ const Routes = (props) => {
           <WelcomeAdmin
             admin={props.admin}
             logout={props.logout}
+            fetchClient={props.fetchClient}
+            data={props.data}
           /> :
           <Welcome
             admin={props.admin}

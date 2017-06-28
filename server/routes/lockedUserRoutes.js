@@ -31,7 +31,7 @@ lockedUserRoutes.param("userID", function(req, res, next, id){
           if(!upcoming){
             var oldIndex = req.user.upcoming.indexOf(up);
             if(oldIndex !== -1) req.user.upcoming.splice(oldIndex, 1);
-            else if (index + 1 === end) return next();
+            //else if (index + 1 === end) return next();
 
             req.user.save(function(err, user){
               if(err) return next(err);
@@ -164,9 +164,9 @@ lockedUserRoutes.post("/:userID/upcoming", mid.authorizeUser, function(req, res,
       //find month
       //push into appropiate month
       var arriveMonth = new Date(parseInt(req.body.arrive)).getMonth();
-      var departMonth = new Date(parseInt(req.body.depart)).getMonth();
+      //var departMonth = new Date(parseInt(req.body.depart)).getMonth();
 
-      if(arriveMonth !== departMonth && !doc[departMonth].includes(req.newUpcoming)) doc[departMonth].push(req.newUpcoming);
+      //if(arriveMonth !== departMonth && !doc[departMonth].includes(req.newUpcoming)) doc[departMonth].push(req.newUpcoming);
       if(!doc[arriveMonth].includes(req.newUpcoming)) doc[arriveMonth].push(req.newUpcoming);
 
       doc.save(function(err){
@@ -229,10 +229,10 @@ lockedUserRoutes.delete("/:userID/upcoming/:upcomingID", mid.authorizeUser, func
 
 
     //MAKE SURE THIS WORKS!!============================================
-    if(arriveMonth !== departMonth){
-      var departIndex = doc[departMonth].indexOf(req.upcoming._id);
-      if(departIndex !== -1) doc[departMonth].splice(departIndex, 1);
-    }
+    // if(arriveMonth !== departMonth){
+    //   var departIndex = doc[departMonth].indexOf(req.upcoming._id);
+    //   if(departIndex !== -1) doc[departMonth].splice(departIndex, 1);
+    // }
 
     var arriveIndex = doc[arriveMonth].indexOf(req.upcoming._id);
     if(arriveIndex !== -1) doc[arriveMonth].splice(arriveIndex, 1);

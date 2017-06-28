@@ -11,7 +11,8 @@ class WelcomeAdmin extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     admin: PropTypes.object.isRequired,
-    logout: PropTypes.func.isRequired
+    logout: PropTypes.func.isRequired,
+    fetchClient: PropTypes.func.isRequired
   }
 
   componentDidMount(){
@@ -41,6 +42,9 @@ class WelcomeAdmin extends React.Component {
             />
             <Route path="/welcome/upcoming" render={ () =>
               <Upcoming
+                data={this.props.data}
+                admin={this.props.admin}
+                fetchClient={this.props.fetchClient}
               />}
             />
             <Route path="/welcome/guest-directory" render={ () =>
