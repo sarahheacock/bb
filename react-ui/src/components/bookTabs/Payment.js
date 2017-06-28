@@ -35,7 +35,7 @@ class Payment extends React.Component {
   }
 
   componentDidMount() {
-    this.props.fetchClient(this.props.admin);
+    this.props.fetchClient(`/locked/user/${this.props.admin.user}?token=${this.props.admin.id}`);
   }
 
   componentDidUpdate() {
@@ -67,6 +67,11 @@ class Payment extends React.Component {
           "payment": true
         }
       );
+      if(this.state.cvv){
+        this.props.makeModal({
+          login: false
+        });
+      }
     }
   }
 

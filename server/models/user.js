@@ -29,7 +29,10 @@ var UpcomingSchema = new Schema({
   depart: Number,
   guests: Number,
   room: Schema.Types.ObjectId,
+  user: Schema.Types.ObjectId,
   userEmail: String,
+  paid: {type:String, default:''},
+  checkedIn: Date,
   createdAt: {type:Date, default:Date.now},
 });
 
@@ -70,7 +73,7 @@ var UserSchema = new Schema({
     default: makeid
   },
   pageID: Schema.Types.ObjectId,
-  upcoming: [UpcomingSchema],
+  upcoming: [Schema.Types.ObjectId],
 });
 
 UserSchema.statics.authenticate = function(email, password, callback) {
@@ -106,22 +109,17 @@ UserSchema.pre("save", function(next){
       next();
     })
   }
-  // else if(user.credit.cvv.length <= 16){
-  //   bcrypt.hash(user["credit"]["cvv"], 10, function(err, hash){
-  //     if (err) {
-  //       return next(err);
-  //     }
-  //     user["credit"]["cvv"] = hash;
-  //     next();
-  //   })
-  // }
+
   else{
-    if(user.upcoming !== undefined) user.upcoming.sort(sortUpcoming);
+    //if(user.upcoming !== undefined) user.upcoming.sort(sortUpcoming);
     next();
   }
 });
 
-//var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
+var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
 var User = mongoose.model("User", UserSchema);
 
-module.exports.User = User;
+module.exports = {
+  User: User,
+  Upcoming: Upcoming
+};

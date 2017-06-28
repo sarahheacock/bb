@@ -55,6 +55,42 @@ export const verifyPayment = (credit) => {
   }
 };
 
+//(3) CHECKOUT
+export const completeCheckout = () => {
+  return {
+    type: AdminActionTypes.COMPLETE_CHECKOUT,
+  }
+};
+
+//(2) UPDATE CLIENT INFO
+export const updateClient = (clientInfo) => {
+  return (dispatch) => {
+    console.log(clientInfo);
+      return axios.post(`/locked/user/${clientInfo.admin.user}/upcoming`, {
+        guests: clientInfo.select.guests,
+        arrive: clientInfo.select.arrive,
+        depart: clientInfo.select.depart,
+        room: clientInfo.select.roomID._id,
+        token: clientInfo.admin.id
+      })
+      .then(response => {
+        console.log("response", response);
+        dispatch(completeCheckout);
+      })
+      .catch(error => {
+        dispatch(fail({"error": "Unable to confirm reservation"}));
+      });
+  };
+}
+
+//(1) CHARGE CLIENT
+//need to add later
+export const chargeClient = (clientInfo) => {
+  console.log(clientInfo.login);
+  return (dispatch) => {
+    return dispatch(updateClient({admin:clientInfo.admin, select:clientInfo.select}));
+  }
+};
 // export const verifyPayment = (cvv, id) => {
 //   return (dispatch) => {
 //
@@ -191,7 +227,7 @@ export const fetchClient = (user) => {
   return (dispatch) => {
     //get("/locked/user/:userID/"
     //console.log(`/locked/user/${user.user}?token=${user.id}`);
-      return axios.get(`/locked/user/${user.user}?token=${user.id}`)
+      return axios.get(user)
       .then(response => {
         dispatch(fetchBlogSuccess([response.data]))
       })
@@ -206,8 +242,6 @@ export const fetchClient = (user) => {
 // (2) UPDATE CLIENT INFO
 export const updateEmail = (profile, credit) => {
   return (dispatch) => {
-      console.log("profile", profile);
-      console.log("credit", credit);
       return axios.put(`/locked/user/${profile.userID}`, {
         credit: {
           name: credit.name,
@@ -224,6 +258,9 @@ export const updateEmail = (profile, credit) => {
       });
   };
 };
+
+//=============MAKE/CANCEL RESERVATION============================================
+
 
 //=================AUTHENTICATION==================================================
 export const logout = (message) => {
@@ -364,7 +401,7 @@ export const fetchSearch = (data) => {
       dateArr.push(end);
       end = end - (24*60*60*1000);
     }
-    console.log("FETCH", dateArr);
+    //console.log("FETCH", dateArr);
 
     //USE ARRAY TO CALL AVAILABILITY FOR THAT DAY
     return dateArr.forEach((date) => {
@@ -393,7 +430,7 @@ export const fetchSearch = (data) => {
             }
           })
           .catch((error) => {
-            console.log(error.message);
+            //console.log(error.message);
             alert("Unable to check availability at this time")
           });
         }

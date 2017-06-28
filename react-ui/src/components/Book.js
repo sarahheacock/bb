@@ -27,7 +27,8 @@ class Book extends React.Component {
     errorMessage: PropTypes.object.isRequired,
     fetchClient: PropTypes.func.isRequired,
     updateEmail: PropTypes.func.isRequired,
-    verifyPayment: PropTypes.func.isRequired
+    verifyPayment: PropTypes.func.isRequired,
+    chargeClient: PropTypes.func.isRequired
   }
 
 
@@ -43,7 +44,7 @@ class Book extends React.Component {
               <LinkContainer to="/book-now/availability">
                 <NavItem className="tab">I.  Check Availability</NavItem>
               </LinkContainer>
-              <LinkContainer to="/book-now/billing" disabled={!(this.props.checkout.selected || this.props.admin.username)}>
+              <LinkContainer to="/book-now/billing" disabled={(!this.props.checkout.selected || !this.props.admin.username)}>
                 <NavItem className="tab" >II.  Billing</NavItem>
               </LinkContainer>
               <LinkContainer to="/book-now/payment" disabled={!(this.props.checkout.billing)}>
@@ -116,6 +117,7 @@ class Book extends React.Component {
                 makeModal={this.props.makeModal}
                 modalVisible={this.props.modalVisible}
                 errorMessage={this.props.errorMessage}
+                chargeClient={this.props.chargeClient}
               /> :
               <Redirect to="/book-now/payment" /> }
             />

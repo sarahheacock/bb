@@ -116,6 +116,32 @@ export default function Admin(state={}, action){
       }
     }
 
+    case AdminActionTypes.COMPLETE_CHECKOUT: {
+      const temp = new Date().toString().split(' ');
+      let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 10:00:00").getTime();
+      const newAdmin = {
+        ...state.admin,
+        credit: {}
+      };
+      return {
+        ...state,
+        admin: newAdmin,
+        checkout: {
+          selected: false,
+          billing: false,
+          payment: false,
+          confirmation: false
+        },
+        select: {
+          roomID: {},
+          arrive: NOW,
+          depart: NOW + 24*60*60*1000,
+          guests: 2
+        },
+        errorMessage: {}
+      }
+    }
+
     default:
       return state;
   }

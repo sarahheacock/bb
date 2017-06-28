@@ -17,15 +17,17 @@ class Confirmation extends React.Component {
     select: PropTypes.object.isRequired,
     makeModal: PropTypes.func.isRequired,
     modalVisible: PropTypes.object.isRequired,
-    errorMessage: PropTypes.object.isRequired
+    errorMessage: PropTypes.object.isRequired,
+    chargeClient: PropTypes.func.isRequired
   }
 
   componentDidMount(){
-    this.props.fetchClient(this.props.admin);
+    this.props.fetchClient(`/locked/user/${this.props.admin.user}?token=${this.props.admin.id}`);
   }
 
   confirm = () => {
     this.props.makeModal({client: true});
+    this.props.chargeClient({admin: this.props.admin, select: this.props.select});
   }
 
   pop = () => {
@@ -61,7 +63,7 @@ class Confirmation extends React.Component {
                 <h3>{this.props.select.roomID.title}</h3>
                 <p>{`$${this.props.select.roomID.cost}.00`}</p>
                 <p>{`${this.props.select.guests} guests`}</p>
-                <p>{`Arrive ${moment(this.props.select.arrive).format('LLLL')}`}</p>
+                <p>{`Arrive ${moment(this.props.select.arrive + (5*60*60*1000)).format('LLLL')}`}</p>
                 <p>{`Depart ${moment(this.props.select.depart).format('LLLL')}`}</p>
               </div>
             </Col>

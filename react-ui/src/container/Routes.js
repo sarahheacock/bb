@@ -113,6 +113,7 @@ const Routes = (props) => {
           fetchClient={props.fetchClient}
           updateEmail={props.updateEmail}
           verifyPayment={props.verifyPayment}
+          chargeClient={props.chargeClient}
         />) }
       />
 
@@ -145,5 +146,6 @@ Routes.propsTypes = {
   modalVisible: PropTypes.object.isRequired,
   fetchClient: PropTypes.func.isRequired,
   updateEmail: PropTypes.func.isRequired,
-  verifyPayment: PropTypes.func.isRequired
+  verifyPayment: PropTypes.func.isRequired,
+  chargeClient: PropTypes.func.isRequired,
 };

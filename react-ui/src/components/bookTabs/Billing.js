@@ -36,7 +36,7 @@ class Billing extends React.Component {
 
   componentDidMount() {
     //this.props.makeModal({login: false});
-    this.props.fetchClient(this.props.admin);
+    this.props.fetchClient(`/locked/user/${this.props.admin.user}?token=${this.props.admin.id}`);
   }
 
   componentDidUpdate() {

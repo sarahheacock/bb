@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { PageHeader, Button } from 'react-bootstrap';
+import { PageHeader, Button, Row, Col } from 'react-bootstrap';
+import moment from 'moment';
 
 class Welcome extends React.Component {
   static propTypes = {
@@ -11,18 +12,28 @@ class Welcome extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchClient(this.props.admin);
+    this.props.fetchClient(`/locked/user/${this.props.admin.user}/detail/?token=${this.props.admin.id}`);
   }
 
   render(){
     let upcoming = <div>Loading</div>;
     if(this.props.data[0]){
-      if(this.props.data[0]["upcoming"]){
-        upcoming = (this.props.data[0]["upcoming"].length === 0) ?
+      if(this.props.data[0]["user"]){
+        upcoming = (this.props.data[0]["user"]["upcoming"].length === 0) ?
           <div><p>You currently have no upcoming stays.</p><hr /></div> :
-          this.props.data[0]["upcoming"].map((u) => (
+          this.props.data[0]["upcomingDetail"].map((u) => (
             <div>
-              hi
+              <Row className="clearfix">
+                <Col className="text-center" sm={5}>
+                  <img src={u.where.image}/>
+                </Col>
+                <Col className="text-center" sm={7}>
+                  <h3>{u.where.title}</h3>
+                  <p>{`Arrive ${moment(u.when.arrive  + (5*60*60*1000)).format('LLLL')}`}</p>
+                  <p>{`Depart ${moment(u.when.depart).format('LLLL')}`}</p>
+                </Col>
+              </Row>
+              <hr />
             </div>
           ));
       }

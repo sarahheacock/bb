@@ -78,6 +78,7 @@ class App extends Component {
     const fetchClient = bindActionCreators(AdminActionCreators.fetchClient, dispatch);
     const updateEmail = bindActionCreators(AdminActionCreators.updateEmail, dispatch);
     const verifyPayment = bindActionCreators(AdminActionCreators.verifyPayment, dispatch);
+    const chargeClient = bindActionCreators(AdminActionCreators.chargeClient, dispatch);
 
 
 
@@ -122,6 +123,7 @@ class App extends Component {
             fetchClient={fetchClient}
             updateEmail={updateEmail}
             verifyPayment={verifyPayment}
+            chargeClient={chargeClient}
           />
 
           <Footer

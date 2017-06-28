@@ -73,7 +73,7 @@ class Available extends React.Component {
         "selected": true
       }
     );
-    if(this.props.admin.username){
+    if(!this.props.admin.username){
       this.props.makeModal({
         login: true
       });
