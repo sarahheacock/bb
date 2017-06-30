@@ -25,15 +25,19 @@ var makeid = function(){
 }
 
 var UpcomingSchema = new Schema({
-  arrive: Number,
-  depart: Number,
-  guests: Number,
-  room: Schema.Types.ObjectId,
-  user: Schema.Types.ObjectId,
-  userEmail: String,
-  paid: {type:String, default:''},
-  checkedIn: Date,
-  createdAt: {type:Date, default:Date.now},
+  start: Number,
+  end: Number,
+  title: String,
+  month: Number,
+  event: {
+    guests: Number,
+    roomID: Schema.Types.ObjectId,
+    userID: Schema.Types.ObjectId,
+    pageID: Schema.Types.ObjectId,
+    paid: {type:String, default:''},
+    checkedIn: Date,
+    createdAt: {type:Date, default:Date.now},
+  },
 });
 
 UpcomingSchema.method("update", function(updates, callback){
@@ -41,11 +45,10 @@ UpcomingSchema.method("update", function(updates, callback){
   this.parent().save(callback);
 });
 
-var CreditSchema = new Schema({
-  name: {type: String, default: ''},
-  number: {type: String, default: ''},
-  //cvv: {type: String, default: ''}
-})
+// var CreditSchema = new Schema({
+//   name: {type: String, default: ''},
+//   number: {type: String, default: ''},
+// })
 
 var UserSchema = new Schema({
   email: {
@@ -65,8 +68,8 @@ var UserSchema = new Schema({
     trim: true
   },
   credit: {
-    type: CreditSchema,
-    default: CreditSchema
+    name: {type: String, default: ''},
+    number: {type: String, default: ''},
   },
   userID: {
     type: String,

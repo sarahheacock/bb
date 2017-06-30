@@ -22,12 +22,21 @@ class Confirmation extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchClient(`/locked/user/${this.props.admin.user}?token=${this.props.admin.id}`);
+    if(this.props.admin.admin === false) this.props.fetchClient(`/locked/user/${this.props.admin.user}?token=${this.props.admin.id}`);
   }
 
   confirm = () => {
     this.props.makeModal({client: true});
-    this.props.chargeClient({admin: this.props.admin, select: this.props.select});
+    //const month = new Date(this.props.select.arrive).getMonth();
+    this.props.chargeClient({admin: this.props.admin, select: {
+      start: this.props.select.arrive,
+      end: this.props.select.depart,
+      event: {
+        guests: this.props.select.guests,
+        roomID: this.props.select.roomID._id,
+        //month: parseInt(month)
+      }
+    }});
   }
 
   pop = () => {
@@ -51,24 +60,6 @@ class Confirmation extends React.Component {
         const arr = this.props.data[0]["billing"].split('/');
 
         client = <div className="text-center">
-          {confirmButton}
-          <hr />
-          <Row>
-            <Col sm={3}>
-              <h4>Room: </h4>
-            </Col>
-            <Col sm={8}>
-              <div className="well text-center">
-                <img className="room-img" src={this.props.select.roomID.image} alt={this.props.select.roomID.title} />
-                <h3>{this.props.select.roomID.title}</h3>
-                <p>{`$${this.props.select.roomID.cost}.00`}</p>
-                <p>{`${this.props.select.guests} guests`}</p>
-                <p>{`Arrive ${moment(this.props.select.arrive + (5*60*60*1000)).format('LLLL')}`}</p>
-                <p>{`Depart ${moment(this.props.select.depart).format('LLLL')}`}</p>
-              </div>
-            </Col>
-          </Row>
-          <hr />
           <Row>
             <Col sm={3}>
               <h4>Billing: </h4>
@@ -95,7 +86,21 @@ class Confirmation extends React.Component {
             </Col>
           </Row>
           <hr />
-          {confirmButton}
+        </div>
+      }
+      else if(this.props.admin.admin){
+        client = <div className="text-center">
+          <Row>
+            <Col sm={3}>
+              <h4>Contact: </h4>
+            </Col>
+            <Col sm={8}>
+              <div className="well text-center">
+                Hello
+              </div>
+            </Col>
+          </Row>
+          <hr />
         </div>
       }
     }
@@ -111,8 +116,27 @@ class Confirmation extends React.Component {
       </Button>;
 
     return (
-      <div className="main-content">
+      <div className="main-content text-center">
+      {confirmButton}
+      <hr />
+        <Row>
+          <Col sm={3}>
+            <h4>Room: </h4>
+          </Col>
+          <Col sm={8}>
+            <div className="well text-center">
+              <img className="room-img" src={this.props.select.roomID.image} alt={this.props.select.roomID.title} />
+              <h3>{this.props.select.roomID.title}</h3>
+              <p>{`$${this.props.select.roomID.cost}.00`}</p>
+              <p>{`${this.props.select.guests} guests`}</p>
+              <p><b>Arrive: </b>{`${moment(this.props.select.arrive + (5*60*60*1000)).format('LLLL')}`}</p>
+              <p><b>Depart: </b>{`${moment(this.props.select.depart).format('LLLL')}`}</p>
+            </div>
+          </Col>
+        </Row>
+      <hr />
         {client}
+        {confirmButton}
 
         <Modal show={this.props.modalVisible.client} >
           <Modal.Body>

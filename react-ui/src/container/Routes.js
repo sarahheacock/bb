@@ -72,12 +72,20 @@ const Routes = (props) => {
             logout={props.logout}
             fetchClient={props.fetchClient}
             data={props.data}
+            refundClient={props.refundClient}
+            makeModal={props.makeModal}
+            modalVisible={props.modalVisible}
+            errorMessage={props.errorMessage}
           /> :
           <Welcome
             admin={props.admin}
             logout={props.logout}
             fetchClient={props.fetchClient}
             data={props.data}
+            refundClient={props.refundClient}
+            makeModal={props.makeModal}
+            modalVisible={props.modalVisible}
+            errorMessage={props.errorMessage}
           />) :
         <Redirect to="/login" />
       )}

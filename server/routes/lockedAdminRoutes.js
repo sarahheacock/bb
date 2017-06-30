@@ -55,48 +55,26 @@ lockedAdminRoutes.param("sectionID", function(req, res, next, id){
 });
 
 lockedAdminRoutes.param("upcomingSection", function(req,res,next,id){
-  //upcomings
-  var end = req.section.length;
-  if(end > 0){
-    var up = [];
-    // THIS IS TO REMOVE NON-EXISTANT UPCOMING
-    req.section.forEach(function(s, index){
-      Upcoming.findById(s, function(err, upcoming){
-        if(err) return next(err);
-        //if(!upcoming || new Date(upcoming.arrive).getYear() < new Date().getYear()){
-        if(!upcoming){
-          var oldIndex = req.section.indexOf(s);
-          if(oldIndex !== -1) req.section.splice(oldIndex, 1);
-          //console.log(oldIndex);
-          //req.section.pull({$oid: })
-          if(end === index + 1){
-            req.page.save(function(err, section){
-              if(err) return next(err);
-              req.upcoming = up;
-              return next();
-            });
-          }
-        }
-        else {
-          //console.log(upcoming);
-          up.push(upcoming);
-          if(end === index + 1){
-            req.page.save(function(err, section){
-              if(err) return next(err);
-              req.upcoming = up;
-              return next();
-            });
-          }
-        }
-
-
-      });
-    });
-  }
-  else {
-    req.upcoming = [];
-    return next();
-  }
+  var ID = parseInt(id);
+  var orArr = [ID - 1, ID, ID + 1].map(function(i){
+    if(i < 0) return {month: 11};
+    else if (i > 11) return {month: 0};
+    else return {month: i};
+  });
+  //HAVE NOT TESTED PAGEID!
+  Upcoming.find({
+    "event.pageID": req.params.pageID,
+    $or: orArr
+  }, function(err, upcoming){
+    if(err) return next(err);
+    if(!upcoming){
+      var err = new Error("Upcoming Not Found");
+      err.status = 404;
+      return next(err);
+    }
+    req.upcoming = upcoming;
+    next();
+  });
 });
 
 
@@ -112,6 +90,7 @@ lockedAdminRoutes.param("userID", function(req,res,next,id){
     return next();
   });
 });
+
 
 
 
@@ -149,6 +128,7 @@ lockedAdminRoutes.post("/:pageID/:section", mid.authorizeAdmin, function(req, re
     }
   });
 });
+
 
 
 lockedAdminRoutes.get("/:pageID/:section/:sectionID", mid.authorizeAdmin, function(req, res){
@@ -200,9 +180,11 @@ lockedAdminRoutes.delete("/:pageID/:section/:sectionID", mid.authorizeAdmin, fun
 
 //================EDIT USER'S UPCOMING=====================================================
 //get upcoming for month
-lockedAdminRoutes.get("/:pageID/:section/upcoming/:upcomingSection/", mid.authorizeAdmin, function(req, res){
+lockedAdminRoutes.get("/:pageID/rooms/upcoming/:upcomingSection/", mid.authorizeAdmin, function(req, res){
   res.json(req.upcoming);
 });
+
+
 
 //get user
 // lockedAdminRoutes.get("/:pageID/:section/checkin/:userID/", mid.authorizeAdmin, function(req, res){

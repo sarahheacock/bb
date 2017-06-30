@@ -12,7 +12,11 @@ class WelcomeAdmin extends React.Component {
     data: PropTypes.array.isRequired,
     admin: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
-    fetchClient: PropTypes.func.isRequired
+    fetchClient: PropTypes.func.isRequired,
+    refundClient: PropTypes.func.isRequired,
+    makeModal: PropTypes.func.isRequired,
+    modalVisible: PropTypes.object.isRequired,
+    errorMessage: PropTypes.object.isRequired
   }
 
   componentDidMount(){
@@ -30,7 +34,7 @@ class WelcomeAdmin extends React.Component {
 
             <Nav bsStyle="tabs">
               <LinkContainer to="/welcome/upcoming">
-                <NavItem className="tab">Upcoming Guest Stays</NavItem>
+                <NavItem className="tab">Guest Calendar</NavItem>
               </LinkContainer>
               <LinkContainer to="/welcome/guest-directory">
                 <NavItem className="tab">Guest Directory</NavItem>
@@ -45,6 +49,10 @@ class WelcomeAdmin extends React.Component {
                 data={this.props.data}
                 admin={this.props.admin}
                 fetchClient={this.props.fetchClient}
+                refundClient={this.props.refundClient}
+                makeModal={this.props.makeModal}
+                modalVisible={this.props.modalVisible}
+                errorMessage={this.props.errorMessage}
               />}
             />
             <Route path="/welcome/guest-directory" render={ () =>

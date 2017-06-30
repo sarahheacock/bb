@@ -56,9 +56,10 @@ export const verifyPayment = (credit) => {
 };
 
 //(3) CHECKOUT
-export const completeCheckout = () => {
+export const completeCheckout = (response) => {
   return {
     type: AdminActionTypes.COMPLETE_CHECKOUT,
+    response
   }
 };
 
@@ -67,15 +68,12 @@ export const updateClient = (clientInfo) => {
   return (dispatch) => {
     console.log(clientInfo);
       return axios.post(`/locked/user/${clientInfo.admin.user}/upcoming`, {
-        guests: clientInfo.select.guests,
-        arrive: clientInfo.select.arrive,
-        depart: clientInfo.select.depart,
-        room: clientInfo.select.roomID._id,
+        ...clientInfo.select,
         token: clientInfo.admin.id
       })
       .then(response => {
         console.log("response", response);
-        dispatch(completeCheckout);
+        dispatch(completeCheckout(response.data));
       })
       .catch(error => {
         dispatch(fail({"error": "Unable to confirm reservation"}));
@@ -86,25 +84,35 @@ export const updateClient = (clientInfo) => {
 //(1) CHARGE CLIENT
 //need to add later
 export const chargeClient = (clientInfo) => {
-  console.log(clientInfo.login);
   return (dispatch) => {
     return dispatch(updateClient({admin:clientInfo.admin, select:clientInfo.select}));
   }
 };
-// export const verifyPayment = (cvv, id) => {
-//   return (dispatch) => {
-//
-//     return axios.post(`/locked/user/id`, cvv)
-//       .then(response => {
-//         console.log("response data", response.data);
-//         dispatch(checkout(response.data));
-//       })
-//       .catch(error => {
-//         console.log(error);
-//         dispatch(fail({"error": "credit card input does not match our records"}));
-//       });
-//   }
-// };
+
+//(2) DELETE UPCOMING WITH USER AUTH
+export const updateUpcoming = (url) => {
+  return (dispatch) => {
+    console.log(url);
+      return axios.delete(url)
+      .then(response => {
+        console.log("response", response);
+        //dispatch(completeCheckout(response));
+        dispatch(fetchBlogSuccess([response.data]))
+      })
+      .catch(error => {
+        dispatch(fail({"error": "Unable to cancel reservation"}));
+      });
+  };
+}
+
+//(1) REFUND CLIENT
+//need to add later
+///:userID/upcoming/:upcomingID
+export const refundClient = (clientInfo) => {
+  return (dispatch) => {
+    return dispatch(updateUpcoming(`/locked/user/${clientInfo.admin.user}/upcoming/${clientInfo.upcomingID}?token=${clientInfo.admin.id}`));
+  }
+}
 
 //===============MESSAGING===============================================
 export const sendMessageSuccess = () => {
@@ -226,7 +234,7 @@ export const deleteBlog = (data) => {
 export const fetchClient = (user) => {
   return (dispatch) => {
     //get("/locked/user/:userID/"
-    //console.log(`/locked/user/${user.user}?token=${user.id}`);
+    console.log(user);
       return axios.get(user)
       .then(response => {
         if(user.includes("upcoming")) dispatch(fetchBlogSuccess(response.data));

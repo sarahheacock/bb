@@ -78,6 +78,11 @@ class Available extends React.Component {
         login: true
       });
     }
+    else if(this.props.admin.admin){
+      this.props.makeModal({
+        client: true
+      });
+    }
   }
 
   render() {
@@ -87,7 +92,7 @@ class Available extends React.Component {
       </option>
     ));
 
-    const closeButton = (this.props.admin.username) ?
+    const closeButton = (this.props.admin.username !== undefined) ?
       <div></div> :
       <Button bsStyle="danger" onClick={(e) => this.props.makeModal({
         login: false
@@ -107,9 +112,9 @@ class Available extends React.Component {
             <img className="room-img round" src={room.image} alt={room.name} />
             <h3>{room.title}</h3>
             <p>{`$${room.cost}.00`}</p>
-            {(this.props.admin.username) ?
-                <NavLink className="select" bsStyle="primary" to="/book-now/billing">
-                  <Button name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} onClick={this.handleSelect}>
+            {(this.props.admin.username && this.props.admin.admin === false) ?
+                <NavLink className="select" to="/book-now/billing">
+                  <Button bsStyle="primary" name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} onClick={this.handleSelect}>
                     Select
                   </Button>
                 </NavLink> :
@@ -182,23 +187,42 @@ class Available extends React.Component {
 
         {available}
 
-        <Modal show={this.props.modalVisible.login} >
-          <Modal.Body>
-            <Login
-              errorMessage={this.props.errorMessage}
-              admin={this.props.admin}
-              verifyEmail={this.props.verifyEmail}
-              logout={this.props.logout}
-              createEmail={this.props.createEmail}
-              modalVisible={this.props.modalVisible}
-              makeModal={this.props.makeModal}
-              checkoutSelected={this.props.checkout.selected}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <div className="text-center">{closeButton}</div>
-          </Modal.Footer>
-        </Modal>
+        <div>
+          {
+            (this.props.admin.admin === true) ?
+            <Modal show={this.props.modalVisible.client} >
+              <Modal.Body>
+                Hello
+              </Modal.Body>
+              <Modal.Footer>
+                <div className="text-center">
+                  <Button onClick={() => this.props.makeModal({client: false})}>
+                    Close
+                  </Button>
+                </div>
+              </Modal.Footer>
+            </Modal>:
+
+            <Modal show={this.props.modalVisible.login} >
+              <Modal.Body>
+                <Login
+                  errorMessage={this.props.errorMessage}
+                  admin={this.props.admin}
+                  verifyEmail={this.props.verifyEmail}
+                  logout={this.props.logout}
+                  createEmail={this.props.createEmail}
+                  modalVisible={this.props.modalVisible}
+                  makeModal={this.props.makeModal}
+                  checkoutSelected={this.props.checkout.selected}
+                />
+              </Modal.Body>
+              <Modal.Footer>
+                <div className="text-center">{closeButton}</div>
+              </Modal.Footer>
+            </Modal>
+          }
+        </div>
+
       </div>
 
     );
