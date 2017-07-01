@@ -78,11 +78,11 @@ class Available extends React.Component {
         login: true
       });
     }
-    else if(this.props.admin.admin){
-      this.props.makeModal({
-        client: true
-      });
-    }
+    // else if(this.props.admin.admin){
+    //   this.props.makeModal({
+    //     client: true
+    //   });
+    // }
   }
 
   render() {
@@ -103,7 +103,7 @@ class Available extends React.Component {
     //if client is signed in, button will be navlink to billing
     //if client is not signed in, button will be login modal
     //make sure data is defined
-    let available = <div></div>;
+    let available = <div className="well text-center well-option">No available rooms for these dates.</div>;
     if(this.props.data[0]){
       //make sure correct data is fetched
       if(this.props.data[0]["cost"]){
@@ -112,7 +112,7 @@ class Available extends React.Component {
             <img className="room-img round" src={room.image} alt={room.name} />
             <h3>{room.title}</h3>
             <p>{`$${room.cost}.00`}</p>
-            {(this.props.admin.username && this.props.admin.admin === false) ?
+            {(this.props.admin.username) ?
                 <NavLink className="select" to="/book-now/billing">
                   <Button bsStyle="primary" name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} onClick={this.handleSelect}>
                     Select

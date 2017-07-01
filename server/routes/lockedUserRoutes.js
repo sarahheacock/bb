@@ -20,7 +20,6 @@ lockedUserRoutes.param("userID", function(req, res, next, id){
     }
 
     req.user = doc;
-
     var end = req.user.upcoming.length;
     //THIS IS TO REMOVE NON-EXISTANT UPCOMING
     if(end > 0){
@@ -35,44 +34,107 @@ lockedUserRoutes.param("userID", function(req, res, next, id){
 
             req.user.save(function(err, user){
               if(err) return next(err);
-              if(index + 1 === end) {
-                return next();
-              }
             });
           }
-          else if(index + 1 === end) {
-            return next();
+          if(index + 1 === end) {
+            Page.findById(req.user.pageID, function(err, page){
+
+              if(err) return next(err);
+              if(!page){
+                err = new Error("Page Not Found");
+                err.status = 404;
+                return next(err);
+              }
+              req.page = page;
+              next();
+            });
           }
         });
       });
     }
-    else {
-      return next();
-    }
-    //req.user = doc;
-
   });
-})
+});
 
 
 lockedUserRoutes.param("upcomingID", function(req,res,next,id){
-  Upcoming.findById(id, function(err, upcoming){
+  Upcoming.findById(id, function(err, u){
     if(err) return next(err);
-    if(!upcoming){
+    if(!u){
       err = new Error("Upcoming Not Found");
       err.status = 404;
       return next(err);
     }
-
-    req.upcoming = upcoming;
+    req.upcoming = u;
     return next();
   });
 });
 
+function getDetails(req, res){
+  if(req.upcoming.length > 0){
+    var detail = [];
+
+    req.user.upcoming.forEach(function(up){
+      Upcoming.findById(up, function(err, u){
+        if(err) return next(err);
+        if(!u){
+          err = new Error("Upcoming Not Found");
+          err.status = 404;
+          return next(err);
+        }
+
+        var roomTitle = req.page.rooms.id(u.event.roomID).title;
+        var roomImage = req.page.rooms.id(u.event.roomID).image;
+
+        detail.push({
+          _id: u._id,
+          start: u.start,
+          end: u.end,
+          title: u.title,
+          month: u.month,
+          event: {
+            guests: u.event.guests,
+            roomID: {
+              title: roomTitle,
+              image: roomImage
+            },
+            userID: u.event.userID,
+            pageID: u.event.pageID,
+            paid: u.event.paid,
+            checkedIn: u.event.checkedIn,
+            notes: u.event.notes,
+            createdAt: u.event.createdAt,
+          }
+        });
+
+        if(detail.length === req.user.upcoming.length){
+          res.json({
+            email: req.user.email,
+            billing: req.user.billing,
+            credit: req.user.credit,
+            upcoming: detail
+          });
+        }
+      });
+    });
+  }
+  else {
+    res.json({
+      email: req.user.email,
+      billing: req.user.billing,
+      credit: req.user.credit,
+      upcoming: []
+    })
+  }
+
+}
+
 //============================================================
 //get user info
-lockedUserRoutes.get('/:userID', mid.authorizeUser, function(req, res, next){
-  res.json(req.user);
+// lockedUserRoutes.get('/:userID', mid.authorizeUser, function(req, res, next){
+//   res.json(req.user);
+// });
+lockedUserRoutes.get('/:userID/', mid.authorizeUser, function(req, res, next){
+  getDetails(req, res);
 });
 
 //edit user info
@@ -90,64 +152,20 @@ lockedUserRoutes.put('/:userID', mid.authorizeUser, function(req, res, next){
   req.user.save(function(err, user){
     if(err) return next(err);
     res.status(200);
-    res.json(user);
+    getDetails(req, res);
   })
 });
-
-lockedUserRoutes.get('/:userID/detail', mid.authorizeUser, function(req, res, next){
-  Page.findById(req.user.pageID, function(err, page){
-    if(err) return next(err);
-    if(!page){
-      err = new Error("Page Not Found");
-      err.status = 404;
-      return next(err);
-    }
-
-    if(req.user.upcoming.length > 0){
-      var detail = [];
-
-      req.user.upcoming.forEach(function(up){
-        Upcoming.findById(up, function(err, u){
-          if(err) return next(err);
-          if(!u){
-            err = new Error("Upcoming Not Found");
-            err.status = 404;
-            return next(err);
-          }
-
-          detail.push({when: u, where: page.rooms.id(u.event.roomID)});
-
-          if(detail.length === req.user.upcoming.length){
-            //req.user.upcoming = detail;
-            res.json({user: req.user, upcomingDetail: detail});
-          }
-        });
-      });
-
-    }
-    else {
-      res.json({user: req.user, upcomingDetail: []});
-    }
-  });
-
-});
-// start: this.props.select.arrive,
-// end: this.props.select.depart,
-// event: {
-//   guests: this.props.select.guests,
-//   room: this.props.select.roomID,
-// }
 
 // MAKE NEW RESERVATION
 //(1) update user upcoming
 //(3) update available
-lockedUserRoutes.post("/:userID/upcoming", mid.authorizeUser, function(req, res, next){
+lockedUserRoutes.post("/:userID/", mid.authorizeUser, function(req, res, next){
   // create new upcoming and add id to user
     var upcoming = new Upcoming(req.body);
     upcoming.title = req.user.email;
     upcoming.event.pageID = req.user.pageID;
     upcoming.event.userID = req.user._id;
-    upcoming.month = new Date(req.body.start).getMonth();
+    upcoming.month = new Date(parseInt(req.body.start)).getMonth();
 
     upcoming.save(function(err, up){
       if(err) return next(err);
@@ -157,7 +175,7 @@ lockedUserRoutes.post("/:userID/upcoming", mid.authorizeUser, function(req, res,
       req.user.save(function(err, user){
         if(err) return next(err);
         res.status(201);
-        req.newUser = user;
+        //req.newUser = user;
         next();
       });
 
@@ -183,27 +201,39 @@ lockedUserRoutes.post("/:userID/upcoming", mid.authorizeUser, function(req, res,
           if(d.roomID.equals(req.body.event.roomID)){
             d.update('reserve', function(err, updated){
               if(err) return next(err);
-              if(dateArr.length === index + 1) res.json(req.newUser);
+              if(dateArr.length === index + 1) getDetails(req, res);
             });
           }
         });
 
       });
     });
-
   }
 );
 
 
 
-lockedUserRoutes.get("/:userID/upcoming/:upcomingID", mid.authorizeUser, function(req, res){
+lockedUserRoutes.get("/:userID/:upcomingID", mid.authorizeUser, function(req, res){
   res.json(req.upcoming);
 });
 
 //cancel reservation
 //(2) update available
 //(3) update user upcoming
-lockedUserRoutes.delete("/:userID/upcoming/:upcomingID", mid.authorizeUser,
+lockedUserRoutes.delete("/:userID/:upcomingID", mid.authorizeUser, function(req, res, next){
+
+  //update user upcoming===================
+  var oldIndex = req.user.upcoming.indexOf(req.upcoming._id);
+  if(oldIndex !== -1) req.user.upcoming.splice(oldIndex, 1);
+  req.user.save(function(err, user){
+    if(err) return next(err);
+    req.upcoming.remove(function(err){
+      if(err) return next(err);
+      next();
+    });
+  });
+  //========================================
+},
 function(req, res, next){ // update what is available
   var end = parseInt(req.upcoming.end) - (24*60*60*1000);
   var begin = parseInt(req.upcoming.start);
@@ -231,54 +261,7 @@ function(req, res, next){ // update what is available
             d.update('cancel', function(err, updated){
               if(err) return next(err);
               if(dateArr.length === index + 1) {
-
-                //update user upcoming===================
-                var oldIndex = req.user.upcoming.indexOf(req.upcoming._id);
-                if(oldIndex !== -1) req.user.upcoming.splice(oldIndex, 1);
-                req.user.save(function(err, user){
-                  if(err) return next(err);
-
-                  req.upcoming.remove(function(err){
-                    if(err) return next(err);
-                    //res.json(req.user);
-                    Page.findById(req.user.pageID, function(err, page){
-                      if(err) return next(err);
-                      if(!page){
-                        err = new Error("Page Not Found");
-                        err.status = 404;
-                        return next(err);
-                      }
-
-                      if(req.user.upcoming.length > 0){
-                        var detail = [];
-
-                        req.user.upcoming.forEach(function(up){
-                          Upcoming.findById(up, function(err, u){
-                            if(err) return next(err);
-                            if(!u){
-                              err = new Error("Upcoming Not Found");
-                              err.status = 404;
-                              return next(err);
-                            }
-
-                            detail.push({when: u, where: page.rooms.id(u.event.roomID)});
-
-                            if(detail.length === req.user.upcoming.length){
-                              //req.user.upcoming = detail;
-                              res.json({user: req.user, upcomingDetail: detail});
-                            }
-                          });
-                        });
-
-                      }
-                      else {
-                        res.json({user: req.user, upcomingDetail: []});
-                      }
-                    });
-                  });
-
-                });
-                //========================================
+                getDetails(req, res);
               }
             });
           }

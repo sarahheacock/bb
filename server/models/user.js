@@ -36,6 +36,7 @@ var UpcomingSchema = new Schema({
     pageID: Schema.Types.ObjectId,
     paid: {type:String, default:''},
     checkedIn: Date,
+    notes: '',
     createdAt: {type:Date, default:Date.now},
   },
 });

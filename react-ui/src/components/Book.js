@@ -110,7 +110,7 @@ class Book extends React.Component {
                   errorMessage={this.props.errorMessage}
                   chargeClient={this.props.chargeClient}
                 /> :
-                <Redirect to="/book-now/availability" />
+                <Redirect to="/welcome" />
                 }
               />
               </Col>  :
@@ -165,7 +165,7 @@ class Book extends React.Component {
                   /> :
                     <Redirect to="/book-now/billing" /> }
                 />
-                <Route path="/book-now/confirmation/" render={ () =>
+                <Route path="/book-now/confirmation/" render={ () => (this.props.checkout.payment) ?
                   <Confirmation
                     select={this.props.select}
                     fetchClient={this.props.fetchClient}
@@ -175,7 +175,9 @@ class Book extends React.Component {
                     modalVisible={this.props.modalVisible}
                     errorMessage={this.props.errorMessage}
                     chargeClient={this.props.chargeClient}
-                  />}
+                  /> :
+                  <Redirect to="/welcome" />
+                  }
                 />
               </Col>
             }

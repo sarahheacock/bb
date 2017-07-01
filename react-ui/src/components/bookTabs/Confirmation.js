@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect, NavLink } from 'react-router-dom';
-import { PageHeader, Row, Col, Button, Modal, Alert } from 'react-bootstrap';
+import { PageHeader, Row, Col, Button, Modal, Alert, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
 import moment from 'moment';
 
 class Confirmation extends React.Component {
@@ -21,22 +21,49 @@ class Confirmation extends React.Component {
     chargeClient: PropTypes.func.isRequired
   }
 
+  constructor(props){
+    super(props);
+    this.state = {
+      title: '',
+      notes: ''
+    }
+  }
+
   componentDidMount(){
     if(this.props.admin.admin === false) this.props.fetchClient(`/locked/user/${this.props.admin.user}?token=${this.props.admin.id}`);
+    else this.props.makeModal({login: true});
   }
 
   confirm = () => {
-    this.props.makeModal({client: true});
+    //this.props.makeModal({client: true});
     //const month = new Date(this.props.select.arrive).getMonth();
-    this.props.chargeClient({admin: this.props.admin, select: {
-      start: this.props.select.arrive,
-      end: this.props.select.depart,
-      event: {
-        guests: this.props.select.guests,
-        roomID: this.props.select.roomID._id,
-        //month: parseInt(month)
-      }
-    }});
+    if(this.props.admin.admin){
+      this.props.chargeClient({admin: this.props.admin, select: {
+        start: this.props.select.arrive,
+        end: this.props.select.depart,
+        title: this.state.title,
+        event: {
+          guests: this.props.select.guests,
+          roomID: this.props.select.roomID._id,
+          notes: this.state.notes
+        }
+      }});
+    }
+    else {
+      this.props.chargeClient({admin: this.props.admin, select: {
+        start: this.props.select.arrive,
+        end: this.props.select.depart,
+        event: {
+          guests: this.props.select.guests,
+          roomID: this.props.select.roomID._id,
+        }
+      }});
+    }
+  }
+
+  handleForm = (e) => {
+    this.state[e.target.name] = e.target.value;
+    this.setState(this.state);
   }
 
   pop = () => {
@@ -96,7 +123,7 @@ class Confirmation extends React.Component {
             </Col>
             <Col sm={8}>
               <div className="well text-center">
-                Hello
+                <p>{this.state.title}</p>
               </div>
             </Col>
           </Row>
@@ -106,13 +133,11 @@ class Confirmation extends React.Component {
     }
 
     const closeButton = (Object.keys(this.props.errorMessage).length === 0) ?
-      <NavLink to="/welcome" onClick={this.pop}>
-        <Button>
-          Continue
-        </Button>
-      </NavLink>:
       <Button onClick={this.pop}>
         Continue
+      </Button>:
+      <Button onClick={this.pop}>
+        Close
       </Button>;
 
     return (
@@ -146,6 +171,27 @@ class Confirmation extends React.Component {
             <div className="text-center">{closeButton}</div>
           </Modal.Footer>
         </Modal>
+
+        <Modal show={this.props.modalVisible.login} >
+          <Modal.Body>
+            <FormGroup>
+              <ControlLabel>Email *</ControlLabel>
+              <FormControl name="title" type="email" value={this.state.title} onChange={this.handleForm} required/>
+            </FormGroup>
+
+            <FormGroup>
+              <ControlLabel>Notes *</ControlLabel>
+              <FormControl name="notes" type="text" value={this.state.notes} onChange={this.handleForm} required/>
+            </FormGroup>
+            {alert}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={() => {if(this.state.title) this.props.makeModal({login: false, client: false});} }>
+              Submit
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
       </div>
     );
   }

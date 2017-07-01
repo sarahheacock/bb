@@ -23,7 +23,7 @@ class Welcome extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchClient(`/locked/user/${this.props.admin.user}/detail/?token=${this.props.admin.id}`);
+    this.props.fetchClient(`/locked/user/${this.props.admin.user}/?token=${this.props.admin.id}`);
   }
 
   // componentDidUpdate(prevProps, prevState){
@@ -57,22 +57,22 @@ class Welcome extends React.Component {
   render(){
     let upcoming = <div>Loading</div>;
     if(this.props.data[0]){
-      if(this.props.data[0]["user"]){
-        upcoming = (this.props.data[0]["user"]["upcoming"].length === 0) ?
+      if(this.props.data[0]["upcoming"]){
+        upcoming = (this.props.data[0]["upcoming"].length === 0) ?
           <div><p>You currently have no upcoming stays.</p><hr /></div> :
-          this.props.data[0]["upcomingDetail"].map((u) => (
+          this.props.data[0]["upcoming"].map((u) => (
             <div>
               <Row className="clearfix">
                 <Col className="text-center" sm={5}>
-                  <img src={u.where.image} />
+                  <img src={u.event.roomID.image} />
                 </Col>
                 <Col className="text-center" sm={7}>
-                  <h3>{u.where.title}</h3>
-                  <p><b>Arrive: </b>{moment(u.when.start).format('LLLL')}</p>
-                  <p><b>Depart: </b>{moment(u.when.end + (5*60*60*1000)).format('LLLL')}</p>
-                  <p><b>Reserved On: </b>{moment(u.when.event.createdAt).format('LLLL')}</p>
-                  <p><b>Guests: </b>{u.when.event.guests}</p>
-                  <Button onClick={this.handleSelect} name={u.when._id}>Cancel Reservation</Button>
+                  <h3>{u.event.roomID.title}</h3>
+                  <p><b>Arrive: </b>{moment(u.start).format('LLLL')}</p>
+                  <p><b>Depart: </b>{moment(u.end + (5*60*60*1000)).format('LLLL')}</p>
+                  <p><b>Reserved On: </b>{moment(u.event.createdAt).format('LLLL')}</p>
+                  <p><b>Guests: </b>{u.event.guests}</p>
+                  <Button onClick={this.handleSelect} name={u._id}>Cancel Reservation</Button>
                 </Col>
               </Row>
               <hr />

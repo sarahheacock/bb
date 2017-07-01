@@ -67,6 +67,20 @@ export const completeCheckout = (response) => {
 export const updateClient = (clientInfo) => {
   return (dispatch) => {
     console.log(clientInfo);
+    if(clientInfo.admin.admin){
+      return axios.post(`/api/admin/${clientInfo.admin.user}`, {
+        ...clientInfo.select,
+        token: clientInfo.admin.id
+      })
+      .then(response => {
+        console.log("response", response);
+        dispatch(completeCheckout(response.data));
+      })
+      .catch(error => {
+        dispatch(fail({"error": "Unable to confirm reservation"}));
+      });
+    }
+    else {
       return axios.post(`/locked/user/${clientInfo.admin.user}/upcoming`, {
         ...clientInfo.select,
         token: clientInfo.admin.id
@@ -78,6 +92,7 @@ export const updateClient = (clientInfo) => {
       .catch(error => {
         dispatch(fail({"error": "Unable to confirm reservation"}));
       });
+    }
   };
 }
 
@@ -110,7 +125,7 @@ export const updateUpcoming = (url) => {
 ///:userID/upcoming/:upcomingID
 export const refundClient = (clientInfo) => {
   return (dispatch) => {
-    return dispatch(updateUpcoming(`/locked/user/${clientInfo.admin.user}/upcoming/${clientInfo.upcomingID}?token=${clientInfo.admin.id}`));
+    return dispatch(updateUpcoming(`/locked/user/${clientInfo.admin.user}/${clientInfo.upcomingID}?token=${clientInfo.admin.id}`));
   }
 }
 

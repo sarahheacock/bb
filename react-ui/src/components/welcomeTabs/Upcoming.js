@@ -27,7 +27,7 @@ class Upcoming extends React.Component {
   }
 
   componentDidMount(){
-    ///:pageID/:section/upcoming/:upcomingSection/
+    //"/:pageID/rooms/upcoming/:request"
     this.props.fetchClient(`/api/admin/${this.props.admin.user}/rooms/upcoming/${this.state.month}?token=${this.props.admin.id}`);
   }
 
@@ -64,6 +64,8 @@ class Upcoming extends React.Component {
           errorMessage={this.props.errorMessage}
           modalVisible={this.props.modalVisible}
           makeModal={this.props.makeModal}
+          data={this.props.data}
+
         />
       </div>
     );
