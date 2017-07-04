@@ -45,6 +45,7 @@ class Confirmation extends React.Component {
         event: {
           guests: this.props.select.guests,
           roomID: this.props.select.roomID._id,
+          cost: this.props.select.cost,
           notes: this.state.notes
         }
       }});
@@ -56,6 +57,7 @@ class Confirmation extends React.Component {
         event: {
           guests: this.props.select.guests,
           roomID: this.props.select.roomID._id,
+          cost: this.props.select.cost
         }
       }});
     }
@@ -107,8 +109,7 @@ class Confirmation extends React.Component {
               <div className="well text-center">
                 <h3>{this.props.data[0]["credit"]["name"]}</h3>
                 <p>{this.props.data[0]["credit"]["number"]}</p>
-                <p>{`${this.props.admin.credit.month} ${this.props.admin.credit.year}`}</p>
-                <p>{this.props.admin.credit.cvv}</p>
+                {(this.props.admin.credit.month)?<div><p>{`${this.props.admin.credit.month} ${this.props.admin.credit.year}`}</p><p>{this.props.admin.credit.cvv}</p></div>:<p>Loading</p>}
               </div>
             </Col>
           </Row>

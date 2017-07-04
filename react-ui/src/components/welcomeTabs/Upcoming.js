@@ -28,21 +28,22 @@ class Upcoming extends React.Component {
 
   componentDidMount(){
     //"/:pageID/rooms/upcoming/:request"
-    this.props.fetchClient(`/api/admin/${this.props.admin.user}/rooms/upcoming/${this.state.month}?token=${this.props.admin.id}`);
+    this.props.fetchClient(`/api/admin/${this.props.admin.user}/${this.state.month}?token=${this.props.admin.id}`);
   }
 
   navigate = (date) => {
     this.state.month = date.getMonth();
-    this.setState(this.state, () => this.props.fetchClient(`/api/admin/${this.props.admin.user}/rooms/upcoming/${this.state.month}?token=${this.props.admin.id}`));
+    this.setState(this.state, () => this.props.fetchClient(`/api/admin/${this.props.admin.user}/${this.state.month}?token=${this.props.admin.id}`));
   }
 
   handleSelect = (event) => {
     this.state.target = event;
+    //console.log(event);
     this.setState(this.state, () => this.props.makeModal({client: true}));
   }
 
   render(){
-    //console.log(this.state);
+    console.log(this.state);
     let myEvents = [];
     if(this.props.data[0]){
       if(this.props.data[0]["start"]){
@@ -64,8 +65,8 @@ class Upcoming extends React.Component {
           errorMessage={this.props.errorMessage}
           modalVisible={this.props.modalVisible}
           makeModal={this.props.makeModal}
-          data={this.props.data}
-
+          admin={this.props.admin}
+          refundClient={this.props.refundClient}
         />
       </div>
     );

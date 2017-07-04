@@ -103,7 +103,10 @@ class Payment extends React.Component {
         token: this.props.admin.id
       },
       {
-        ...this.state
+        credit: {
+          name: this.state.name,
+          number: this.state.number
+        }
       });
 
     if(this.state.name !== undefined && this.state.number !== undefined && today < exp && this.state.cvv !== undefined && Object.keys(this.props.errorMessage).length === 0){

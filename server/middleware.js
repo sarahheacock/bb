@@ -16,6 +16,17 @@ function authorizeUser(req, res, next){
   return next();
 }
 
+// function authorizeBoth(req, res, next){
+//   //console.log(req.user.userID);
+//   console.log(req.decoded.userID);
+//   if(req.decoded.userID !== req.user.userID && req.decoded.userID !== req.page.adminID){
+//     var err = new Error("You are not authorized");
+//     return next(err);
+//   }
+//   return next();
+// }
+
 
 module.exports.authorizeAdmin = authorizeAdmin;
 module.exports.authorizeUser = authorizeUser;
+//module.exports.authorizeBoth = authorizeBoth;

@@ -83,24 +83,6 @@ var PageSchema = new Schema({
   about: {type:[AboutSchema], default:[AboutSchema, AboutSchema]},
   rooms: {type:[RoomSchema], default:[RoomSchema]},
   localGuide: {type:[LocalGuideSchema], default:[LocalGuideSchema]},
-  //array of user ids that have stays for the month
-  // upcomings: {
-  //   type: Object,
-  //   default: {
-      "0":[Schema.Types.ObjectId],
-      "1":[Schema.Types.ObjectId],
-      "2":[Schema.Types.ObjectId],
-      "3":[Schema.Types.ObjectId],
-      "4":[Schema.Types.ObjectId],
-      "5":[Schema.Types.ObjectId],
-      "6":[Schema.Types.ObjectId],
-      "7":[Schema.Types.ObjectId],
-      "8":[Schema.Types.ObjectId],
-      "9":[Schema.Types.ObjectId],
-      "10":[Schema.Types.ObjectId],
-      "11":[Schema.Types.ObjectId]
-  //   }
-  // }
 });
 
 // authenticate input against database documents

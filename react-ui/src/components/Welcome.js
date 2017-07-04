@@ -23,7 +23,7 @@ class Welcome extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchClient(`/locked/user/${this.props.admin.user}/?token=${this.props.admin.id}`);
+    this.props.fetchClient(`/locked/user/${this.props.admin.user}/all?token=${this.props.admin.id}`);
   }
 
   // componentDidUpdate(prevProps, prevState){

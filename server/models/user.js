@@ -7,12 +7,6 @@ var Schema = mongoose.Schema;
 const temp = new Date().toString().split(' ');
 const NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 10:00:00").getTime();
 
-var sortUpcoming = function(a, b){
-  //negative if a before b
-  //0 if unchanged order
-  //position if a after b
-  return b.arrive - a.arrive;
-};
 
 var makeid = function(){
     var text = "";
@@ -24,32 +18,6 @@ var makeid = function(){
     return text;
 }
 
-var UpcomingSchema = new Schema({
-  start: Number,
-  end: Number,
-  title: String,
-  month: Number,
-  event: {
-    guests: Number,
-    roomID: Schema.Types.ObjectId,
-    userID: Schema.Types.ObjectId,
-    pageID: Schema.Types.ObjectId,
-    paid: {type:String, default:''},
-    checkedIn: Date,
-    notes: '',
-    createdAt: {type:Date, default:Date.now},
-  },
-});
-
-UpcomingSchema.method("update", function(updates, callback){
-  Object.assign(this, updates, {updatedAt: new Date()});
-  this.parent().save(callback);
-});
-
-// var CreditSchema = new Schema({
-//   name: {type: String, default: ''},
-//   number: {type: String, default: ''},
-// })
 
 var UserSchema = new Schema({
   email: {
@@ -77,7 +45,7 @@ var UserSchema = new Schema({
     default: makeid
   },
   pageID: Schema.Types.ObjectId,
-  upcoming: [Schema.Types.ObjectId],
+  //upcoming: [Schema.Types.ObjectId],
 });
 
 UserSchema.statics.authenticate = function(email, password, callback) {
@@ -113,17 +81,15 @@ UserSchema.pre("save", function(next){
       next();
     })
   }
-
-  else{
-    //if(user.upcoming !== undefined) user.upcoming.sort(sortUpcoming);
+  else {
     next();
   }
 });
 
-var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
+//var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
 var User = mongoose.model("User", UserSchema);
 
 module.exports = {
   User: User,
-  Upcoming: Upcoming
+  //Upcoming: Upcoming
 };

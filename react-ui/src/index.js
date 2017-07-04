@@ -51,7 +51,6 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
       data: {},
       section: ""
     },
-    newPage: true,
     checkout: {
       selected: false,
       billing: false,
@@ -77,9 +76,18 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
     }
   };
 
+  const storage = JSON.parse(localStorage.info);
+  const newSelect = (storage.select.arrive < NOW) ?
+    initialState.select :
+    storage.select;
   const initial = (localStorage.info !== undefined) ?
-        {...JSON.parse(localStorage.info), newPage: true} :
-        initialState;
+        {
+          ...storage,
+          select: newSelect
+        }:
+        {
+          ...initialState
+        };
 
   const store = createStore(
     AdminReducer, initial, applyMiddleware(thunk)

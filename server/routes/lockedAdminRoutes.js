@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 
 var express = require("express");
 var ObjectId = require('mongodb').ObjectID;
@@ -28,28 +28,6 @@ lockedAdminRoutes.param("pageID", function(req, res, next, id){
 });
 
 
-lockedAdminRoutes.param("section", function(req,res,next,id){
-  req.section = req.page[id];
-  if(!req.section){
-    var err = new Error("Not Found");
-    err.status = 404;
-    return next(err);
-  }
-  next();
-});
-
-
-
-lockedAdminRoutes.param("sectionID", function(req, res, next, id){
-  req.oneSection = req.section.id(id);
-  if(!req.oneSection){
-    var err = new Error("Not Found");
-    err.status = 404;
-    return next(err);
-  }
-  next();
-});
-
 lockedAdminRoutes.param("request", function(req,res,next,id){
   //REQUEST OPTIONS===========================================
   if(id === "all"){
@@ -66,7 +44,7 @@ lockedAdminRoutes.param("request", function(req,res,next,id){
     });
 
     var parameters = {
-      "event.pageID": req.params.pageID, //HAVE NOT TESTED PAGEID!
+      "event.pageID": req.params.pageID,
       $or: orArr
     };
   }
@@ -82,10 +60,19 @@ lockedAdminRoutes.param("request", function(req,res,next,id){
       err.status = 404;
       return next(err);
     }
-    var result = upcoming.map(function(u){
+    req.upcoming = upcoming;
+    next();
+  });
+});
+
+//this is to format upcoming output
+function formatOutput(req, res){
+  if(req.upcoming.length > 0){
+    var result = req.upcoming.map(function(u){
       var roomTitle = req.page.rooms.id(u.event.roomID).title;
       var roomImage = req.page.rooms.id(u.event.roomID).image;
       return {
+        _id: u._id,
         start: u.start,
         end: u.end,
         title: u.title,
@@ -105,67 +92,127 @@ lockedAdminRoutes.param("request", function(req,res,next,id){
         }
       };
     });
-    req.upcoming = result;
-    next();
-  });
+    //res.json(result);
+    return result;
+  }
+  //res.json([]);
+  return [];
+}
 
+lockedAdminRoutes.param("section", function(req,res,next,id){
+  req.section = req.page[id];
+  if(!req.section){
+    var err = new Error("Not Found");
+    err.status = 404;
+    return next(err);
+  }
+  next();
 });
 
+
+lockedAdminRoutes.param("sectionID", function(req, res, next, id){
+  req.oneSection = req.section.id(id);
+  if(!req.oneSection){
+    var err = new Error("Not Found");
+    err.status = 404;
+    return next(err);
+  }
+  next();
+});
+
+//====================EDIT UPCOMING===========================================================
 //create upcoming
 lockedAdminRoutes.post("/:pageID/", mid.authorizeAdmin, function(req, res, next){
-    var upcoming = new Upcoming(req.body);
-    upcoming.event.pageID = req.params.pageID;
-    upcoming.month = new Date(parseInt(req.body.start)).getMonth();
+  var upcoming = new Upcoming(req.body);
+  upcoming.event.pageID = req.page._id;
+  upcoming.month = new Date(parseInt(req.body.start)).getMonth();
 
-    upcoming.save(function(err, up){
+  upcoming.save(function(err, up){
+    if(err) return next(err);
+    //req.upcoming.push(up);
+    req.start = req.body.start;
+    req.end = req.body.end;
+    req.roomID = req.body.event.roomID;
+    req.dir = true;
+    next();
+  });
+},
+function(req, res, next){ // update what is available
+  Available.updateDates(req, function(err){
+    if(err) return next(err);
+    res.json({"message": "success"})
+    //res.json(formatOutput(req, res));
+  });
+});
+
+//request === all or monthNum or ID
+lockedAdminRoutes.get("/:pageID/:request", mid.authorizeAdmin, function(req, res){
+  //res.json(req.upcoming);
+  res.json(formatOutput(req, res));
+});
+
+//check-in client
+lockedAdminRoutes.put("/:pageID/:request", mid.authorizeAdmin, function(req, res){
+
+  if(!(parseInt(req.params.request) >= 0 && parseInt(req.params.request) <= 11) && req.params.request !== "all"){
+    req.upcoming[0].event.checkedIn = new Date();
+    req.upcoming[0].save(function(err, result){
       if(err) return next(err);
-      req.newUpcoming = up;
-      next();
+      req.upcoming = [result];
+      res.json(formatOutput(req, res));
     });
-  },
-  function(req, res, next){ // update what is available
-    var end = parseInt(req.body.end) - (24*60*60*1000);
-    var begin = parseInt(req.body.start);
-    var dateArr = [];
-    var results = [];
+  }
+  else {
+    var err = new Error("Invalid request");
+    return next(err);
+  }
+});
 
-    while(end >= begin){
-      dateArr.push(new Date(end));
-      end = end - (24*60*60*1000);
-    }
+//delete one upcoming
+lockedAdminRoutes.delete("/:pageID/:request", mid.authorizeAdmin, function(req, res, next){ // update what is available
+  if(!(parseInt(req.params.request) >= 0 && parseInt(req.params.request) <= 11) && req.params.request !== "all"){
 
-    if(end < begin){
-      //console.log(date)
-      dateArr.forEach(function(thisDate, index){
-        Available.findOne({ pageID: req.params.pageID, date: thisDate }, function(err, date){
+    console.log("upcoming", req.upcoming[0]);
+    req.end = parseInt(req.upcoming[0].end);
+    req.start = parseInt(req.upcoming[0].start);
+    req.roomID = req.upcoming[0].event.roomID;
+    req.dir = false;
 
-          if(err || !date) return next(err);
-          date.free.forEach(function(d, index){
-            if(d.roomID.equals(req.body.event.roomID)){
-              d.update('reserve', function(err, updated){
-                if(err) return next(err);
-                if(dateArr.length === index + 1) res.json(req.newUpcoming);
-              });
-            }
-            else if(dateArr.length === index + 1) {
-              res.json(req.newUpcoming);
-            }
-          });
+    var ID = req.upcoming[0].month;
+    var orArr = [ID - 1, ID, ID + 1].map(function(i){
+      if(i < 0) return {month: 11};
+      else if (i > 11) return {month: 0};
+      else return {month: i};
+    });
+    var parameters = {
+      "event.pageID": req.params.pageID,
+      $or: orArr
+    };
 
+    Available.updateDates(req, function(err, updated){
+
+      if(err) return next(err);
+      req.upcoming[0].remove(function(err){
+        if(err) return next(err);
+        Upcoming.find(parameters, function(err, up){
+          if(err || !up) res.json([]);
+          req.upcoming = up;
+          res.json(formatOutput(req, res));
         });
       });
-    }
 
-  });
-//});
+    });
+  }
+});
 
-//======================EDIT SECTIONS==============================
-lockedAdminRoutes.get("/:pageID/:section", mid.authorizeAdmin, function(req, res){
+
+//======================EDIT PAGE==============================
+lockedAdminRoutes.get("/:pageID/page/:section", mid.authorizeAdmin, function(req, res){
   res.json(req.section);
 });
 
 //add section
-lockedAdminRoutes.post("/:pageID/:section", mid.authorizeAdmin, function(req, res, next){
+lockedAdminRoutes.post("/:pageID/page/:section", mid.authorizeAdmin, function(req, res, next){
 
   req.section.push(req.body);
   req.page.save(function(err, page){
@@ -183,7 +230,8 @@ lockedAdminRoutes.post("/:pageID/:section", mid.authorizeAdmin, function(req, re
           a.free.push({roomID:page._id});
           a.save(function(err, newA){
             if(err) next(err);
-            else if (index === available.length - 1) res.json({page:page, available:available});
+            else if (index === available.length - 1) res.json(page[req.params.section]);
+            //res.json({page:page, available:available});
           });
         });
       });
@@ -196,12 +244,12 @@ lockedAdminRoutes.post("/:pageID/:section", mid.authorizeAdmin, function(req, re
 
 
 
-lockedAdminRoutes.get("/:pageID/:section/:sectionID", mid.authorizeAdmin, function(req, res){
+lockedAdminRoutes.get("/:pageID/page/:section/:sectionID", mid.authorizeAdmin, function(req, res){
   res.json(req.oneSection);
 });
 
 //edit section
-lockedAdminRoutes.put("/:pageID/:section/:sectionID", mid.authorizeAdmin, function(req, res){
+lockedAdminRoutes.put("/:pageID/page/:section/:sectionID", mid.authorizeAdmin, function(req, res){
   Object.assign(req.oneSection, req.body);
   req.page.save(function(err, result){
     if(err){
@@ -213,7 +261,7 @@ lockedAdminRoutes.put("/:pageID/:section/:sectionID", mid.authorizeAdmin, functi
 
 
 //delete section
-lockedAdminRoutes.delete("/:pageID/:section/:sectionID", mid.authorizeAdmin, function(req, res){
+lockedAdminRoutes.delete("/:pageID/page/:section/:sectionID", mid.authorizeAdmin, function(req, res){
   req.oneSection.remove(function(err){
     req.page.save(function(err, page){
       if(err) return next(err);
@@ -243,93 +291,7 @@ lockedAdminRoutes.delete("/:pageID/:section/:sectionID", mid.authorizeAdmin, fun
   })
 });
 
-//================EDIT UPCOMING=====================================================
-//request === all or monthNum or ID
-lockedAdminRoutes.get("/:pageID/rooms/upcoming/:request", mid.authorizeAdmin, function(req, res){
-  //console.log();
-  // if(!(parseInt(req.params.request) >= 0 && parseInt(req.params.request) <= 11) && req.params.request !== "all"){
-  //   var room = req.page.rooms.id(req.upcoming[0].event.roomID);
-  //   var minRoom = {
-  //     title: room.title,
-  //     image: room.image
-  //   }
-  //   if(room){
-  //     if(room.title){
-  //       res.json([{upcoming: req.upcoming[0], room: minRoom}]);
-  //     }
-  //   }
-  //   res.json(req.upcoming);
-  // }
-  res.json(req.upcoming);
 
-
-});
-
-//edit one upcoming
-lockedAdminRoutes.put("/:pageID/rooms/upcoming/:request", mid.authorizeAdmin, function(req, res){
-  if(!(parseInt(req.params.request) >= 0 && parseInt(req.params.request) <= 11) && req.params.request !== "all"){
-    Object.assign(req.upcoming[0], req.body);
-    req.upcoming[0].save(function(err, result){
-      if(err) return next(err);
-      res.json(result);
-    });
-  }
-  else {
-    next(err);
-  }
-});
-
-//delete one upcoming
-lockedAdminRoutes.delete("/:pageID/rooms/upcoming/:request", mid.authorizeAdmin, function(req, res, next){ // update what is available
-  var end = parseInt(req.upcoming[0].end) - (24*60*60*1000);
-  var begin = parseInt(req.upcoming[0].start);
-  var dateArr = [];
-  var results = [];
-
-  while(end >= begin){
-    dateArr.push(new Date(end));
-    end = end - (24*60*60*1000);
-  }
-
-  if(end < begin){
-    dateArr.forEach(function(thisDate, index){
-      //console.log(dateArr);
-      Available.findOne({ pageID: req.params.pageID, date: thisDate }, function(err, date){
-
-        if(err) return next(err);
-        if(!date){
-          err = new error("Unavailable date");
-          return next(err);
-        }
-
-        date.free.forEach(function(d){
-          if(d.roomID.equals(req.upcoming[0].event.roomID)){
-            d.update('cancel', function(err, updated){
-              if(err) return next(err);
-              else if(dateArr.length === index + 1) next();
-            });
-          }
-          else if(dateArr.length === index + 1) {
-            next();
-          }
-        });
-      });
-    });
-  }
-},
-function(req, res, next){
-  if(!(parseInt(req.params.request) >= 0 && parseInt(req.params.request) <= 11) && req.params.request !== "all"){
-    req.upcoming[0].remove(function(err){
-      if(err) return next(err);
-      Upcoming.find({"event.pageID": req.params.pageID}, function(err, up){
-        if(err || !up) res.json([]);
-        res.json(up);
-        //req.newUpcoming = up;
-        //next();
-      })
-    })
-  }
-});
 
 
 module.exports = lockedAdminRoutes;

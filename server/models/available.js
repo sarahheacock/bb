@@ -2,26 +2,11 @@
 
 var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
-
-
-var sortFree = function(a, b){
-  return b.roomID - a.roomID;
-};
-
 var d = new Date();
+
 var FreeSchema = new Schema({
   roomID: Schema.Types.ObjectId,
   reserved: {type: Number, default: 0}
-});
-
-FreeSchema.method("update", function(vote, callback){
-  if(vote === "reserve"){
-    this.reserved += 1;
-  }
-  else {
-    this.reserved -= 1;
-  }
-  this.parent().save(callback);
 });
 
 var AvailableSchema = new Schema({
@@ -30,11 +15,50 @@ var AvailableSchema = new Schema({
   free: {type: [FreeSchema], default: [FreeSchema]}
 });
 
-AvailableSchema.pre('save', function(next) {
-  var available = this;
-  if(available.free !== undefined) available.free.sort(sortFree);
-  next();
-});
+AvailableSchema.statics.updateDates = function(req, callback) {
+  var end = parseInt(req.end) - (24*60*60*1000);
+  var begin = parseInt(req.start);
+
+  var dateArr = [];
+  var results = [];
+
+  while(end >= begin){
+    dateArr.push(new Date(end));
+    end = end - (24*60*60*1000);
+  }
+
+  if(end < begin){
+
+    dateArr.forEach(function(thisDate, dindex){
+      if (req.user) var id = req.user.pageID
+      else var id = req.page._id;
+
+      Available.findOne({ pageID: id, date: thisDate }, function(err, date){
+
+        if(err || !date) return next(err);
+        date.free.forEach(function(d, index){
+          if(d.roomID.equals(req.roomID)){
+            if(req.dir){
+              d.reserved += 1;
+            }
+            else {
+              d.reserved -= 1;
+            }
+
+            if(date.free.length === index + 1 && dateArr.length === dindex + 1){
+              date.save(callback);
+            }
+          }
+          else if(date.free.length === index + 1 && dateArr.length === dindex + 1){
+            date.save(callback);
+          }
+        });
+
+      });
+    });
+  }
+}
+
 
 
 var Available = mongoose.model("Available", AvailableSchema);
