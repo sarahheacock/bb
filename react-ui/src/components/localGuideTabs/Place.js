@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import { Col, Row, Button } from 'react-bootstrap';
 import moment from 'moment';
 
+import { blogID, initialPage } from '../data/options';
+
+
 class Place extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    admin: PropTypes.object.isRequired,
-    selectEdit: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
-    selectAdd: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    updateState: PropTypes.func.isRequired,
+    deleteData: PropTypes.func.isRequired
   }
 
   render(){
@@ -41,13 +43,13 @@ class Place extends React.Component {
 
               </Row>
               <div className="text-center">
-                {(this.props.admin.admin) ?
+                {(this.props.user.admin) ?
                   <div>
                   <Button className="edit" bsStyle="info" onClick={() => this.props.selectEdit({data:event, section:"localGuide", id:this.props.admin.id})}>
                     Edit
                   </Button>
                   <Button className="edit" bsStyle="danger" onClick={() => {
-                    if(this.props.data.length > 1) this.props.deleteBlog({sectionID:event._id, section:"localGuide"});
+                    if(this.props.data.length > 1) this.props.deleteData(`/api/admin/${blogID}/page/${this.props.page.page}/${this.props.page.edit._id}?token=${this.props.user.token}`);
                     else alert("You cannot delete all entries. Deleting all entries will cause errors.");
                   }}>
                     Delete
@@ -60,7 +62,7 @@ class Place extends React.Component {
           </div>
         ));
 
-        addButton = (this.props.admin.admin) ?
+        addButton = (this.props.user.admin) ?
           <Button className="add" bsStyle="primary" onClick={() => this.props.selectAdd({section:"localGuide", data:this.props.data[0]})}>
             Add
           </Button>:

@@ -2,13 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
 
+import { initialPage } from '../data/options';
+
+
 class MessageModal extends React.Component {
   static propTypes = {
-    visible: PropTypes.bool.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    sendMessage: PropTypes.func.isRequired,
-    messageSent: PropTypes.bool.isRequired,
-    errorMessage: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    page: PropTypes.object.isRequired,
+    postData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -28,7 +30,10 @@ class MessageModal extends React.Component {
 
   send = (e) => {
     if(e) e.preventDefault();
-    this.props.sendMessage({name: this.state.name, email: this.state.email, phone: this.state.phone, message: this.state.message });
+    this.props.postData (
+      `user/sayHello`,
+      {message: `<h3>Hello, from ${this.state.name}</h3><p><b>Message: </b>${this.state.message}</p><br /><p><b>Contact: </b>${this.state.email} ${this.state.phone}</p>`}
+    );
     this.state.name = '';
     this.state.email = '';
     this.state.phone = '';
@@ -42,18 +47,18 @@ class MessageModal extends React.Component {
     this.state.phone = '';
     this.state.message = '';
     this.setState(this.state);
-    this.props.makeModal({"message": false});
+    this.props.updateState({ page: {...initialPage, page: this.props.page.page} });
     //this.props.resetMessage;
   }
 
   render(){
-    const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
+    const alert = (this.props.page.message.error) ?
       <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      (this.props.messageSent) ?
+      (this.props.page.message.success) ?
         <Alert className="content text-center alertMessage" bsStyle="success">"Message Sent!"</Alert>:
         <div></div>;
 
-    const button = (this.props.messageSent) ?
+    const button = (this.props.page.message.success) ?
       <Button bsStyle="danger" onClick={this.pop}>
         Close
       </Button> :

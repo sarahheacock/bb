@@ -6,14 +6,17 @@ import { Route, Redirect } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import Place from './localGuideTabs/Place';
 
+import { blogID, initialPage } from './data/options';
+
+
 class LocalGuide extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    fetchBlog: PropTypes.func.isRequired,
-    admin: PropTypes.object.isRequired,
-    selectEdit: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
-    selectAdd: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    page: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+    deleteData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -24,7 +27,7 @@ class LocalGuide extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchBlog("localGuide");
+    this.props.getData(`/page/${blogID}/localGuide`, {page: {...initialPage, page: "localGuide"}});
   }
 
   componentDidUpdate(){
@@ -73,11 +76,9 @@ class LocalGuide extends React.Component {
         <Route path={c.link} key={c.title} render={ () =>
           <Place
             data={c.data}
-            admin={this.props.admin}
-            selectEdit={this.props.selectEdit}
-            deleteBlog={this.props.deleteBlog}
-            selectEdit={this.props.selectEdit}
-            selectAdd={this.props.selectAdd}
+            user={this.props.user}
+            deleteData={this.props.deleteData}
+            updateState={this.props.updateState}
           /> }
         />
       ));

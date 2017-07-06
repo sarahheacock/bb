@@ -10,3 +10,52 @@ const currentYear = d.getFullYear();
 export const Years = [...new Array(12)].map((year, i) => (
   currentYear + i
 ));
+
+export const blogID = "594952df122ff83a0f190050";
+
+const temp = new Date().toString().split(' ');
+export const NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 10:00:00").getTime();
+
+export const initialData = [];
+export const initialPage = {
+    page: '',
+    edit: {},
+    modalVisible: {
+      modalOne: false,
+      modalTwo: false,
+      modalThree: false,
+      modalFour: false,
+      modalFive: false,
+    },
+    message: {
+      error: '',
+      success: ''
+    }
+  };
+export const initialUser = {
+    admin: false,
+    id: "",
+    token: "",
+    username: ""
+  };
+export const initialCheckout = {
+    selected: {
+      roomID: {},
+      arrive: NOW,
+      depart: NOW + 24*60*60*1000,
+      guests: 2
+    },
+    billing: {
+      name: '',
+      email: '',
+      addresss: ''
+    },
+    payment: {
+      number: '',
+      name: '',
+      month: '',
+      year: '',
+      cvv: ''
+    },
+    confirmation: false
+  };

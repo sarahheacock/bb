@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
 import EditModal from '../modals/EditModal';
 
+import { blogID, initialPage } from '../data/options';
+
+
 const Nancy = (props) => {
   let editButton = <div></div>;
   let title = <h3>Loading</h3>;
@@ -11,8 +14,18 @@ const Nancy = (props) => {
   let image = <div>Loading</div>
   //make sure data is defined
   if(props.data){
-    editButton = (props.admin.admin) ?
-      <Button bsStyle="info" onClick={() => props.selectEdit({data:props.data, section:"about"})}>
+    editButton = (props.user.admin) ?
+      <Button bsStyle="info" onClick={() => props.updateState({
+        page: {
+          ...initialPage,
+          message: initialPage.message,
+          modalVisible: {
+            ...initialPage.modalVisible,
+            modalTwo: true,
+          },
+          edit: props.data
+        }
+      })}>
         Edit
       </Button> :
       <div></div>;
@@ -49,6 +62,6 @@ export default Nancy;
 
 Nancy.propTypes = {
   data: PropTypes.object.isRequired,
-  admin: PropTypes.object.isRequired,
-  selectEdit: PropTypes.func.isRequired
+  user: PropTypes.object.isRequired,
+  updateState: PropTypes.func.isRequired
 }

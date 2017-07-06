@@ -5,14 +5,16 @@ import { Nav, NavItem, Tab, Row, Col, PageHeader } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import Nancy from './aboutTabs/Nancy';
+import { blogID, initialPage } from './data/options';
 
 
 class About extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    fetchBlog: PropTypes.func.isRequired,
-    admin: PropTypes.object.isRequired,
-    selectEdit: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    page: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -23,7 +25,7 @@ class About extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchBlog("about");
+    this.props.getData(`/page/${blogID}/about`, {page: {...initialPage, page: "about"}});
   }
 
   componentDidUpdate(){
@@ -76,8 +78,8 @@ class About extends React.Component {
           <Route path={c.link} render={ () =>
             <Nancy
               data={c.data}
-              admin={this.props.admin}
-              selectEdit={this.props.selectEdit}
+              user={this.props.user}
+              updateState={this.props.updateState}
             /> }
           />
         ));

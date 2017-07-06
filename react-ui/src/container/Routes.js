@@ -23,10 +23,10 @@ const Routes = (props) => {
     <Switch>
       <Route path="/home" render={ () => (
         <Home
-          fetchBlog={props.fetchBlog}
           data={props.data}
-          admin={props.admin}
-          selectEdit={props.selectEdit}
+          user={props.user}
+          getData={props.getData}
+          updateState={props.updateState}
         />) }
       />
 
@@ -37,31 +37,32 @@ const Routes = (props) => {
 
       <Route path="/about" render={ () => (
         <About
-          fetchBlog={props.fetchBlog}
           data={props.data}
-          admin={props.admin}
-          selectEdit={props.selectEdit}
+          user={props.user}
+          getData={props.getData}
+          updateState={props.updateState}
         />) }
       />
 
       <Route path="/rooms" render={ () => (
         <Rooms
-          fetchBlog={props.fetchBlog}
           data={props.data}
-          admin={props.admin}
-          selectEdit={props.selectEdit}
-          deleteBlog={props.deleteBlog}
-          selectAdd={props.selectAdd}
+          user={props.user}
+          getData={props.getData}
+          deleteData={props.deleteData}
+          updateState={props.updateState}
+          //selectAdd={props.selectAdd}
         />) }
       />
       <Route path="/local-guide" render={ () => (
         <LocalGuide
-          fetchBlog={props.fetchBlog}
           data={props.data}
-          admin={props.admin}
-          selectEdit={props.selectEdit}
-          selectAdd={props.selectAdd}
-          deleteBlog={props.deleteBlog}
+          user={props.user}
+          page={props.page}
+          getData={props.getData}
+          deleteData={props.deleteData}
+          updateState={props.updateState}
+          //selectAdd={props.selectAdd}
         />) }
       />
 
@@ -138,24 +139,36 @@ const Routes = (props) => {
 export default Routes;
 
 Routes.propsTypes = {
-  fetchBlog: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired,
-  admin: PropTypes.object.isRequired,
-  select: PropTypes.object.isRequired,
-  selectEdit: PropTypes.func.isRequired,
-  selectAdd: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
-  errorMessage: PropTypes.object.isRequired,
-  verifyEmail: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
-  fetchSearch: PropTypes.func.isRequired,
-  updateCheckout: PropTypes.func.isRequired,
+  page: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   checkout: PropTypes.object.isRequired,
-  createEmail: PropTypes.func.isRequired,
-  makeModal: PropTypes.func.isRequired,
-  modalVisible: PropTypes.object.isRequired,
-  fetchClient: PropTypes.func.isRequired,
-  updateEmail: PropTypes.func.isRequired,
-  verifyPayment: PropTypes.func.isRequired,
+  refundClient: PropTypes.func.isRequired,
   chargeClient: PropTypes.func.isRequired,
+  updateState: PropTypes.func.isRequired,
+  getData: PropTypes.func.isRequired,
+  putData: PropTypes.func.isRequired,
+  postData: PropTypes.func.isRequired,
+  deleteData: PropTypes.func.isRequired,
+  fetchSearch: PropTypes.func.isRequired
+  // fetchBlog: PropTypes.func.isRequired,
+  // data: PropTypes.object.isRequired,
+  // admin: PropTypes.object.isRequired,
+  // select: PropTypes.object.isRequired,
+  // selectEdit: PropTypes.func.isRequired,
+  // selectAdd: PropTypes.func.isRequired,
+  // deleteBlog: PropTypes.func.isRequired,
+  // errorMessage: PropTypes.object.isRequired,
+  // verifyEmail: PropTypes.func.isRequired,
+  // logout: PropTypes.func.isRequired,
+  // fetchSearch: PropTypes.func.isRequired,
+  // updateCheckout: PropTypes.func.isRequired,
+  // checkout: PropTypes.object.isRequired,
+  // createEmail: PropTypes.func.isRequired,
+  // makeModal: PropTypes.func.isRequired,
+  // modalVisible: PropTypes.object.isRequired,
+  // fetchClient: PropTypes.func.isRequired,
+  // updateEmail: PropTypes.func.isRequired,
+  // verifyPayment: PropTypes.func.isRequired,
+  // chargeClient: PropTypes.func.isRequired,
 };

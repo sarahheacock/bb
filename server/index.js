@@ -79,8 +79,8 @@ adminAuthRoutes.post('/login', function(req, res, next) {
 
         res.json({
           admin: true,
-          id: token,
-          user: user._id,
+          token: token,
+          id: user._id,
           username: user.username
           //pageID: user._id
         });
@@ -138,8 +138,8 @@ userAuthRoutes.post('/userlogin', function(req, res, next) {
         var username = user.email.split("@");
         res.json({
           admin: false,
-          id: token,
-          user: user._id,
+          token: token,
+          id: user._id,
           username: username[0]
           //pageID: user._id
         });

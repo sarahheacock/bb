@@ -11,28 +11,22 @@ var FaEmail = require('react-icons/lib/fa/envelope');
 const Footer = (props) => (
   <footer className="text-center content">
     <AddModal
-      addVisible={props.addVisible}
-      makeModal={props.makeModal}
-      addBlog={props.addBlog}
-      errorMessage={props.errorMessage}
-      selectedAdd={props.selectedAdd}
-      admin={props.admin}
+      user={props.user}
+      page={props.page}
+      postData={props.postData}
+      updateState={props.updateState}
     />
     <EditModal
-      makeModal={props.makeModal}
-      editVisible={props.editVisible}
-      selectedEdit={props.selectedEdit}
-      editBlog={props.editBlog}
-      errorMessage={props.errorMessage}
-      admin={props.admin}
+      user={props.user}
+      page={props.page}
+      putData={props.putData}
+      updateState={props.updateState}
     />
     <MessageModal
-      visible={props.visible}
-      makeModal={props.makeModal}
-      sendMessage={props.sendMessage}
-      messageSent={props.messageSent}
-      errorMessage={props.errorMessage}
-
+      user={props.user}
+      page={props.page}
+      postData={props.postData}
+      updateState={props.updateState}
     />
     <Row className="clearfix">
       <Col sm={6}>
@@ -65,16 +59,21 @@ const Footer = (props) => (
 export default Footer;
 
 Footer.propTypes = {
-  visible: PropTypes.bool.isRequired,
-  makeModal: PropTypes.func.isRequired,
-  sendMessage: PropTypes.func.isRequired,
-  messageSent: PropTypes.bool.isRequired,
-  selectedAdd: PropTypes.string.isRequired,
-  errorMessage: PropTypes.object.isRequired,
-  selectedEdit: PropTypes.object.isRequired,
-  editVisible: PropTypes.bool.isRequired,
-  addVisible: PropTypes.bool.isRequired,
-  editBlog: PropTypes.func.isRequired,
-  addBlog: PropTypes.func.isRequired,
-  admin: PropTypes.object.isRequired
+  page: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  putData: PropTypes.func.isRequired,
+  postData: PropTypes.func.isRequired,
+  updateState: PropTypes.func.isRequired,
+  // visible: PropTypes.bool.isRequired,
+  // makeModal: PropTypes.func.isRequired,
+  // sendMessage: PropTypes.func.isRequired,
+  // messageSent: PropTypes.bool.isRequired,
+  // selectedAdd: PropTypes.string.isRequired,
+  // errorMessage: PropTypes.object.isRequired,
+  // selectedEdit: PropTypes.object.isRequired,
+  // editVisible: PropTypes.bool.isRequired,
+  // addVisible: PropTypes.bool.isRequired,
+  // editBlog: PropTypes.func.isRequired,
+  // addBlog: PropTypes.func.isRequired,
+  // admin: PropTypes.object.isRequired
 };

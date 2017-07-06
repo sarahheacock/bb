@@ -3,18 +3,20 @@ import PropTypes from 'prop-types';
 import { PageHeader, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 
+import { blogID, initialPage } from './data/options';
+
 class Rooms extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    fetchBlog: PropTypes.func.isRequired,
-    admin: PropTypes.object.isRequired,
-    selectEdit: PropTypes.func.isRequired,
-    deleteBlog: PropTypes.func.isRequired,
-    selectAdd: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    page: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+    deleteData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired
   }
 
   componentDidMount(){
-    this.props.fetchBlog("rooms");
+    this.props.getData(`/page/${blogID}/rooms`, {page: {...initialPage, page: "rooms"}});
   }
 
 
@@ -41,13 +43,23 @@ class Rooms extends React.Component {
                   </Row>
 
                   <div className="text-center">
-                    {(this.props.admin.admin) ?
+                    {(this.props.user.admin) ?
                       <div>
-                        <Button className="edit" bsStyle="info" onClick={() => this.props.selectEdit({data:article, section:"rooms"})}>
+                        <Button className="edit" bsStyle="info" onClick={() => this.props.updateState({
+                          page: {
+                            ...initialPage,
+                            message: initialPage.message,
+                            modalVisible: {
+                              ...initialPage.modalVisible,
+                              modalTwo: true,
+                            },
+                            edit: article
+                          }
+                        })}>
                           Edit
                         </Button>
                         <Button className="edit" bsStyle="danger" onClick={() => {
-                          if(this.props.data.length > 1) this.props.deleteBlog({sectionID:article._id, section:"rooms", id:this.props.admin.id});
+                          if(this.props.data.length > 1) this.props.deleteData(`/api/admin/${blogID}/page/${this.props.page.page}/${this.props.page.edit._id}?token=${this.props.user.token}`);
                           else alert("You cannot delete all entries. Deleting all entries will cause errors");
                         }}>
                           Delete
@@ -61,8 +73,17 @@ class Rooms extends React.Component {
               </a>
             ));
 
-        addButton = (this.props.admin.admin) ?
-          <Button className="add text-center" bsStyle="primary" onClick={() => this.props.selectAdd({section:"publications", data:this.props.data[0]})}>
+        addButton = (this.props.user.admin) ?
+          <Button className="add text-center" bsStyle="primary" onClick={() => this.props.updateState({
+            page: {
+              ...initialPage,
+              modalVisible: {
+                ...initialPage.modalVisible,
+                modalOne: true,
+              },
+              edit: this.props.data[0]
+            }
+          })}>
             Add
           </Button>:
           <div></div>;

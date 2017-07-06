@@ -2,16 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Carousel, Button } from 'react-bootstrap';
 
+import { blogID, initialPage } from './data/options';
+
 class Home extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    fetchBlog: PropTypes.func.isRequired,
-    admin: PropTypes.object.isRequired,
-    selectEdit: PropTypes.func.isRequired
+    user: PropTypes.object.isRequired,
+    page: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired
   }
 
   componentDidMount(){
-    this.props.fetchBlog("home");
+    //this.props.fetchBlog("home");
+    this.props.getData(`/page/${blogID}/home`, {page: {...initialPage, page: "home"}});
   }
 
   render(){
@@ -30,8 +34,17 @@ class Home extends React.Component {
           )) :
         <Carousel.Item>Loading</Carousel.Item>;
 
-      editButton = (this.props.admin.admin) ?
-        <Button bsStyle="info" onClick={() => this.props.selectEdit({data:this.props.data[0], section:"home"})}>
+      editButton = (this.props.user.admin) ?
+        <Button bsStyle="info" onClick={() => this.props.updateState({
+          page: {
+            ...initialPage,
+            modalVisible: {
+              ...initialPage.modalVisible,
+              modalTwo: true,
+            },
+            edit: this.props.data[0]
+          }
+        })}>
           Edit
         </Button> :
         <div></div>;

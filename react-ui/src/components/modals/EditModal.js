@@ -3,34 +3,36 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
 
+import { blogID } from '../data/options';
+import EditForm from '../forms/EditForm';
+
 class EditModal extends React.Component {
   static propTypes = {
-    editVisible: PropTypes.bool.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    selectedEdit: PropTypes.object.isRequired,
-    editBlog: PropTypes.func.isRequired,
-    errorMessage: PropTypes.object.isRequired,
-    admin: PropTypes.object.isRequired
+    //selectedEdit: PropTypes.object.isRequired,
+    page: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    putData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired,
   }
 
   constructor(props){
     super(props);
 
     this.state = {
-      input: props.selectedEdit.data,
-      section: props.selectedEdit.section,
-      sectionID: props.selectedEdit.data._id,
-      id: props.admin.id
+      input: props.page.edit,
+      section: props.page.page,
+      sectionID: props.page.edit._id,
+      token: props.user.token
     }
   }
 
   componentWillReceiveProps(nextProps){
-    if(nextProps.selectedEdit.data !== undefined) {
+    if(Object.keys(nextProps.page.edit).length > 0) {
       this.setState({
-        input: nextProps.selectedEdit.data,
-        section: nextProps.selectedEdit.section,
-        sectionID: nextProps.selectedEdit.data._id,
-        id: nextProps.admin.id
+        input: nextProps.page.edit,
+        section: nextProps.page.page,
+        sectionID: nextProps.page.edit._id,
+        token: nextProps.user.token
       });
     }
   }
@@ -49,76 +51,42 @@ class EditModal extends React.Component {
       else if(k === "carousel" && Array.isArray(this.state["input"][k]) === false) results[k] = this.state["input"][k].split(',');
       else if(k !== "_id") results[k] = this.state["input"][k]
     });
-    this.props.editBlog({...this.state, input:results});
+    this.props.putData(`/api/admin/${blogID}/page/${this.props.page.edit._id}/${this.props.page.page}`, results);
   }
 
   pop = (e) => {
-    this.props.makeModal({"edit": false});
+    this.props.updateState({
+      page: {
+        ...this.props.page,
+        modalVisible: {
+          modalOne: false,
+          modalTwo: false,
+          modalThree: false,
+          modalFour: false,
+          modalFive: false
+        }
+      }
+    });
   }
 
   render(){
-    const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
-      <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      <div></div>;
 
-    const formItems = (this.state.input === undefined) ?
-      <div></div>:
-      (Object.keys(this.state.input)).map((k, index) => {
-        //let value =
-        if(k !== "_id") {
-          return (
-            <FormGroup key={`formgroup${index}`}>
-              <ControlLabel>{k}</ControlLabel>
-              <FormControl componentClass="Textarea"
-                name={k}
-                type="text"
-                value={
-                  Array.isArray(this.state["input"][k]) ?
-                  this.state["input"][k].toString() :
-                  this.state["input"][k]
-                }
-                onChange={this.onFormChange}
-              />
-            </FormGroup>
-          );
-        }
-      });
-
-    const buttons = (this.props.admin.admin) ?
-      <div>
-        <Button className="edit" bsStyle="primary" type="submit">
-          Submit
-        </Button>
-        <Button className="edit" bsStyle="danger" onClick={this.pop}>
-          Cancel
-        </Button>
-      </div> :
-      <div>
-        <Button className="edit" bsStyle="info">
-          <NavLink className="select" to="/login" onClick={this.pop}>
-            Login Again
-          </NavLink>
-        </Button>
-        <Button className="edit" bsStyle="danger" onClick={this.pop}>
-          Cancel
-        </Button>
-      </div>
 
     return (
       <div>
-        <Modal show={this.props.editVisible}>
+        <Modal show={this.props.page.modalVisible.modalTwo}>
           <Modal.Header>
             <Modal.Title>Edit Content</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
-            <Form className="content" onSubmit={this.send}>
-              {formItems}
-              <div className="text-center">
-                {alert}
-                {buttons}
-              </div>
-            </Form>
+            <EditForm
+              formChange={this.onFormChange}
+              pop={this.pop}
+              submit={this.send}
+              edit={this.state.input}
+              message={this.props.page.message}
+            />
           </Modal.Body>
 
           <Modal.Footer>

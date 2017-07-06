@@ -15,60 +15,14 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import './stylesheets/index.css';
 
-//import registerServiceWorker from './registerServiceWorker';
-
-
+import {NOW, initialData, initialPage, initialUser, initialCheckout} from './components/data/options';
 //=============================================================\
-//const Render = () => {
-const temp = new Date().toString().split(' ');
-let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 10:00:00").getTime();
 
-  const data = {current: []};
-  const initialState = {
-    data: data,
-    modalVisible: {
-      add: false,
-      edit: false,
-      message: false,
-      client: false,
-      login: false
-    },
-    messageSent: false,
-    //CHANGE BACK LATER
-    admin: {
-      admin: false,
-      id: "",
-      user: "",
-      username: "",
-      credit: {}
-    },
-    errorMessage: {},
-    selectedEdit: {
-      data: {},
-      section: ""
-    },
-    selectedAdd: {
-      data: {},
-      section: ""
-    },
-    checkout: {
-      selected: false,
-      billing: false,
-      payment: false,
-      confirmation: false
-    },
-    select: {
-      roomID: {},
-      arrive: NOW,
-      depart: NOW + 24*60*60*1000,
-      guests: 2
-    },
-    //searchResults: []
-  };
+
 
   const saveState = (state) => {
     try {
-      const serializedState = JSON.stringify(state);
+      const serializedState = JSON.stringify({user: state.user, checkout: state.checkout, page: state.page});
       localStorage.setItem('info', serializedState);
     }
     catch(err){
@@ -77,20 +31,32 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
   };
 
   const storage = JSON.parse(localStorage.info);
-  const newSelect = (storage.select.arrive < NOW) ?
-    initialState.select :
-    storage.select;
+  const newCheckout = (storage.checkout.selected.arrive < NOW) ?
+    initialCheckout :
+    storage.checkout;
+
   const initial = (localStorage.info !== undefined) ?
         {
-          ...storage,
-          select: newSelect
+          data: initialData,
+          page: initialPage,
+          user: initialUser,
+          checkout: newCheckout
         }:
         {
-          ...initialState
+          data: initialData,
+          page: initialPage,
+          user: initialUser,
+          checkout: initialCheckout
         };
 
   const store = createStore(
-    AdminReducer, initial, applyMiddleware(thunk)
+    //AdminReducer, initial, applyMiddleware(thunk)
+    AdminReducer, {
+      data: initialData,
+      page: initialPage,
+      user: initialUser,
+      checkout: initialCheckout
+    }, applyMiddleware(thunk)
   );
 
   store.subscribe(() => {
@@ -104,8 +70,3 @@ let NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 1
     </Provider>,
     document.getElementById('root')
   );
-//}
-
-//Render();
-//export default Render;
-//registerServiceWorker();
