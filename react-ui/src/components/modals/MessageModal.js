@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
 
+import AlertMessage from '../buttons/AlertMessage';
 import { initialPage } from '../data/options';
 
 
@@ -9,6 +10,7 @@ class MessageModal extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
     page: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
     postData: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired
   }
@@ -47,18 +49,13 @@ class MessageModal extends React.Component {
     this.state.phone = '';
     this.state.message = '';
     this.setState(this.state);
-    this.props.updateState({ page: {...initialPage, page: this.props.page.page} });
+    this.props.updateState({ page: initialPage });
     //this.props.resetMessage;
   }
 
   render(){
-    const alert = (this.props.page.message.error) ?
-      <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      (this.props.page.message.success) ?
-        <Alert className="content text-center alertMessage" bsStyle="success">"Message Sent!"</Alert>:
-        <div></div>;
 
-    const button = (this.props.page.message.success) ?
+    const button = (this.props.message.success) ?
       <Button bsStyle="danger" onClick={this.pop}>
         Close
       </Button> :
@@ -74,7 +71,7 @@ class MessageModal extends React.Component {
 
     return (
       <div>
-        <Modal show={this.props.visible}>
+        <Modal show={this.props.page.modalVisible.message}>
           <Modal.Header>
             <Modal.Title>Leave Us a Message</Modal.Title>
           </Modal.Header>
@@ -102,7 +99,9 @@ class MessageModal extends React.Component {
               </FormGroup>
 
               <div className="text-center">
-                {alert}
+                <AlertMessage
+                  message={this.props.message}
+                />
                 {button}
               </div>
             </Form>

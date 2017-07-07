@@ -51,6 +51,7 @@ const Routes = (props) => {
           getData={props.getData}
           deleteData={props.deleteData}
           updateState={props.updateState}
+          modalDelete={props.page.modalVisible.delete}
           //selectAdd={props.selectAdd}
         />) }
       />
@@ -58,51 +59,46 @@ const Routes = (props) => {
         <LocalGuide
           data={props.data}
           user={props.user}
-          page={props.page}
           getData={props.getData}
           deleteData={props.deleteData}
           updateState={props.updateState}
-          //selectAdd={props.selectAdd}
+          modalDelete={props.page.modalVisible.delete}
         />) }
       />
 
-      <Route path="/welcome" render={ () => ((props.admin.username) ?
-        ((props.admin.admin) ?
+      <Route path="/welcome" render={ () => ((props.user.username) ?
+        ((props.user.admin) ?
           <WelcomeAdmin
-            admin={props.admin}
-            logout={props.logout}
-            fetchClient={props.fetchClient}
+            page={props.page}
             data={props.data}
+            user={props.user}
+            message={props.message}
+            getData={props.getData}
             refundClient={props.refundClient}
-            makeModal={props.makeModal}
-            modalVisible={props.modalVisible}
-            errorMessage={props.errorMessage}
+            updateState={props.updateState}
           /> :
           <Welcome
-            admin={props.admin}
-            logout={props.logout}
-            fetchClient={props.fetchClient}
+            page={props.page}
             data={props.data}
+            user={props.user}
+            message={props.message}
+            getData={props.getData}
             refundClient={props.refundClient}
-            makeModal={props.makeModal}
-            modalVisible={props.modalVisible}
-            errorMessage={props.errorMessage}
+            updateState={props.updateState}
           />) :
         <Redirect to="/login" />
       )}
       />
 
-      <Route path="/login" render={ () => ((props.admin.username) ?
+      <Route path="/login" render={ () => ((props.user.username) ?
         <Redirect to="/welcome" /> :
         <Login
-          errorMessage={props.errorMessage}
-          admin={props.admin}
-          verifyEmail={props.verifyEmail}
-          logout={props.logout}
-          createEmail={props.createEmail}
-          modalVisible={props.modalVisible}
-          makeModal={props.makeModal}
-          checkoutSelected={props.checkout.selected}
+          page={props.page}
+          data={props.data}
+          user={props.user}
+          message={props.message}
+          postData={props.postData}
+          updateState={props.updateState}
         />
         ) }
       />
@@ -143,6 +139,7 @@ Routes.propsTypes = {
   user: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
   checkout: PropTypes.object.isRequired,
+  message: PropTypes.object.isRequired,
   refundClient: PropTypes.func.isRequired,
   chargeClient: PropTypes.func.isRequired,
   updateState: PropTypes.func.isRequired,

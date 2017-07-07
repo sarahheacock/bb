@@ -23,13 +23,10 @@ export const initialPage = {
     modalVisible: {
       modalOne: false,
       modalTwo: false,
-      modalThree: false,
-      modalFour: false,
-      modalFive: false,
-    },
-    message: {
-      error: '',
-      success: ''
+      edit: false,
+      add: false,
+      message: false,
+			delete: false
     }
   };
 export const initialUser = {
@@ -59,3 +56,8 @@ export const initialCheckout = {
     },
     confirmation: false
   };
+
+export const initialMessage = {
+	error: '',
+	success: ''
+};

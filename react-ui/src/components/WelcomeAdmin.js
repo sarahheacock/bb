@@ -6,28 +6,28 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import Upcoming from './welcomeTabs/Upcoming';
 import GuestDirectory from './welcomeTabs/GuestDirectory';
+import LogoutButton from './buttons/LogoutButton';
 
 class WelcomeAdmin extends React.Component {
   static propTypes = {
+    page: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
-    admin: PropTypes.object.isRequired,
-    logout: PropTypes.func.isRequired,
-    fetchClient: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
     refundClient: PropTypes.func.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    errorMessage: PropTypes.object.isRequired
+    updateState: PropTypes.func.isRequired
   }
 
-  componentDidMount(){
-    //this.props.fetchBlog("home");
-  }
+  // componentDidMount(){
+  //   //this.props.fetchBlog("home");
+  // }
 
   render(){
 
     return (
       <div className="main-content">
-        <PageHeader>{`Welcome admin, ${this.props.admin.username}`}</PageHeader>
+        <PageHeader>{`Welcome admin, ${this.props.user.username}`}</PageHeader>
         <div className="text-center">
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row className="clearfix">
@@ -47,12 +47,12 @@ class WelcomeAdmin extends React.Component {
             <Route path="/welcome/upcoming" render={ () =>
               <Upcoming
                 data={this.props.data}
-                admin={this.props.admin}
-                fetchClient={this.props.fetchClient}
+                user={this.props.user}
+                getData={this.props.getData}
                 refundClient={this.props.refundClient}
-                makeModal={this.props.makeModal}
-                modalVisible={this.props.modalVisible}
-                errorMessage={this.props.errorMessage}
+                updateState={this.props.updateState}
+                page={this.props.page}
+                message={this.props.message}
               />}
             />
             <Route path="/welcome/guest-directory" render={ () =>
@@ -62,9 +62,9 @@ class WelcomeAdmin extends React.Component {
 
           </Row>
         </Tab.Container>
-          <Button bsStyle="primary" onClick={() => this.props.logout("You are logged out.")}>
-            Logout
-          </Button>
+          <LogoutButton
+            updateState={this.props.updateState}
+          />
         </div>
       </div>
     );

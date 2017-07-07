@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
 
-import { blogID } from '../data/options';
+import { blogID, initialPage } from '../data/options';
 import EditForm from '../forms/EditForm';
 
 class AddModal extends React.Component {
   static propTypes = {
     //selectedAdd: PropTypes.object.isRequired,
     page: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
     user: PropTypes.object.isRequired,
     postData: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired,
@@ -17,33 +18,20 @@ class AddModal extends React.Component {
 
   constructor(props){
     super(props);
-    let input = {};
-
-    if(Object.keys(this.props.page.edit).length > 0){
-      Object.keys(this.props.page.edit).forEach((k) => {
-        input[k] = '';
-      });
-    }
 
     this.state = {
-      input: input,
+      input: props.page.edit,
       section: props.page.page,
-      sectionID: props.page.edit._id,
       token: props.user.token
     }
   }
 
   componentWillReceiveProps(nextProps, prevProps){
     if(Object.keys(nextProps.page.edit).length > 0){
-      let input = {};
-      Object.keys(this.props.page.edit).forEach((k) => {
-        input[k] = '';
-      });
 
       this.setState({
-        input: input,
+        input: nextProps.page.edit,
         section: nextProps.page.page,
-        sectionID: nextProps.page.edit._id,
         token: nextProps.user.token
       });
     }
@@ -57,26 +45,21 @@ class AddModal extends React.Component {
 
   send = (e) => {
     if(e) e.preventDefault();
-    let results = {};
+    let results = {
+      token: this.state.token
+    };
     (Object.keys(this.state.input)).forEach((k) => {
       if(k === "carousel" && Array.isArray(this.state["input"][k]) && this.state["input"][k].length === 1) results[k] = this.state["input"][k][0].split(',');
       else if(k === "carousel" && Array.isArray(this.state["input"][k]) === false) results[k] = this.state["input"][k].split(',');
       else if(k !== "_id") results[k] = this.state["input"][k]
     });
-    this.props.postData(``, results);
+    this.props.postData(`/api/admin/${blogID}/page/${this.state.section}`, results);
   }
 
   pop = (e) => {
     this.props.updateState({
       page: {
-        ...this.props.page,
-        modalVisible: {
-          modalOne: false,
-          modalTwo: false,
-          modalThree: false,
-          modalFour: false,
-          modalFive: false
-        }
+        ...initialPage
       }
     });
   }
@@ -86,7 +69,7 @@ class AddModal extends React.Component {
 
     return (
       <div>
-        <Modal show={this.props.page.modalVisible.modalOne}>
+        <Modal show={this.props.page.modalVisible.add}>
           <Modal.Header>
             <Modal.Title>Add Content</Modal.Title>
           </Modal.Header>
@@ -94,10 +77,11 @@ class AddModal extends React.Component {
           <Modal.Body>
             <EditForm
               formChange={this.onFormChange}
-              pop={this.pop}
-              submit={this.send}
+              updateState={this.props.updateState}
+              onSubmit={this.send}
               edit={this.state.input}
-              message={this.props.page.message}
+              message={this.props.message}
+              token={this.props.user.token}
             />
           </Modal.Body>
 

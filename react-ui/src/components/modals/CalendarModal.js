@@ -4,17 +4,16 @@ import { PageHeader, Button, Row, Col, Modal, Alert, Form, FormGroup, ControlLab
 import PayForm from '../forms/PayForm';
 import moment from 'moment';
 
+import { initialPage } from '../data/options';
+import SubmitButtonSet from '../buttons/SubmitButtonSet';
+
 class CalendarModal extends React.Component {
   static propTypes = {
-    // data: PropTypes.array.isRequired,
-    // admin: PropTypes.object.isRequired,
-    // logout: PropTypes.func.isRequired,
-    // fetchClient: PropTypes.func.isRequired,
+    page: PropTypes.object.isRequired,
+    data: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
     refundClient: PropTypes.func.isRequired,
-    admin: PropTypes.object.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    errorMessage: PropTypes.object.isRequired,
+    updateState: PropTypes.func.isRequired,
     upcoming: PropTypes.object.isRequired
   }
 
@@ -45,20 +44,30 @@ class CalendarModal extends React.Component {
   }
 
   handleCancel = (e) => {
-    this.props.refundClient({
-      admin: this.props.admin,
-      upcomingID: e.target.name
+    this.props.updateState({
+      page: {
+        ...initialPage,
+        modalVisible: {
+          ...initialPage.modalVisible,
+          delete: true
+        }
+      }
     });
 
-    if (Object.keys(this.props.errorMessage).length === 0){
-      this.props.makeModal({client: false})
-    }
+    // refundClient({
+    //   user: this.props.user,
+    //   upcomingID: e.target.name
+    // });
+
+    // if (Object.keys(this.props.errorMessage).length === 0){
+    //   this.props.makeModal({client: false})
+    // }
   }
 
-  handleCheckIn = () => {
-    if (Object.keys(this.props.errorMessage).length === 0){
-      this.props.makeModal({client: false})
-    }
+  handleCheckIn() {
+    // if (Object.keys(this.props.errorMessage).length === 0){
+    //   this.props.makeModal({client: false})
+    // }
   }
 
   handleFormChange = (e) => {
@@ -73,9 +82,6 @@ class CalendarModal extends React.Component {
 
   render(){
     console.log(this.state);
-    const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
-      <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      <div></div>;
 
     let upcomingStay = <div></div>;
     if(this.props.upcoming){
@@ -95,7 +101,7 @@ class CalendarModal extends React.Component {
             </Col>
           </Row>
           <Row className="text-center">
-            <Button onClick={this.handleCancel} name={this.props.upcoming._id}>Cancel Reservation</Button>
+            <Button onClick={this.handleCancel}>Cancel Reservation</Button>
           </Row>
           <hr />
           <Row>
@@ -123,7 +129,7 @@ class CalendarModal extends React.Component {
 
     return (
       <div className="main-content">
-        <Modal show={this.props.modalVisible.client} >
+        <Modal show={this.props.page.modalVisible.modalOne} >
           <Modal.Body>
             {upcomingStay}
 
@@ -150,19 +156,21 @@ class CalendarModal extends React.Component {
                 <div></div>):
                 <div></div>}
 
-            {alert}
           </Modal.Body>
           <Modal.Footer>
             <div className="text-center">
-              <Button bsStyle="primary" onClick={this.handleCheckIn}>
-                Check-in
-              </Button>
-              <Button onClick={() => this.props.makeModal({client: false})}>
-                Close
-              </Button>
+              <SubmitButtonSet
+                onSubmit={this.handleCheckIn}
+                message={this.props.message}
+                next="/welcome/upcoming"
+                token={this.props.user.token}
+                updateState={this.props.updateState}
+                formItems={this.state.paymentForms[this.state.payment]}
+              />
             </div>
           </Modal.Footer>
         </Modal>
+
       </div>
     );
   }

@@ -13,18 +13,21 @@ const Footer = (props) => (
     <AddModal
       user={props.user}
       page={props.page}
+      message={props.message}
       postData={props.postData}
       updateState={props.updateState}
     />
     <EditModal
       user={props.user}
       page={props.page}
+      message={props.message}
       putData={props.putData}
       updateState={props.updateState}
     />
     <MessageModal
       user={props.user}
       page={props.page}
+      message={props.message}
       postData={props.postData}
       updateState={props.updateState}
     />
@@ -61,6 +64,7 @@ export default Footer;
 Footer.propTypes = {
   page: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  message: PropTypes.object.isRequired,
   putData: PropTypes.func.isRequired,
   postData: PropTypes.func.isRequired,
   updateState: PropTypes.func.isRequired,

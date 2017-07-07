@@ -6,15 +6,18 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
+import { initialPage } from '../data/options';
+import CancelModal from '../modals/CancelModal';
+
 class Upcoming extends React.Component {
   static propTypes = {
-    fetchClient: PropTypes.func.isRequired,
+    page: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
-    admin: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
     refundClient: PropTypes.func.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    errorMessage: PropTypes.object.isRequired
+    updateState: PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -28,18 +31,26 @@ class Upcoming extends React.Component {
 
   componentDidMount(){
     //"/:pageID/rooms/upcoming/:request"
-    this.props.fetchClient(`/api/admin/${this.props.admin.user}/${this.state.month}?token=${this.props.admin.id}`);
+    this.props.getData(`/api/admin/${this.props.user.id}/${this.state.month}?token=${this.props.user.token}`);
   }
 
   navigate = (date) => {
     this.state.month = date.getMonth();
-    this.setState(this.state, () => this.props.fetchClient(`/api/admin/${this.props.admin.user}/${this.state.month}?token=${this.props.admin.id}`));
+    this.setState(this.state, () => this.props.getData(`/api/admin/${this.props.admin.user}/${this.state.month}?token=${this.props.admin.id}`));
   }
 
   handleSelect = (event) => {
     this.state.target = event;
     //console.log(event);
-    this.setState(this.state, () => this.props.makeModal({client: true}));
+    this.setState(this.state, () => this.props.updateState({
+      page: {
+        ...initialPage,
+        modalVisible: {
+          ...initialPage.modalVisible,
+          modalOne: true
+        }
+      }
+    }));
   }
 
   render(){
@@ -62,11 +73,19 @@ class Upcoming extends React.Component {
         />
         <CalendarModal
           upcoming={this.state.target}
-          errorMessage={this.props.errorMessage}
-          modalVisible={this.props.modalVisible}
-          makeModal={this.props.makeModal}
-          admin={this.props.admin}
+          message={this.props.message}
+          page={this.props.page}
+          updateState={this.props.updateState}
+          user={this.props.user}
           refundClient={this.props.refundClient}
+        />
+        <CancelModal
+          message={this.props.message}
+          user={this.props.user}
+          refundClient={this.props.refundClient}
+          updateState={this.props.updateState}
+          upcomingID={this.state.target._id}
+          modalDelete={this.props.page.modalVisible.delete}
         />
       </div>
     );

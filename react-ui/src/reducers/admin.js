@@ -14,6 +14,17 @@ export default function Admin(state={}, action){
       }
     }
 
+    case AdminActionTypes.UPDATE_NEW_MESSAGE: {
+
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          message: action.newMessage
+        }
+      }
+    }
+
     // case AdminActionTypes.MAKE_MODAL: {
     //   const newVis = {
     //

@@ -3,16 +3,20 @@ import PropTypes from 'prop-types';
 import { PageHeader, Button, Row, Col, Modal, Alert } from 'react-bootstrap';
 import moment from 'moment';
 
+import { initialPage, initialUser } from './data/options';
+import CancelModal from './modals/CancelModal';
+import LogoutButton from './buttons/LogoutButton';
+
+
 class Welcome extends React.Component {
   static propTypes = {
+    page: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
-    admin: PropTypes.object.isRequired,
-    logout: PropTypes.func.isRequired,
-    fetchClient: PropTypes.func.isRequired,
+    user: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
     refundClient: PropTypes.func.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    errorMessage: PropTypes.object.isRequired
+    updateState: PropTypes.func.isRequired
   }
 
   constructor(props){
@@ -23,7 +27,7 @@ class Welcome extends React.Component {
   }
 
   componentDidMount(){
-    this.props.fetchClient(`/locked/user/${this.props.admin.user}/all?token=${this.props.admin.id}`);
+    this.props.getData(`/locked/user/${this.props.user.id}/all?token=${this.props.user.token}`);
   }
 
   // componentDidUpdate(prevProps, prevState){
@@ -40,19 +44,18 @@ class Welcome extends React.Component {
   handleSelect = (e) => {
     this.setState({
       target: e.target.name
-    }, () => this.props.makeModal({client: true}));
+    }, () => this.props.updateState({
+      page: {
+        ...initialPage,
+        modalVisible: {
+          ...initialPage.modalVisible,
+          delete: true
+        }
+      }
+    }));
   }
 
-  handleCancel = (e) => {
-    this.props.refundClient({
-      admin: this.props.admin,
-      upcomingID: this.state.target
-    });
 
-    if (Object.keys(this.props.errorMessage).length === 0){
-      this.props.makeModal({client: false})
-    }
-  }
 
   render(){
     let upcoming = <div>Loading</div>;
@@ -61,7 +64,7 @@ class Welcome extends React.Component {
         upcoming = (this.props.data[0]["upcoming"].length === 0) ?
           <div><p>You currently have no upcoming stays.</p><hr /></div> :
           this.props.data[0]["upcoming"].map((u) => (
-            <div>
+            <div key={u._id}>
               <Row className="clearfix">
                 <Col className="text-center" sm={5}>
                   <img src={u.event.roomID.image} />
@@ -81,40 +84,28 @@ class Welcome extends React.Component {
       }
     }
 
-    const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
-      <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      <div></div>;
-
 
     console.log(this.props.data);
     return (
       <div className="main-content">
-        <PageHeader>{`Welcome, ${this.props.admin.username}`}</PageHeader>
+        <PageHeader>{`Welcome, ${this.props.user.username}`}</PageHeader>
         <div className="text-center">
           <h2>Upcoming Stays</h2>
-          <Button bsStyle="primary" onClick={() => this.props.logout("You are logged out.")}>
-            Logout
-          </Button>
+          <LogoutButton
+            updateState={this.props.updateState}
+          />
           <hr />
           {upcoming}
         </div>
 
-        <Modal show={this.props.modalVisible.client} >
-          <Modal.Body>
-            <div className="text-center">Are you sure you would like to cancel your reservation?</div>
-            {alert}
-          </Modal.Body>
-          <Modal.Footer>
-            <div className="text-center">
-              <Button bsStyle="danger" onClick={this.handleCancel}>
-                Cancel Reservation
-              </Button>
-              <Button onClick={() => this.props.makeModal({client: false})}>
-                Close
-              </Button>
-            </div>
-          </Modal.Footer>
-        </Modal>
+        <CancelModal
+          message={this.props.message}
+          user={this.props.user}
+          refundClient={this.props.refundClient}
+          updateState={this.props.updateState}
+          upcomingID={this.state.target}
+          modalDelete={this.props.page.modalVisible.delete}
+        />
       </div>
     );
   }

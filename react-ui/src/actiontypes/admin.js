@@ -1,5 +1,7 @@
 //export const MAKE_MODAL = 'admin/MAKE_ADD_MODAL';
 export const UPDATE_STATE = 'admin/UPDATE_STATE';
+export const UPDATE_NEW_MESSAGE = 'admin/UPDATE_NEW_MESSAGE';
+
 //export const UPDATE_STATE = 'admin/UPDATE_STATE';
 
 // export const FETCH_BLOG_SUCCESS = 'admin/FETCH_BLOG_SUCCESS';

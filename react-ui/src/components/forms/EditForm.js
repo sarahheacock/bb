@@ -1,33 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
-import { Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
+import { Button, Form, FormControl, ControlLabel, FormGroup } from 'react-bootstrap';
+
+import SubmitButtonSet from '../buttons/SubmitButtonSet';
 
 const EditForm = (props) => {
-
-  const alert = (props.message.error) ?
-    <Alert className="content text-center alertMessage" bsStyle="warning">{props.message.error}</Alert> :
-    <div></div>;
-
-  const buttons = (props.admin) ?
-    <div>
-      <Button className="edit" bsStyle="primary" type="submit">
-        Submit
-      </Button>
-      <Button className="edit" bsStyle="danger" onClick={props.pop}>
-        Cancel
-      </Button>
-    </div> :
-    <div>
-      <Button className="edit" bsStyle="info">
-        <NavLink className="select" to="/login" onClick={props.pop}>
-          Login Again
-        </NavLink>
-      </Button>
-      <Button className="edit" bsStyle="danger" onClick={props.pop}>
-        Cancel
-      </Button>
-    </div>
 
   const formItems = (Object.keys(props.edit).length < 1) ?
     <div></div>:
@@ -53,11 +30,17 @@ const EditForm = (props) => {
     });
 
   return (
-    <Form className="content" onSubmit={props.send}>
+    <Form className="content">
       {formItems}
       <div className="text-center">
-        {alert}
-        {buttons}
+        <SubmitButtonSet
+          submit={props.onSubmit}
+          message={props.message}
+          next={props.page.page}
+          token={props.token}
+          updateState={props.updateState}
+          formItems={props.edit}
+        />
       </div>
     </Form>
   );
@@ -68,8 +51,11 @@ export default EditForm;
 
 EditForm.propTypes = {
   formChange: PropTypes.func.isRequired,
-  pop: PropTypes.func.isRequired,
-  submit: PropTypes.func.isRequired,
+  //pop: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  updateState: PropTypes.func.isRequired,
   edit: PropTypes.object.isRequired,
-  message: PropTypes.object.isRequired
+  message: PropTypes.object.isRequired,
+  token: PropTypes.string.isRequired,
+  //page: PropTypes.object.isRequired
 };

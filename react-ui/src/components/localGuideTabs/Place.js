@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { Col, Row, Button } from 'react-bootstrap';
 import moment from 'moment';
 
+import EditButton from '../buttons/EditButton';
+import AddButton from '../buttons/AddButton';
+import DeleteModal from '../modals/DeleteModal';
+import DeleteButton from '../buttons/DeleteButton';
 import { blogID, initialPage } from '../data/options';
 
 
@@ -11,7 +15,30 @@ class Place extends React.Component {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
     updateState: PropTypes.func.isRequired,
-    deleteData: PropTypes.func.isRequired
+    deleteData: PropTypes.func.isRequired,
+    modalDelete: PropTypes.bool.isRequired,
+    length: PropTypes.number.isRequired
+  }
+
+  constructor(props){
+    super(props);
+    this.state = {
+      target: '',
+    }
+  }
+
+  handleSelect = (e) => {
+    this.setState({
+      target: e.target.name
+    }, () => this.props.updateState({
+      page: {
+        ...initialPage,
+        modalVisible: {
+          ...initialPage.modalVisible,
+          delete: true
+        }
+      }
+    }));
   }
 
   render(){
@@ -43,30 +70,29 @@ class Place extends React.Component {
 
               </Row>
               <div className="text-center">
-                {(this.props.user.admin) ?
-                  <div>
-                  <Button className="edit" bsStyle="info" onClick={() => this.props.selectEdit({data:event, section:"localGuide", id:this.props.admin.id})}>
-                    Edit
-                  </Button>
-                  <Button className="edit" bsStyle="danger" onClick={() => {
-                    if(this.props.data.length > 1) this.props.deleteData(`/api/admin/${blogID}/page/${this.props.page.page}/${this.props.page.edit._id}?token=${this.props.user.token}`);
-                    else alert("You cannot delete all entries. Deleting all entries will cause errors.");
-                  }}>
-                    Delete
-                  </Button>
-                  </div> :
-                  <div></div>}
+                <EditButton
+                  updateState={this.props.updateState}
+                  admin={this.props.user.admin}
+                  pageSection="localGuide"
+                  dataObj={event}
+                />
+                <DeleteButton
+                  handleClick={this.handleSelect}
+                  name={event._id}
+                  user={this.props.user}
+                />
               </div>
               <hr />
             </div>
           </div>
         ));
 
-        addButton = (this.props.user.admin) ?
-          <Button className="add" bsStyle="primary" onClick={() => this.props.selectAdd({section:"localGuide", data:this.props.data[0]})}>
-            Add
-          </Button>:
-          <div></div>
+        addButton = <AddButton
+                      updateState={this.props.updateState}
+                      admin={this.props.user.admin}
+                      pageSection="localGuide"
+                      dataObj={this.props.data[0]}
+                    />;
       }
     }
 
@@ -77,6 +103,14 @@ class Place extends React.Component {
         <div className="text-center">
           {addButton}
         </div>
+        <DeleteModal
+          user={this.props.user}
+          deleteData={this.props.deleteData}
+          pageSection="localGuide"
+          dataObjID={this.state.target}
+          length={this.props.length}
+          modalDelete={this.props.modalDelete}
+        />
       </div>
     );
   }

@@ -15,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import './stylesheets/index.css';
 
-import {NOW, initialData, initialPage, initialUser, initialCheckout} from './components/data/options';
+import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMessage} from './components/data/options';
 //=============================================================\
 
 
@@ -40,13 +40,15 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout} from './com
           data: initialData,
           page: initialPage,
           user: initialUser,
-          checkout: newCheckout
+          checkout: newCheckout,
+          message: initialMessage
         }:
         {
           data: initialData,
           page: initialPage,
           user: initialUser,
-          checkout: initialCheckout
+          checkout: initialCheckout,
+          message: initialMessage
         };
 
   const store = createStore(
@@ -55,7 +57,8 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout} from './com
       data: initialData,
       page: initialPage,
       user: initialUser,
-      checkout: initialCheckout
+      checkout: initialCheckout,
+      message: initialMessage
     }, applyMiddleware(thunk)
   );
 

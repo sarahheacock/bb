@@ -4,19 +4,21 @@ import { Nav, NavItem, PageHeader, Row, Button, Tab } from 'react-bootstrap';
 import moment from 'moment';
 import { Route, Redirect } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
+
+
 import Place from './localGuideTabs/Place';
 
-import { blogID, initialPage } from './data/options';
+import { blogID } from './data/options';
 
 
 class LocalGuide extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    page: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
     deleteData: PropTypes.func.isRequired,
-    updateState: PropTypes.func.isRequired
+    updateState: PropTypes.func.isRequired,
+    modalDelete: PropTypes.bool.isRequired
   }
 
   constructor(props){
@@ -27,7 +29,7 @@ class LocalGuide extends React.Component {
   }
 
   componentDidMount(){
-    this.props.getData(`/page/${blogID}/localGuide`, {page: {...initialPage, page: "localGuide"}});
+    this.props.getData(`/page/${blogID}/localGuide`, "localGuide");
   }
 
   componentDidUpdate(){
@@ -79,6 +81,8 @@ class LocalGuide extends React.Component {
             user={this.props.user}
             deleteData={this.props.deleteData}
             updateState={this.props.updateState}
+            length={this.props.data.length}
+            modalDelete={this.props.modalDelete}
           /> }
         />
       ));

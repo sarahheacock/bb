@@ -2,20 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Carousel, Button } from 'react-bootstrap';
 
-import { blogID, initialPage } from './data/options';
+import EditButton from './buttons/EditButton';
+import { blogID } from './data/options';
 
 class Home extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    page: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired
   }
 
   componentDidMount(){
-    //this.props.fetchBlog("home");
-    this.props.getData(`/page/${blogID}/home`, {page: {...initialPage, page: "home"}});
+    this.props.getData(`/page/${blogID}/home`, "home");
   }
 
   render(){
@@ -34,20 +33,12 @@ class Home extends React.Component {
           )) :
         <Carousel.Item>Loading</Carousel.Item>;
 
-      editButton = (this.props.user.admin) ?
-        <Button bsStyle="info" onClick={() => this.props.updateState({
-          page: {
-            ...initialPage,
-            modalVisible: {
-              ...initialPage.modalVisible,
-              modalTwo: true,
-            },
-            edit: this.props.data[0]
-          }
-        })}>
-          Edit
-        </Button> :
-        <div></div>;
+      editButton = <EditButton
+                    updateState={this.props.updateState}
+                    admin={this.props.user.admin}
+                    pageSection="home"
+                    dataObj={this.props.data[0]}
+                  />;
 
       summary = (this.props.data[0]["summary"]) ?
         <p className="summary">{this.props.data[0]["summary"]}</p> :
@@ -66,9 +57,7 @@ class Home extends React.Component {
             <PageHeader>Home</PageHeader>
             <div className="content">
               {summary}
-              <div className="text-center">
-                {editButton}
-              </div>
+              {editButton}
             </div>
 
           </div>

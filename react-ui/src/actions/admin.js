@@ -2,6 +2,7 @@ import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
 import {blogID, key} from '../config';
+import {initialPage, initialUser, initialCheckout, initialMessage} from '../components/data/options';
 var CryptoJS = require("crypto-js");
 
 // const key = '0s3W7DOZkYFzEtLS';
@@ -45,6 +46,13 @@ export const updateState = (newState) => {
     newState
   }
 }
+
+// export const updateNewMessage = (newMessage) => {
+//   return {
+//     type: AdminActionTypes.UPDATE_NEW_MESSAGE,
+//     newMessage
+//   }
+// }
 
 // export const updateUserState = (newState) => {
 //   return {
@@ -177,14 +185,25 @@ export const getData = (url, thisPage) => {
       .then(response => {
         console.log("response", response.data);
         dispatch(updateState({
+          page: {
+            ...initialPage,
+            page: thisPage
+          },
+          message: {
+            ...initialMessage
+          },
           data: response.data,
-          ...thisPage
         }));
       })
       .catch(error => {
         console.log("error", error);
         //alert("Unable to load content at this time.")
-        dispatch(updateState(thisPage));
+        dispatch(updateState({
+          message: {
+            error: "Unable to fetch data",
+            success: ""
+          }
+        }));
       });
   }
 };
@@ -195,13 +214,42 @@ export const putData = (url, newData) => {
     return axios.put(url, newData)
       .then(response => {
         console.log("response data", response.data);
-        //if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."))
-        dispatch(updateState({data: response.data}));
+        if(response.data.success === false){
+          dispatch(updateState({
+            user: {
+              ...initialUser,
+            },
+            checkout: {
+              ...initialCheckout
+            },
+            message: {
+              ...initialMessage
+            },
+            page: {
+              ...initialPage
+            }
+          }));
+        }
+        else {
+          dispatch(updateState({
+            message: {
+              "success": "data edited",
+              "error": ""
+            },
+            data: response.data,
+          }));
+        }
       })
       .catch(error => {
         console.log(error);
-        dispatch(updateState({"errorMessage": "Unable to edit content at this time."}));
+        dispatch(updateState({
+          message: {
+            error: "Unable to edit data",
+            success: ""
+          }
+        }));
       });
+
   }
 }
 
@@ -213,12 +261,104 @@ export const postData = (url, newData) => {
     return axios.post(url, newData)
       .then(response => {
         console.log("response data", response.data);
-        //if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."));
-        dispatch(updateState({data: response.data}));
+        if(response.data.success === false){
+          dispatch(updateState({
+            user: {
+              ...initialUser,
+            },
+            checkout: {
+              ...initialCheckout
+            },
+            message: {
+              error: "Session expired",
+              success: ''
+            }
+          }));
+        }
+        else {
+          if (url.includes('say')) { //if posting message
+            dispatch(updateState({
+              message: {
+                "success": "Message sent!",
+                "error": ""
+              }
+            }));
+          }
+          else if (url.includes('login')) { //if posting login
+            dispatch(updateState({
+              message: {
+                ...initialMessage
+              },
+              page: {
+                ...initialPage
+              },
+              checkout: {
+                ...initialCheckout
+              },
+              user: response.data
+            }));
+          }
+          else if (url.includes('page')) { //if posting new page
+            dispatch(updateState({
+              message: {
+                ...initialMessage
+              },
+              page: {
+                ...initialPage
+              },
+              data: response.data
+            }));
+          }
+          else { //if posting upcoming
+            dispatch(updateState({
+              message: {
+                "success": "Thank you",
+                "error": ""
+              },
+              page: {
+                ...initialPage
+              },
+              checkout: {
+                ...initialCheckout
+              }
+            }));
+          }
+        }
       })
       .catch(error => {
         console.log(error);
-        dispatch(updateState({"errorMessage": "Unable to add content at this time"}));
+        if (url.includes('say')) { //if posting message
+          dispatch(updateState({
+            message: {
+              "success": "",
+              "error": "Unable to send Message"
+            }
+          }));
+        }
+        else if (url.includes('login')) { //if posting login
+          dispatch(updateState({
+            message: {
+              "success": "",
+              "error": "Username and/or password not found"
+            }
+          }));
+        }
+        else if (url.includes('page')) { //if posting new page
+          dispatch(updateState({
+            message: {
+              "success": "",
+              "error": "Unable to add data"
+            }
+          }));
+        }
+        else { //if posting upcoming
+          dispatch(updateState({
+            message: {
+              "success": "",
+              "error": "Unable to book stay."
+            }
+          }));
+        }
       });
   }
 };
@@ -227,15 +367,40 @@ export const deleteData = (url) => {
   return (dispatch) => {
 
     return axios.delete(url)
-      .then(response => {
-        console.log("response data", response.data);
-        //if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."))
-        dispatch(updateState(response.data));
-      })
-      .catch(error => {
-        console.log(error);
-        dispatch(updateState({"errorMessage": "Unable to delete content at this time."}));
-      });
+    .then(response => {
+      console.log("response data", response.data);
+      if(response.data.success === false){
+        dispatch(updateState({
+          user: {
+            ...initialUser,
+          },
+          checkout: {
+            ...initialCheckout
+          },
+          message: {
+            error: "Session expired",
+            success: ''
+          }
+        }));
+      }
+      else {
+        dispatch(updateState({
+          page: {
+            ...initialPage
+          },
+          data: response.data,
+        }));
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      dispatch(updateState({
+        message: {
+          error: "Unable to delete data",
+          success: ""
+        }
+      }));
+    });
   }
 };
 
@@ -328,13 +493,13 @@ export const chargeClient = (url, newData) => {
 //(1) REFUND CLIENT
 //need to add later
 ///:userID/upcoming/:upcomingID
-export const refundClient = (url) => {
+export const refundClient = (clientInfo) => {
   return (dispatch) => {
     //"/:pageID/rooms/upcoming/:request"
     //console.log(clientInfo);
-    //if(clientInfo.admin.admin) return dispatch(deleteData(`/api/admin/${clientInfo.admin.user}/${clientInfo.upcomingID}?token=${clientInfo.admin.id}`));
-    //return dispatch(deleteData(`/locked/user/${clientInfo.admin.user}/${clientInfo.upcomingID}?token=${clientInfo.admin.id}`));
-    return dispatch(deleteData(url));
+    if(clientInfo.user.admin) return dispatch(deleteData(`/api/admin/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
+    else return dispatch(deleteData(`/locked/user/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
+    //return dispatch(deleteData(url));
   }
 }
 
