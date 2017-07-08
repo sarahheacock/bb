@@ -43,7 +43,9 @@ const EditForm = (props) => {
       {
         (props.edit.modalTitle === "Delete Content") ?
           <div className="text-center">Are you sure you want to delete this content?</div>:
-          <div>{formItems}</div>
+          ((props.title.modalTitle === "Cancel Reservation") ?
+            <div className="text-center">Are you sure you want to Cancel your Reservation?</div>:
+            <div>{formItems}</div>)
       }
       <div className="text-center">
         <SubmitButtonSet
@@ -51,7 +53,6 @@ const EditForm = (props) => {
           editData={props.editData}
           message={props.message}
           next={props.next}
-          token={props.token}
           updateState={props.updateState}
           formItems={results}
           title={props.edit.modalTitle}
@@ -67,7 +68,6 @@ export default EditForm;
 
 EditForm.propTypes = {
   formChange: PropTypes.func.isRequired,
-  //pop: PropTypes.func.isRequired,
   editData: PropTypes.func.isRequired,
   updateState: PropTypes.func.isRequired,
   edit: PropTypes.object.isRequired,
@@ -75,6 +75,4 @@ EditForm.propTypes = {
   token: PropTypes.string.isRequired,
   next: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
-  //dataLength: PropTypes.number.isRequired
-  //page: PropTypes.object.isRequired
 };

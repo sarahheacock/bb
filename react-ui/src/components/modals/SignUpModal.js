@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 //import { NavLink } from 'react-router-dom';
-import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert, Checkbox } from 'react-bootstrap';
+import { Modal, Button, Form, FormControl, ControlLabel, FormGroup } from 'react-bootstrap';
 import { Countries } from '../data/options';
 import SignUpForm from '../forms/SignUpForm';
 //var CryptoJS = require("crypto-js");
@@ -9,29 +9,21 @@ import SignUpForm from '../forms/SignUpForm';
 //SignUp is a modal that update login and billing state
 class SignUpModal extends React.Component {
   static propTypes = {
-    createEmail: PropTypes.func.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    errorMessage: PropTypes.object.isRequired,
-    admin: PropTypes.object.isRequired,
-    checkoutSelected: PropTypes.bool.isRequired
+    user: PropTypes.object.isRequired,
+    editData: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired,
+    roomID: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
+    modalEdit: PropTypes.bool.isRequired,
+
+    title: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    dataObj: PropTypes.object.isRequired,
   };
 
   constructor(props){
     super(props);
-    this.state =
-     {
-      email: '',
-      password: '',
-      billing: {
-        line1: '',
-        line2: '',
-        city: '',
-        state: '',
-        zip: '',
-        country: 'United States'
-      },
-    }
+    this.state = {...props.dataObj}
   }
 
   onFormChange = (e) => {
@@ -52,40 +44,20 @@ class SignUpModal extends React.Component {
     });
   }
 
+
+  //if there is a selected room, next is book-now/billing
   render() {
-    //console.log("state", this.state.billing.country);
-    const alert = (Object.keys(this.props.errorMessage).length !== 0) ?
-      <Alert className="content text-center alertMessage" bsStyle="warning">{this.props.errorMessage.error}</Alert> :
-      (this.props.admin.username) ?
-        <Alert className="content text-center alertMessage" bsStyle="success">{`Welcome, ${this.props.admin.username}`}</Alert>:
-        <div></div>;
-
-
-    const submitButton = <button type="submit" className="btn btn-primary" onClick={() => {
-
-        this.props.createEmail({
-          password: this.state.password,
-          email: this.state.email,
-          billing: `${this.state.billing.line1}/${this.state.billing.line2}/${this.state.billing.city}/${this.state.billing.state}/${this.state.billing.zip}/${this.state.billing.country}`
-        });
-
-        this.props.makeModal({
-          client: false,
-          login: true
-        });
-      }}>
-        Submit
-    </button>;
-
-    const closeButton = <button className="btn btn-danger" onClick={this.pop}>
-      {(this.props.admin.username) ? "Close" : "Cancel"}
-    </button>;
+    const next = (Object.keys(this.props.roomID).length === 0) ?
+      "/welcome" :
+      ((this.props.title === "Sign Up") ?
+        "/book-now/billing":
+        "#");
 
     return (
       <div className="main-content not-found">
-        <Modal show={this.props.modalVisible.client} >
+        <Modal show={this.props.modalEdit} >
           <Modal.Header>
-            <Modal.Title>Sign Up</Modal.Title>
+            <Modal.Title>{this.props.title}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form className="content" onSubmit={this.verify}>
@@ -101,21 +73,22 @@ class SignUpModal extends React.Component {
             </Form>
 
             <SignUpForm
-              line1Value={this.state.billing.line1}
-              line2Value={this.state.billing.line2}
-              cityValue={this.state.billing.city}
-              stateValue={this.state.billing.state}
-              zipValue={this.state.billing.zip}
-              countryValue={this.state.billing.country}
+              billing={this.state.billing}
+              emailInfo={ (this.props.title === "Sign Up") ? {email: this.state.email, password: this.state.password} : {email: this.state.email} }
+              title={this.props.title}
+              user={this.props.user}
+
               addressChange={this.onAddressChange}
+              url={this.props.url}
+              editData={this.props.editData}
+              message={this.props.message}
+              updateState={this.props.updateState}
+              next={next}
             />
 
           </Modal.Body>
           <Modal.Footer>
-            <div className="text-center">
-              {alert}
-              {submitButton}{closeButton}
-            </div>
+            *Fill out required fields
           </Modal.Footer>
         </Modal>
       </div>

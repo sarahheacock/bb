@@ -6,7 +6,7 @@ import moment from 'moment';
 //import EditButton from './buttons/EditButton';
 import EditButton from './buttons/EditButton';
 import EditModal from './modals/EditModal';
-import { blogID, initialPage } from './data/options';
+import { blogID } from './data/options';
 
 class Rooms extends React.Component {
   static propTypes = {
@@ -34,7 +34,6 @@ class Rooms extends React.Component {
   }
 
   handleSelect = (e) => {
-    console.log(e.target);
     this.setState({
       target: JSON.parse(e.target.name),
       targetType: e.target.value
@@ -99,19 +98,18 @@ class Rooms extends React.Component {
       }
     }
 
-    //<Button onClick={this.handleSelect} name={event._id}>Delete</Button>
-    const url = (this.state.targetType === "Add" && this.state.target._id !== 'undefined') ?
-      `/api/admin/${blogID}/page/rooms` :
-      (
-        (this.state.targetType === "Edit" && this.state.target._id !== 'undefined') ?
-          `/api/admin/${blogID}/page/rooms/${this.state.target._id}`:
-          `/api/admin/${blogID}/page/rooms/${this.state.target._id}?token=${this.props.user.token}`
-      );
+    let url = `/api/admin/${blogID}/page/rooms`;
+    let editFunc = this.props.postData;
 
+    if(this.state.targetType === "Edit" && this.state.target._id !== 'undefined'){
+      url = `/api/admin/${blogID}/page/rooms/${this.state.target._id}`;
+      editFunc = this.props.putData;
+    }
+    else if(this.state.targetType === "Delete" && this.state.target._id !== 'undefined'){
+      url = `/api/admin/${blogID}/page/rooms/${this.state.target._id}?token=${this.props.user.token}`;
+      editFunc = this.props.deleteData;
+    }
 
-    let editFunc = this.props.putData;
-    if(this.state.targetType === "Add") editFunc = this.props.postData;
-    else if(this.state.targetType === "Delete") editFunc = this.props.deleteData;
 
     return (
       <div className="main-content">
@@ -122,7 +120,7 @@ class Rooms extends React.Component {
         </div>
         <EditModal
           user={this.props.user}
-          modalEdit={this.props.page.modalVisible.edit}
+          modalEdit={this.props.page.edit}
           editData={editFunc}
           updateState={this.props.updateState}
           url={url}

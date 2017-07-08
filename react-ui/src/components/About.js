@@ -7,7 +7,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import EditButton from './buttons/EditButton';
 import EditModal from './modals/EditModal';
 import Nancy from './aboutTabs/Nancy';
-import { blogID, initialPage } from './data/options';
+import { blogID } from './data/options';
 
 
 class About extends React.Component {
@@ -24,8 +24,8 @@ class About extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      //aboutTabs: [],
-      target: {}
+      target: {},
+      targetType: ''
     }
   }
 
@@ -35,9 +35,9 @@ class About extends React.Component {
 
 
   handleSelect = (e) => {
-    //console.log("click", e.target.name);
     this.setState({
-      target: JSON.parse(e.target.name)
+      target: JSON.parse(e.target.name),
+      targetType: e.target.value
     });
   }
 
@@ -48,8 +48,8 @@ class About extends React.Component {
 
     //create tabs from categories
     //make sure data is defined
-    if(this.props.data[1]){
-      if(this.props.data[1]["title"]){
+    if(this.props.data[0]){
+      if(this.props.data[0]["title"] && this.props.data[0]["category"] === undefined){
         let cat = [];
         this.props.data.forEach((event, index) => {
             let create = {
@@ -59,10 +59,11 @@ class About extends React.Component {
             };
 
             cat.push(create);
+            //console.log("cat", cat);
             if(cat.length === index + 1 && index > 0){
               //make sure aboutTabs are initialized
               tabs = cat.map((c, index) => (
-                  <LinkContainer key={`${c.title}link`} to={c.link}>
+                  <LinkContainer key={`${c.title}link${index}`} to={c.link}>
                     <NavItem className="tab">{c.title}</NavItem>
                   </LinkContainer>
                 ));
@@ -72,7 +73,7 @@ class About extends React.Component {
                  />;
 
               routes = cat.map((c, index) => (
-                  <Route key={`${c.title}route`} path={c.link} render={ () =>
+                  <Route key={`${c.data._id}`} path={c.link} render={ () =>
                     <div>
                       <Nancy
                         data={c.data}
@@ -82,8 +83,9 @@ class About extends React.Component {
                       <EditButton
                         handleSelect={this.handleSelect}
                         admin={this.props.user.admin}
-                        name={JSON.stringify(c.data)}
                         updateState={this.props.updateState}
+                        name={c.data}
+                        title="Edit"
                       />
                     </div>}
                   />
@@ -93,6 +95,7 @@ class About extends React.Component {
       }
     }
 
+    //since the only button available is Edit, url and editing function are predetermined
     return (
       <div className="main-content">
         <PageHeader>About Us</PageHeader>
@@ -109,12 +112,12 @@ class About extends React.Component {
           </div>
           <EditModal
             user={this.props.user}
-            modalEdit={this.props.page.modalVisible.edit}
+            modalEdit={this.props.page.edit}
             editData={this.props.putData}
             updateState={this.props.updateState}
-            url={`/api/admin/${blogID}/page/about/${this.state.target._id}`}
+            url={(this.props.data[0]) ? `/api/admin/${blogID}/page/about/${this.state.target._id}` : ''}
             next="#"
-            dataObj={this.state.target}
+            dataObj={ {...this.state.target, modalTitle: "Edit Content", length: this.props.data.length} }
             message={this.props.message}
           />
       </div>

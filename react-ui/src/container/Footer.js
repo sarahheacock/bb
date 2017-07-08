@@ -54,19 +54,7 @@ Footer.propTypes = {
   message: PropTypes.object.isRequired,
   putData: PropTypes.func.isRequired,
   postData: PropTypes.func.isRequired,
-  updateState: PropTypes.func.isRequired,
-  // visible: PropTypes.bool.isRequired,
-  // makeModal: PropTypes.func.isRequired,
-  // sendMessage: PropTypes.func.isRequired,
-  // messageSent: PropTypes.bool.isRequired,
-  // selectedAdd: PropTypes.string.isRequired,
-  // errorMessage: PropTypes.object.isRequired,
-  // selectedEdit: PropTypes.object.isRequired,
-  // editVisible: PropTypes.bool.isRequired,
-  // addVisible: PropTypes.bool.isRequired,
-  // editBlog: PropTypes.func.isRequired,
-  // addBlog: PropTypes.func.isRequired,
-  // admin: PropTypes.object.isRequired
+  updateState: PropTypes.func.isRequired
 };
 
 // <AddModal

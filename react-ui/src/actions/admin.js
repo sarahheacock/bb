@@ -114,7 +114,7 @@ export const postData = (url, newData) => {
               ...initialCheckout
             },
             message: {
-              error: "Session expired",
+              error: "Session expired. Log back in again to continue.",
               success: ''
             }
           }));
@@ -136,10 +136,13 @@ export const postData = (url, newData) => {
               page: {
                 ...initialPage
               },
-              checkout: {
-                ...initialCheckout
-              },
               user: response.data
+            }));
+          }
+          else if (url.includes('user-setup')) { //if signing up, login
+            dispatch(postData('/locked/userlogin', {
+              email: newData.email,
+              password: newData.password
             }));
           }
           else if (url.includes('page')) { //if posting new page
@@ -222,7 +225,7 @@ export const deleteData = (url) => {
             ...initialCheckout
           },
           message: {
-            error: "Session expired",
+            error: "Session expired. Log back in again to continue.",
             success: ''
           }
         }));
@@ -263,12 +266,13 @@ export const chargeClient = (url, newData) => {
 //(1) REFUND CLIENT
 //need to add later
 ///:userID/upcoming/:upcomingID
-export const refundClient = (clientInfo) => {
+export const refundClient = (url) => {
   return (dispatch) => {
+    return dispatch(postData(url))
     //"/:pageID/rooms/upcoming/:request"
     //console.log(clientInfo);
-    if(clientInfo.user.admin) return dispatch(deleteData(`/api/admin/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
-    else return dispatch(deleteData(`/locked/user/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
+    //if(clientInfo.user.admin) return dispatch(deleteData(`/api/admin/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
+    //else return dispatch(deleteData(`/locked/user/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
   }
 }
 

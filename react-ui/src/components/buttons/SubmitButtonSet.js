@@ -12,7 +12,7 @@ class SubmitButtonSet extends React.Component {
     next: PropTypes.string.isRequired,
     updateState: PropTypes.func.isRequired,
     editData: PropTypes.func.isRequired,
-    token: PropTypes.string.isRequired,
+    //token: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired,
     formItems: PropTypes.object.isRequired,
     length: PropTypes.number.isRequired,
@@ -38,9 +38,10 @@ class SubmitButtonSet extends React.Component {
     }, true);
     console.log("valid", valid);
 
+
     //if editing page
     //`/api/admin/${blogID}/page/${this.props.section}/${this.props.dataObj._id}`
-    if(valid && this.props.url.includes('api')){
+    if(valid && (this.props.url.includes('api') || this.props.url.includes('user-setup'))){
       if(this.props.title === "Delete Content"){
         if(this.props.length > 1 ){
           this.props.editData(this.props.url);
@@ -58,6 +59,9 @@ class SubmitButtonSet extends React.Component {
         this.props.editData(this.props.url, this.props.formItems);
       }
     }
+    // else if(valid && this.props.url.includes('user-setup')){ //if logging in
+    //   this.props.editData(this.props.url, this.props.formItems);
+    // }
     else {
       e.preventDefault();
       this.props.updateState({
@@ -79,9 +83,9 @@ class SubmitButtonSet extends React.Component {
           <Button className="edit" bsStyle="danger">
             Delete
           </Button>) :
-        ((this.props.title === "Edit Content") ?
-          <Button className="edit" bsStyle="info">
-            Submit
+        ((this.props.title === "Cancel Reservation") ?
+          <Button className="edit" bsStyle="danger">
+            Cancel Reservation
           </Button> :
           <Button className="edit" bsStyle="primary">
             Submit
@@ -89,6 +93,7 @@ class SubmitButtonSet extends React.Component {
         );
     }
 
+    console.log("formItems", this.props.formItems);
     return (
       <div className="text-center">
         <AlertMessage

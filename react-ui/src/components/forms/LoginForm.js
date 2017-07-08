@@ -25,7 +25,10 @@ const LoginForm = (props) => {
       <LoginButtonSet
         updateState={props.updateState}
         message={props.message}
-        onSubmit={props.onSubmit}
+        next={props.next}
+        postData={props.postData}
+        url={(props.adminValue) ? '/api/login' : '/locked/userlogin'}
+        formItems={(props.adminValue) ? {username: props.usernameValue, password: props.passwordValue} : {email:props.usernameValue, password: props.passwordValue}}
       />
 
     </Form>
@@ -40,9 +43,12 @@ LoginForm.propTypes = {
   passwordValue: PropTypes.string.isRequired,
   usernameValue: PropTypes.string.isRequired,
   adminValue: PropTypes.bool.isRequired,
+
   formChange: PropTypes.func.isRequired,
   checkboxChange: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+
+  postData: PropTypes.func.isRequired,
   message: PropTypes.object.isRequired,
   updateState: PropTypes.func.isRequired,
+  next: PropTypes.string.isRequired,
 };

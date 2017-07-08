@@ -15,8 +15,7 @@ class EditModal extends React.Component {
     next: PropTypes.string.isRequired,
     dataObj: PropTypes.object.isRequired,
     message: PropTypes.object.isRequired,
-    modalEdit: PropTypes.bool.isRequired,
-    //dataLength: PropTypes.number.isRequired
+    modalEdit: PropTypes.bool.isRequired
   }
 
   constructor(props){
@@ -60,14 +59,14 @@ class EditModal extends React.Component {
               edit={this.state.input}
               message={this.props.message}
               updateState={this.props.updateState}
-              token={this.props.user.token}
               next={this.props.next}
+              token={this.props.user.token}
             />
           </Modal.Body>
 
           <Modal.Footer>
             {
-              (this.props.dataObj.modalTitle !== "Delete Content") ?
+              (this.props.dataObj.modalTitle !== "Delete Content" && this.props.dataObj.modalTitle !== "Cancel Reservation") ?
                 <div>
                   *Fill out required fields
                   <br />

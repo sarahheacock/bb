@@ -7,7 +7,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { initialPage } from '../data/options';
-import CancelModal from '../modals/CancelModal';
+import EditModal from '../modals/EditModal';
 
 class Upcoming extends React.Component {
   static propTypes = {
@@ -45,10 +45,7 @@ class Upcoming extends React.Component {
     this.setState(this.state, () => this.props.updateState({
       page: {
         ...initialPage,
-        modalVisible: {
-          ...initialPage.modalVisible,
-          modalOne: true
-        }
+        modalOne: true
       }
     }));
   }
@@ -79,13 +76,15 @@ class Upcoming extends React.Component {
           user={this.props.user}
           refundClient={this.props.refundClient}
         />
-        <CancelModal
-          message={this.props.message}
+        <EditModal
           user={this.props.user}
-          refundClient={this.props.refundClient}
+          modalEdit={this.props.page.edit}
+          editData={this.props.refundClient}
           updateState={this.props.updateState}
-          upcomingID={this.state.target._id}
-          modalDelete={this.props.page.modalVisible.delete}
+          url={(this.props.data[0]) ? `/api/admin/${this.props.user.id}/${this.state.target._id}?token=${this.props.user.token}` : ''}
+          next="#"
+          dataObj={ {...this.state.target, modalTitle: "Cancel Reservation", length: 2} }
+          message={this.props.message}
         />
       </div>
     );

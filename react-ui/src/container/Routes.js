@@ -13,10 +13,6 @@ import WelcomeAdmin from '../components/WelcomeAdmin';
 import NotFound from '../components/NotFound';
 
 
-
-// <Route path="/home" render={ () => (
-//   ) }
-// />
 const Routes = (props) => {
 
   return (
@@ -103,35 +99,32 @@ const Routes = (props) => {
 
       <Route path="/login" render={ () => ((props.user.username) ?
         <Redirect to="/welcome" /> :
-        <Login
-          page={props.page}
-          data={props.data}
-          user={props.user}
-          message={props.message}
-          postData={props.postData}
-          updateState={props.updateState}
-        />
+          <Login
+            modalEdit={props.page.edit}
+            data={props.data}
+            user={props.user}
+            message={props.message}
+            postData={props.postData}
+            updateState={props.updateState}
+            roomID={props.checkout.selected.roomID}
+          />
+
         ) }
       />
 
       <Route path="/book-now" render={ () => (
         <Book
+          page={props.page}
           data={props.data}
-          fetchSearch={props.fetchSearch}
-          select={props.select}
+          user={props.user}
           checkout={props.checkout}
-          updateCheckout={props.updateCheckout}
-          admin={props.admin}
-          makeModal={props.makeModal}
-          modalVisible={props.modalVisible}
-          verifyEmail={props.verifyEmail}
-          logout={props.logout}
-          createEmail={props.createEmail}
-          errorMessage={props.errorMessage}
-          fetchClient={props.fetchClient}
-          updateEmail={props.updateEmail}
-          verifyPayment={props.verifyPayment}
+          message={props.message}
+          getData={props.getData}
+          putData={props.putData}
+          postData={props.postData}
+          updateState={props.updateState}
           chargeClient={props.chargeClient}
+          fetchSearch={props.fetchSearch}
         />) }
       />
 
@@ -159,24 +152,5 @@ Routes.propsTypes = {
   postData: PropTypes.func.isRequired,
   deleteData: PropTypes.func.isRequired,
   fetchSearch: PropTypes.func.isRequired
-  // fetchBlog: PropTypes.func.isRequired,
-  // data: PropTypes.object.isRequired,
-  // admin: PropTypes.object.isRequired,
-  // select: PropTypes.object.isRequired,
-  // selectEdit: PropTypes.func.isRequired,
-  // selectAdd: PropTypes.func.isRequired,
-  // deleteBlog: PropTypes.func.isRequired,
-  // errorMessage: PropTypes.object.isRequired,
-  // verifyEmail: PropTypes.func.isRequired,
-  // logout: PropTypes.func.isRequired,
-  // fetchSearch: PropTypes.func.isRequired,
-  // updateCheckout: PropTypes.func.isRequired,
-  // checkout: PropTypes.object.isRequired,
-  // createEmail: PropTypes.func.isRequired,
-  // makeModal: PropTypes.func.isRequired,
-  // modalVisible: PropTypes.object.isRequired,
-  // fetchClient: PropTypes.func.isRequired,
-  // updateEmail: PropTypes.func.isRequired,
-  // verifyPayment: PropTypes.func.isRequired,
-  // chargeClient: PropTypes.func.isRequired,
+
 };

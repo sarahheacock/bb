@@ -47,10 +47,7 @@ class CalendarModal extends React.Component {
     this.props.updateState({
       page: {
         ...initialPage,
-        modalVisible: {
-          ...initialPage.modalVisible,
-          delete: true
-        }
+        delete: true
       }
     });
 
@@ -129,7 +126,7 @@ class CalendarModal extends React.Component {
 
     return (
       <div className="main-content">
-        <Modal show={this.props.page.modalVisible.modalOne} >
+        <Modal show={this.props.page.modalOne} >
           <Modal.Body>
             {upcomingStay}
 
@@ -162,8 +159,7 @@ class CalendarModal extends React.Component {
               <SubmitButtonSet
                 onSubmit={this.handleCheckIn}
                 message={this.props.message}
-                next="/welcome/upcoming"
-                token={this.props.user.token}
+                next="#"
                 updateState={this.props.updateState}
                 formItems={this.state.paymentForms[this.state.payment]}
               />

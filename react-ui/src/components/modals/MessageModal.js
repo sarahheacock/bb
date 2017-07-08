@@ -71,7 +71,7 @@ class MessageModal extends React.Component {
 
     return (
       <div>
-        <Modal show={this.props.page.modalVisible.message}>
+        <Modal show={this.props.page.message}>
           <Modal.Header>
             <Modal.Title>Leave Us a Message</Modal.Title>
           </Modal.Header>

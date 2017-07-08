@@ -4,7 +4,7 @@ import { PageHeader, Carousel, Button } from 'react-bootstrap';
 
 import EditModal from './modals/EditModal';
 import EditButton from './buttons/EditButton';
-import { blogID, initialPage } from './data/options';
+import { blogID } from './data/options';
 
 class Home extends React.Component {
   static propTypes = {
@@ -50,6 +50,8 @@ class Home extends React.Component {
         <p>Loading</p>
     }
 
+    //since the only button available is Edit, url and modalTitle are predetermined
+    //since data array is only length = 1, there is no state for this route and content to be edited is already predetermined
     return (
       <div>
         <header>
@@ -69,12 +71,12 @@ class Home extends React.Component {
         </div>
         <EditModal
           user={this.props.user}
-          modalEdit={this.props.page.modalVisible.edit}
+          modalEdit={this.props.page.edit}
           editData={this.props.putData}
           updateState={this.props.updateState}
           url={(this.props.data[0]) ? `/api/admin/${blogID}/page/home/${this.props.data[0]["_id"]}` : ''}
           next="#"
-          dataObj={ {...this.props.data[0], modalTitle: "Edit Content", length: this.props.data.length} }
+          dataObj={(this.props.data[0]) ? {...this.props.data[0], modalTitle: "Edit Content", length: this.props.data.length} : {} }
           message={this.props.message}
         />
       </div>

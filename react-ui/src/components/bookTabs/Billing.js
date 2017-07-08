@@ -53,8 +53,7 @@ class Billing extends React.Component {
               state: arr[3],
               zip: arr[4],
               country: arr[5]
-            },
-            key: '0s3W7DOZkYFzEtLS'
+            }
           }
           this.setState(this.state);
         }

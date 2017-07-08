@@ -4,7 +4,7 @@ import { PageHeader, Button, Row, Col, Modal, Alert } from 'react-bootstrap';
 import moment from 'moment';
 
 import { initialPage, initialUser } from './data/options';
-import CancelModal from './modals/CancelModal';
+import EditModal from './modals/EditModal';
 import LogoutButton from './buttons/LogoutButton';
 
 
@@ -47,10 +47,7 @@ class Welcome extends React.Component {
     }, () => this.props.updateState({
       page: {
         ...initialPage,
-        modalVisible: {
-          ...initialPage.modalVisible,
-          delete: true
-        }
+        edit: true
       }
     }));
   }
@@ -98,13 +95,15 @@ class Welcome extends React.Component {
           {upcoming}
         </div>
 
-        <CancelModal
-          message={this.props.message}
+        <EditModal
           user={this.props.user}
-          refundClient={this.props.refundClient}
+          modalEdit={this.props.page.edit}
+          editData={this.props.refundClient}
           updateState={this.props.updateState}
-          upcomingID={this.state.target}
-          modalDelete={this.props.page.modalVisible.delete}
+          url={(this.props.data[0]) ? `/locked/user/${this.props.user.id}/${this.state.target._id}?token=${this.props.user.token}` : ''}
+          next="#"
+          dataObj={ {...this.state.target, modalTitle: "Cancel Reservation", length: 2} }
+          message={this.props.message}
         />
       </div>
     );

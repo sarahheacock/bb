@@ -14,21 +14,16 @@ import '../stylesheets/book.css';
 class Book extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    admin: PropTypes.object.isRequired,
-    fetchSearch: PropTypes.func.isRequired,
-    select: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
     checkout: PropTypes.object.isRequired,
-    updateCheckout: PropTypes.func.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    verifyEmail: PropTypes.func.isRequired,
-    logout: PropTypes.func.isRequired,
-    createEmail: PropTypes.func.isRequired,
-    errorMessage: PropTypes.object.isRequired,
-    fetchClient: PropTypes.func.isRequired,
-    updateEmail: PropTypes.func.isRequired,
-    verifyPayment: PropTypes.func.isRequired,
-    chargeClient: PropTypes.func.isRequired
+    message: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+    putData: PropTypes.func.isRequired,
+    postData: PropTypes.func.isRequired,
+    chargeClient: PropTypes.func.isRequired,
+    fetchSearch: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired,
+    page: PropTypes.object.isRequired
   }
 
 
@@ -41,13 +36,13 @@ class Book extends React.Component {
           <Col sm={4}>
 
 
-            { (this.props.admin.admin) ?
+            { (this.props.user.admin) ?
               <Nav bsStyle="pills" stacked>
                 <LinkContainer to="/book-now/availability">
                   <NavItem className="tab">I.  Check Availability</NavItem>
                 </LinkContainer>
                 <LinkContainer to="/book-now/confirmation" disabled={!(this.props.checkout.selected)}>
-                  <NavItem className="tab">IV.  Confirmation</NavItem>
+                  <NavItem className="tab">II.  Confirmation</NavItem>
                 </LinkContainer>
               </Nav>:
 
@@ -72,7 +67,7 @@ class Book extends React.Component {
 
 
             {
-              (this.props.admin.admin) ?
+              (this.props.user.admin) ?
               <Col sm={8}>
               <Route exact path="/book-now/" render={ () =>
                 <Redirect to="/book-now/availability" /> }
