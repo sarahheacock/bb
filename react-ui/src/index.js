@@ -39,7 +39,7 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
         {
           data: initialData,
           page: initialPage,
-          user: initialUser,
+          user: storage.user,
           checkout: newCheckout,
           message: initialMessage
         }:
@@ -52,14 +52,14 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
         };
 
   const store = createStore(
-    //AdminReducer, initial, applyMiddleware(thunk)
-    AdminReducer, {
-      data: initialData,
-      page: initialPage,
-      user: initialUser,
-      checkout: initialCheckout,
-      message: initialMessage
-    }, applyMiddleware(thunk)
+    AdminReducer, initial, applyMiddleware(thunk)
+    // AdminReducer, {
+    //   data: initialData,
+    //   page: initialPage,
+    //   user: initialUser,
+    //   checkout: initialCheckout,
+    //   message: initialMessage
+    // }, applyMiddleware(thunk)
   );
 
   store.subscribe(() => {

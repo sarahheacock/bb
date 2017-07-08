@@ -2,28 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'react-bootstrap';
 import MessageModal from '../components/modals/MessageModal';
-import EditModal from '../components/modals/EditModal';
-import AddModal from '../components/modals/AddModal';
+//import EditModal from '../components/modals/EditModal';
+//import AddModal from '../components/modals/AddModal';
 var FaLinked = require('react-icons/lib/fa/linkedin-square');
 var FaFacebook = require('react-icons/lib/fa/facebook-square');
 var FaEmail = require('react-icons/lib/fa/envelope');
 
 const Footer = (props) => (
   <footer className="text-center content">
-    <AddModal
-      user={props.user}
-      page={props.page}
-      message={props.message}
-      postData={props.postData}
-      updateState={props.updateState}
-    />
-    <EditModal
-      user={props.user}
-      page={props.page}
-      message={props.message}
-      putData={props.putData}
-      updateState={props.updateState}
-    />
+
     <MessageModal
       user={props.user}
       page={props.page}
@@ -81,3 +68,11 @@ Footer.propTypes = {
   // addBlog: PropTypes.func.isRequired,
   // admin: PropTypes.object.isRequired
 };
+
+// <AddModal
+//   user={props.user}
+//   page={props.page}
+//   message={props.message}
+//   postData={props.postData}
+//   updateState={props.updateState}
+// />

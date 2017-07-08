@@ -12,33 +12,7 @@ var CryptoJS = require("crypto-js");
 // console.log("key", enc);
 // console.log("message", de);
 //=======================================================
-// export const makeModal = (vis) => {
-//   return {
-//     type: AdminActionTypes.MAKE_MODAL,
-//     vis
-//   }
-// }
-//
-// export const selectEdit = (data) => {
-//   return {
-//     type: AdminActionTypes.SELECT_EDIT,
-//     data
-//   }
-// }
-//
-// export const selectAdd = (data) => {
-//   return {
-//     type: AdminActionTypes.SELECT_ADD,
-//     data
-//   }
-// }
-//
-// export const fail = (results) => {
-//   return {
-//     type: AdminActionTypes.FAIL,
-//     results
-//   };
-// };
+
 
 export const updateState = (newState) => {
   return {
@@ -47,136 +21,6 @@ export const updateState = (newState) => {
   }
 }
 
-// export const updateNewMessage = (newMessage) => {
-//   return {
-//     type: AdminActionTypes.UPDATE_NEW_MESSAGE,
-//     newMessage
-//   }
-// }
-
-// export const updateUserState = (newState) => {
-//   return {
-//     type: AdminActionTypes.UPDATE_USER_STATE,
-//     newState
-//   }
-// }
-
-
-//===============MESSAGING===============================================
-// export const sendMessageSuccess = () => {
-//   return {
-//     type: AdminActionTypes.SEND_MESSAGE_SUCCESS,
-//   };
-// };
-
-
-// export const sendMessage = (data) => {
-//   return (dispatch) => {
-//     console.log(data);
-//     //return dispatch(sendMessageSuccess(data));
-//     return axios.post(`/user/sayHello`,
-//       {
-//         message: `<h3>Hello, from ${data.name}</h3><p><b>Message: </b>${data.message}</p><br /><p><b>Contact: </b>${data.email} ${data.phone}</p>`
-//       })
-//       .then(response => {
-//         console.log("response data", response.data);
-//         //dispatch(sendMessageSuccess());
-//         dispatch(updateState({
-//           errorMessage: '',
-//           messageSent: true
-//         }));
-// ;      })
-//       .catch(error => {
-//         console.log(error);
-//         //dispatch(fail({"error": "Message unable to send"}));
-//         dispatch(updateState({errorMessage: "Message unable to send"}));
-//
-//         //throw(error);
-//       });
-//   }
-// };
-
-
-
-//=====================PAGE LOADING==========================================
-// export const fetchBlogSuccess = (results) => {
-//   return {
-//     type: AdminActionTypes.FETCH_BLOG_SUCCESS,
-//     results
-//   };
-// };
-
-
-// export const fetchBlog = (page) => {
-//   return (dispatch) => {
-//
-//     return axios.get(`/page/${blogID}/${page}`)
-//       .then(json => {
-//         console.log("response", json);
-//         dispatch(fetchBlogSuccess(json.data));
-//       })
-//       .catch(error => {
-//         console.log(error);
-//         alert("Unable to load content at this time.")
-//       });
-//   }
-// };
-
-// export const editBlog = (data) => {
-//
-//   return (dispatch) => {
-//
-//     return axios.put(`/api/admin/${blogID}/page/${data.section}/${data.sectionID}`, {
-//       ...data.input,
-//       token: data.id
-//     })
-//       .then(response => {
-//         console.log("response data", response.data);
-//         if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."))
-//         else dispatch(fetchBlogSuccess(response.data));
-//       })
-//       .catch(error => {
-//         console.log(error);
-//         dispatch(fail({"error": "Unable to edit content at this time."}));
-//       });
-//   }
-// };
-
-// export const postData = (url, newData) => {
-//   return (dispatch) => {
-//
-//     return axios.post(`/api/admin/${blogID}/page/${data.section}`,
-//       {
-//         ...data.input,
-//         token: data.id
-//       })
-//       .then(response => {
-//         console.log("response data", response.data);
-//         if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."));
-//         else dispatch(fetchBlogSuccess(response.data));
-//       })
-//       .catch(error => {
-//         console.log(error);
-//         dispatch(fail({"error": "Unable to add content at this time"}));
-//       });
-//   }
-// };
-
-// export const deleteBlog = (data) => {
-//   return (dispatch) => {
-//
-//     return axios.delete(`/api/admin/${blogID}/page/${data.section}/${data.sectionID}?token=${data.id}`)
-//       .then(response => {
-//         console.log("response data", response.data);
-//         if(response.data.success === false) dispatch(logout("Session expired. You are now logged out. Log back in again to continue editing."))
-//         else dispatch(fetchBlogSuccess(response.data));
-//       })
-//       .catch(error => {
-//         console.log(error);
-//         dispatch(fail({"error": "Unable to delete content at this time."}));
-//       });
-//   }
-// };
 
 export const getData = (url, thisPage) => {
   return (dispatch) => {
@@ -223,18 +67,18 @@ export const putData = (url, newData) => {
               ...initialCheckout
             },
             message: {
-              ...initialMessage
-            },
-            page: {
-              ...initialPage
+              error: "Session expired. Log back in again to continue.",
+              success: ""
             }
           }));
         }
         else {
           dispatch(updateState({
             message: {
-              "success": "data edited",
-              "error": ""
+              ...initialMessage
+            },
+            page: {
+              ...initialPage
             },
             data: response.data,
           }));
@@ -251,7 +95,7 @@ export const putData = (url, newData) => {
       });
 
   }
-}
+};
 
 
 
@@ -404,64 +248,7 @@ export const deleteData = (url) => {
   }
 };
 
-//===================CHECKOUT=================================
-// export const updateCheckout = (select, checkout) => {
-//   return {
-//     type: AdminActionTypes.UPDATE_CHECKOUT,
-//     select,
-//     checkout
-//   }
-// };
-//
-// export const verifyPayment = (credit) => {
-//   return {
-//     type: AdminActionTypes.VERIFY_PAYMENT,
-//     credit
-//   }
-// };
 
-//(3) CHECKOUT
-// export const completeCheckout = (response) => {
-//   return {
-//     type: AdminActionTypes.COMPLETE_CHECKOUT,
-//     response
-//   }
-// };
-//
-// //(2) UPDATE CLIENT INFO
-// export const updateClient = (clientInfo) => {
-//   return (dispatch) => {
-//     console.log(clientInfo);
-//     if(clientInfo.admin.admin){
-//       return axios.post(`/api/admin/${clientInfo.admin.user}`, {
-//         ...clientInfo.select,
-//         token: clientInfo.admin.id
-//       })
-//       .then(response => {
-//         console.log("response", response);
-//         dispatch(completeCheckout(response.data));
-//       })
-//       .catch(error => {
-//         dispatch(fail({"error": "Unable to confirm reservation"}));
-//       });
-//     }
-//     else {
-//       console.log({...clientInfo.select,
-//       token: clientInfo.admin.id});
-//       return axios.post(`/locked/user/${clientInfo.admin.user}`, {
-//         ...clientInfo.select,
-//         token: clientInfo.admin.id
-//       })
-//       .then(response => {
-//         console.log("response", response);
-//         dispatch(completeCheckout(response.data));
-//       })
-//       .catch(error => {
-//         dispatch(fail({"error": "Unable to confirm reservation"}));
-//       });
-//     }
-//   };
-// }
 
 //(1) CHARGE CLIENT
 //need to add later
@@ -472,23 +259,6 @@ export const chargeClient = (url, newData) => {
   }
 };
 
-//(2) DELETE UPCOMING WITH USER AUTH
-// export const updateUpcoming = (url) => {
-//   return (dispatch) => {
-//     console.log(url);
-//     //return dispatch(fetchBlogSuccess([]));
-//     return axios.delete(url)
-//     .then(res => {
-//       console.log("res", res.data);
-//
-//       if(res.data) dispatch(fetchBlogSuccess(res.data));
-//       //dispatch(fail({}));
-//     })
-//     .catch(error => {
-//       dispatch(fail({"error": "Unable to cancel reservation"}));
-//     });
-//   }
-// }
 
 //(1) REFUND CLIENT
 //need to add later
@@ -499,133 +269,13 @@ export const refundClient = (clientInfo) => {
     //console.log(clientInfo);
     if(clientInfo.user.admin) return dispatch(deleteData(`/api/admin/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
     else return dispatch(deleteData(`/locked/user/${clientInfo.user.id}/${clientInfo.upcomingID}?token=${clientInfo.user.token}`));
-    //return dispatch(deleteData(url));
   }
 }
 
 
-//=================FETCH CLIENT INFO==============================================
-// (2) MAKE RESULT DATA CURRENT
-// (1) FETCH CLIENT INFO
-// export const fetchClient = (user) => {
-//   return (dispatch) => {
-//     //get("/locked/user/:userID/"
-//     console.log(user);
-//       return axios.get(user)
-//       .then(response => {
-//         dispatch(fetchBlogSuccess(response.data));
-//         //else dispatch(fetchBlogSuccess([response.data]))
-//       })
-//       .catch(error => {
-//         console.log(error);
-//         dispatch(fail({"error": "Unable to fetch account information"}));
-//       });
-//   };
-// };
-
-//===============UPDATE CLIENT INFO===============================================
-// (1) MAKE RESULT PART OF STATE.ADMIN
-// (2) UPDATE CLIENT INFO
-// export const updateEmail = (profile, credit) => {
-//   return (dispatch) => {
-//       return axios.put(`/locked/user/${profile.userID}`, {
-//         ...credit,
-//         token: profile.token
-//       })
-//       .then(response => {
-//         //dispatch(fetchBlogSuccess([response.data]))
-//         dispatch(verifyPayment(credit));
-//       })
-//       .catch(error => {
-//         dispatch(fail({"error": "Unable to update account information"}));
-//       });
-//   };
-// };
-
-//=============MAKE/CANCEL RESERVATION============================================
-
-
-//=================AUTHENTICATION==================================================
-// export const logout = (message) => {
-//   if(message === "Session expired. You are now logged out. Log back in again to continue editing.") alert("Session expired");
-//   return {
-//     type: AdminActionTypes.LOGOUT,
-//     message
-//   };
-// };
-//
-// export const verifyEmailSuccess = (results) => {
-//   return {
-//     type: AdminActionTypes.VERIFY_EMAIL_SUCCESS,
-//     results
-//   };
-// };
-//
-// export const verifyEmail = (data) => {
-//   return (dispatch) => {
-//
-//     if(data.admin){
-//       //admin login
-//       return axios.post(`/api/login`, {
-//         username: data.username,
-//         password: data.password
-//       })
-//         .then(response => {
-//           console.log("response data", response.data);
-//           dispatch(verifyEmailSuccess(response.data));
-//         })
-//         .catch(error => {
-//           console.log(error);
-//           dispatch(fail({"error": "username and/or password not found"}));
-//           //throw(error);
-//         });
-//     }
-//     else {
-//       //user login
-//       return axios.post(`/locked/userlogin`, {
-//         email: data.username,
-//         password: data.password
-//       })
-//         .then(response => {
-//           console.log("response data", response.data);
-//           dispatch(verifyEmailSuccess(response.data));
-//         })
-//         .catch(error => {
-//           console.log(error);
-//           dispatch(fail({"error": "username and/or password not found"}));
-//           //throw(error);
-//         });
-//     }
-//   }
-// };
-
-//==============CREATE CLIENT=====================================
-// (3) VERIFY_EMAIL_SUCCESS
-// (2) SIGN IN
-// (1) UPDATE CLIENT'S ACCOUNT
-// export const createEmail = (formData) => {
-//   return (dispatch) => {
-//     //post("/:userID/:password/upcoming"
-//     console.log(formData.email);
-//       return axios.post(`/page/user-setup`, {
-//         "email": formData.email,
-//         "password": formData.password,
-//         "billing": formData.billing,
-//         "pageID": blogID
-//       })
-//       .then(response => {
-//         console.log(response.data);
-//         dispatch(verifyEmail({admin: false, username: response.data.email, password: formData.password }))
-//       })
-//       .catch(error => {
-//         dispatch(fail({"error": "Unable to create new account"}));
-//       });
-//   };
-// }
-
 //=============GET AVAILABLE ROOMS==============================
 // Sync Action
-//(3) SUCCESS/UPDATE SEARCHRESULTS PROP
+//(3) SUCCESS/UPDATE DATA PROP
 //(2) GET THE ROOM DATA FROM THE ID
 export const filterSearch = (data, results) => {
   //fetch rooms from page

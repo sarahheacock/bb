@@ -23,9 +23,12 @@ const Routes = (props) => {
     <Switch>
       <Route path="/home" render={ () => (
         <Home
+          page={props.page}
           data={props.data}
           user={props.user}
+          message={props.message}
           getData={props.getData}
+          putData={props.putData}
           updateState={props.updateState}
         />) }
       />
@@ -37,32 +40,40 @@ const Routes = (props) => {
 
       <Route path="/about" render={ () => (
         <About
+          page={props.page}
           data={props.data}
           user={props.user}
+          message={props.message}
           getData={props.getData}
+          putData={props.putData}
           updateState={props.updateState}
         />) }
       />
 
       <Route path="/rooms" render={ () => (
         <Rooms
+          page={props.page}
           data={props.data}
           user={props.user}
+          message={props.message}
           getData={props.getData}
+          putData={props.putData}
+          postData={props.postData}
           deleteData={props.deleteData}
           updateState={props.updateState}
-          modalDelete={props.page.modalVisible.delete}
-          //selectAdd={props.selectAdd}
         />) }
       />
       <Route path="/local-guide" render={ () => (
         <LocalGuide
+          page={props.page}
           data={props.data}
           user={props.user}
+          message={props.message}
           getData={props.getData}
+          putData={props.putData}
+          postData={props.postData}
           deleteData={props.deleteData}
           updateState={props.updateState}
-          modalDelete={props.page.modalVisible.delete}
         />) }
       />
 

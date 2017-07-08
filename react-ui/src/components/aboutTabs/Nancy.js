@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Button } from 'react-bootstrap';
-import EditModal from '../modals/EditModal';
+//import EditModal from '../modals/EditModal';
 
-import EditButton from '../buttons/EditButton';
-import { blogID } from '../data/options';
+//import { blogID } from '../data/options';
 
 
 const Nancy = (props) => {
@@ -15,12 +14,6 @@ const Nancy = (props) => {
   let image = <div>Loading</div>
   //make sure data is defined
   if(props.data){
-    editButton = <EditButton
-                  updateState={props.updateState}
-                  admin={props.user.admin}
-                  pageSection="about"
-                  dataObj={props.data}
-                />;
     //make sure data is fetched
     title = (props.data.title) ? <h3>{props.data.title}</h3> : <h3>Loading</h3>;
     bold = (props.data.bold) ? <p><b>{props.data.bold}</b></p> : <p><b>Loading</b></p>;
@@ -44,9 +37,6 @@ const Nancy = (props) => {
         </Row>
       </Row>
 
-      <div className="text-center">
-        {editButton}
-      </div>
     </div>
   );
 };

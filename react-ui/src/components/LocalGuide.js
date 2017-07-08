@@ -7,7 +7,10 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 
 import Place from './localGuideTabs/Place';
-
+import AddButton from './buttons/AddButton';
+import EditDeleteButtons from './buttons/EditDeleteButtons';
+import DeleteModal from './modals/DeleteModal';
+import EditModal from './modals/EditModal';
 import { blogID } from './data/options';
 
 
@@ -15,16 +18,20 @@ class LocalGuide extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
+    putData: PropTypes.func.isRequired,
+    postData: PropTypes.func.isRequired,
     deleteData: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired,
-    modalDelete: PropTypes.bool.isRequired
+    page: PropTypes.object.isRequired
   }
 
   constructor(props){
     super(props);
     this.state = {
-      categories: []
+      //categories: [],
+      target: {}
     }
   }
 
@@ -32,60 +39,96 @@ class LocalGuide extends React.Component {
     this.props.getData(`/page/${blogID}/localGuide`, "localGuide");
   }
 
-  componentDidUpdate(){
-    //make sure data is defined
-    if(this.props.data[0]){
-      //make sure data is fetched and categories is not already intialiazed
-      if(this.props.data[0]["category"] !== undefined && this.state.categories.length === 0){
-        let cat = [];
-        this.props.data.forEach((event, index) => {
-            let create = {
-              "title": event.category,
-              "link": `/local-guide/${event.category.trim().replace(/\s/g, "-")}`
-            };
+  // componentDidUpdate(){
+  //   //make sure data is defined
+  //
+  // }
 
-            const titles = cat.map((c) => c.title);
-
-            if (titles.indexOf(create.title) === -1) cat.push({...create, data: [event]});
-            else cat[titles.indexOf(create.title)]["data"].push(event);
-          });
-
-        this.setState({categories: cat})
-      }
-    }
+  handleSelect = (e) => {
+    //console.log("click", e.target.name);
+    this.setState({
+      target: JSON.parse(e.target.name)
+    });
   }
 
   render(){
-    //component already determined data is defined and correct data is fetched
-    //create tabs from categories
-    const tabs = (this.state.categories.length === 0) ?
-      <div>Loading</div> :
-      this.state.categories.map((c, index) => (
-        <LinkContainer to={c.link} key={c.link}>
-          <NavItem className="tab">{c.title}</NavItem>
-        </LinkContainer>
-      ));
+    let tabs = <div>Loading</div>;
+    let defaultRoute = <div></div>;
+    let routes = <div></div>;
+    let addButton = <div></div>;
 
-    const defaultRoute = (this.state.categories.length === 0) ?
-       <div></div>:
-       <Route exact path="/local-guide/" render={ () =>
-         <Redirect to={this.state.categories[0]["link"]} /> }
-       />;
+    if(this.props.data[0]){
+      //make sure data is fetched and categories is not already intialiazed
+      if(this.props.data[0]["category"]){
+        let cat = [];
+        let count = -1;
+        this.props.data.forEach((event, index) => {
+            // let create = {
+            //   "title": event.category,
+            //   "link": `/local-guide/${event.category.trim().replace(/\s/g, "-")}`
+            // };
 
-    const routes = (this.state.categories.length === 0) ?
-      <div></div> :
-      this.state.categories.map((c, index) => (
-        <Route path={c.link} key={c.title} render={ () =>
-          <Place
-            data={c.data}
-            user={this.props.user}
-            deleteData={this.props.deleteData}
-            updateState={this.props.updateState}
-            length={this.props.data.length}
-            modalDelete={this.props.modalDelete}
-          /> }
-        />
-      ));
+            const titles = cat.map((c) => c.title);
+            const titleIndex = titles.indexOf(event.category);
+
+            if (titleIndex === -1){
+              cat.push({
+                "title": event.category,
+                "link": `/local-guide/${event.category.trim().replace(/\s/g, "-")}`,
+                data: [event]
+              });
+              count++;
+            }
+            else {
+              cat[titleIndex]["data"].push(event);
+              count++;
+            }
+
+            if(count === index){
+              tabs = cat.map((c, index) => (
+                  <LinkContainer to={c.link} key={c.link}>
+                    <NavItem className="tab">{c.title}</NavItem>
+                  </LinkContainer>
+                ));
+
+              defaultRoute = <Route exact path="/local-guide/" render={ () =>
+                   <Redirect to={cat[0]["link"]} /> }
+                 />;
+
+              routes = cat.map((c, index) => (
+                  <Route path={c.link} key={c.title} render={ () =>
+                    <div>
+                    {c.data.map((cdata, j) => (
+                      <div key={`${cdata.title}j`}>
+                        <Place
+                          data={cdata}
+                          user={this.props.user}
+                          updateState={this.props.updateState}
+                        />
+                        <EditDeleteButtons
+                          handleClick={this.handleSelect}
+                          name={JSON.stringify(cdata)}
+                          user={this.props.user}
+                          updateState={this.props.updateState}
+                        />
+                        <hr />
+                      </div>
+                    ))}
+                    </div>}
+                  />
+                ));
+
+              addButton = <AddButton
+                            updateState={this.props.updateState}
+                            admin={this.props.user.admin}
+                            pageSection="rooms"
+                            dataObj={this.props.data[0]}
+                          />;
+            }
+          });
+      }
+    }
+
 
     return (
       <div className="main-content">
@@ -104,6 +147,27 @@ class LocalGuide extends React.Component {
           </Row>
           </Tab.Container>
           </div>
+          {addButton}
+          <DeleteModal
+            user={this.props.user}
+            deleteData={this.props.deleteData}
+            pageSection="localGuide"
+            dataObjID={this.state.target._id}
+            length={this.props.data.length}
+            modalDelete={this.props.page.modalVisible.delete}
+            message={this.props.message}
+            updateState={this.props.updateState}
+          />
+          <EditModal
+            user={this.props.user}
+            modalEdit={this.props.page.modalVisible.edit}
+            editData={this.props.putData}
+            updateState={this.props.updateState}
+            url={`/api/admin/${blogID}/page/localGuide/${this.state.target._id}`}
+            next="#"
+            dataObj={this.state.target}
+            message={this.props.message}
+          />
       </div>
     );
   }

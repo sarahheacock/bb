@@ -3,26 +3,29 @@ import PropTypes from 'prop-types';
 import { PageHeader, Button, Row, Col } from 'react-bootstrap';
 import moment from 'moment';
 
+//import EditButton from './buttons/EditButton';
 import EditButton from './buttons/EditButton';
-import AddButton from './buttons/AddButton';
-import DeleteButton from './buttons/DeleteButton';
-import DeleteModal from './modals/DeleteModal';
+import EditModal from './modals/EditModal';
 import { blogID, initialPage } from './data/options';
 
 class Rooms extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
+    message: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
+    putData: PropTypes.func.isRequired,
+    postData: PropTypes.func.isRequired,
     deleteData: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired,
-    modalDelete: PropTypes.bool.isRequired
+    page: PropTypes.object.isRequired
   }
 
   constructor(props){
     super(props);
     this.state = {
-      target: '',
+      target: {},
+      targetType: ''
     }
   }
 
@@ -31,17 +34,11 @@ class Rooms extends React.Component {
   }
 
   handleSelect = (e) => {
+    console.log(e.target);
     this.setState({
-      target: e.target.name
-    }, () => this.props.updateState({
-      page: {
-        ...initialPage,
-        modalVisible: {
-          ...initialPage.modalVisible,
-          delete: true
-        }
-      }
-    }));
+      target: JSON.parse(e.target.name),
+      targetType: e.target.value
+    });
   }
 
   render(){
@@ -66,35 +63,56 @@ class Rooms extends React.Component {
                     </Col>
                   </Row>
 
-                  <div className="text-center">
-                    <EditButton
-                      updateState={this.props.updateState}
-                      admin={this.props.user.admin}
-                      pageSection="rooms"
-                      dataObj={article}
-                    />
-                    <DeleteButton
-                      handleClick={this.handleSelect}
-                      name={article._id}
-                      user={this.props.user}
-                    />
-                  </div>
+                  <Row>
+                    <Col sm={1}>
+                      <EditButton
+                        handleSelect={this.handleSelect}
+                        admin={this.props.user.admin}
+                        updateState={this.props.updateState}
+                        name={article}
+                        title="Edit"
+                      />
+                    </Col>
+                    <Col sm={1}>
+                      <EditButton
+                        handleSelect={this.handleSelect}
+                        admin={this.props.user.admin}
+                        updateState={this.props.updateState}
+                        name={article}
+                        title="Delete"
+                      />
+                    </Col>
+                  </Row>
 
                   </div>
                 </div>
               </a>
             ));
 
-        addButton = <AddButton
-                      updateState={this.props.updateState}
+        addButton = <EditButton
+                      handleSelect={this.handleSelect}
                       admin={this.props.user.admin}
-                      pageSection="rooms"
-                      dataObj={this.props.data[0]}
+                      updateState={this.props.updateState}
+                      name={this.props.data[0]}
+                      title="Add"
                     />;
       }
     }
 
     //<Button onClick={this.handleSelect} name={event._id}>Delete</Button>
+    const url = (this.state.targetType === "Add" && this.state.target._id !== 'undefined') ?
+      `/api/admin/${blogID}/page/rooms` :
+      (
+        (this.state.targetType === "Edit" && this.state.target._id !== 'undefined') ?
+          `/api/admin/${blogID}/page/rooms/${this.state.target._id}`:
+          `/api/admin/${blogID}/page/rooms/${this.state.target._id}?token=${this.props.user.token}`
+      );
+
+
+    let editFunc = this.props.putData;
+    if(this.state.targetType === "Add") editFunc = this.props.postData;
+    else if(this.state.targetType === "Delete") editFunc = this.props.deleteData;
+
     return (
       <div className="main-content">
         <PageHeader>Rooms</PageHeader>
@@ -102,13 +120,15 @@ class Rooms extends React.Component {
           {pubs}
           {addButton}
         </div>
-        <DeleteModal
+        <EditModal
           user={this.props.user}
-          deleteData={this.props.deleteData}
-          pageSection="rooms"
-          dataObjID={this.state.target}
-          length={this.props.data.length}
-          modalDelete={this.props.modalDelete}
+          modalEdit={this.props.page.modalVisible.edit}
+          editData={editFunc}
+          updateState={this.props.updateState}
+          url={url}
+          next="#"
+          dataObj={ {...this.state.target, modalTitle: `${this.state.targetType} Content`, length: this.props.data.length} }
+          message={this.props.message}
         />
       </div>
     );

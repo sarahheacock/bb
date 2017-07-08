@@ -11,9 +11,12 @@ class SubmitButtonSet extends React.Component {
     message: PropTypes.object.isRequired,
     next: PropTypes.string.isRequired,
     updateState: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired,
+    editData: PropTypes.func.isRequired,
     token: PropTypes.string.isRequired,
-    formItems: PropTypes.object.isRequired
+    url: PropTypes.string.isRequired,
+    formItems: PropTypes.object.isRequired,
+    length: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
   }
 
 
@@ -31,20 +34,28 @@ class SubmitButtonSet extends React.Component {
 
   submit = (e) => {
     const valid = Object.keys(this.props.formItems).reduce((a, b) => {
-      return (a && this.props.formItems[b] !== undefined);
+      return (a && this.props.formItems[b] !== "");
     }, true);
+    console.log("valid", valid);
 
-    if(valid){
-      this.props.onSubmit;
-      if(this.props.message.success){
-        this.props.updateState({
-          page: {
-            ...initialPage
-          },
-          message: {
-            ...initialMessage
-          }
-        });
+    //if editing page
+    //`/api/admin/${blogID}/page/${this.props.section}/${this.props.dataObj._id}`
+    if(valid && this.props.url.includes('api')){
+      if(this.props.title === "Delete Content"){
+        if(this.props.length > 1 ){
+          this.props.editData(this.props.url);
+        }
+        else {
+          this.props.updateState({
+            message: {
+              error: "You cannot delete all entries. Deleting all entries will cause errors",
+              success: ''
+            }
+          });
+        }
+      }
+      else {
+        this.props.editData(this.props.url, this.props.formItems);
       }
     }
     else {
@@ -58,7 +69,25 @@ class SubmitButtonSet extends React.Component {
     }
   }
 
+
   render(){
+    let submitButton = <div></div>;
+    if(this.props.formItems){
+      submitButton = (this.props.title === "Delete Content") ?
+        ((this.props.message.error) ?
+          <div></div>:
+          <Button className="edit" bsStyle="danger">
+            Delete
+          </Button>) :
+        ((this.props.title === "Edit Content") ?
+          <Button className="edit" bsStyle="info">
+            Submit
+          </Button> :
+          <Button className="edit" bsStyle="primary">
+            Submit
+          </Button>
+        );
+    }
 
     return (
       <div className="text-center">
@@ -66,14 +95,12 @@ class SubmitButtonSet extends React.Component {
           message={this.props.message}
         />
         {
-          (this.props.token) ?
+          (this.props.message.error !== "Session expired. Log back in again to continue.") ?
             <div>
-              <NavLink className="select" to={`/${this.props.next}`} onClick={this.submit}>
-                <Button className="edit" bsStyle="info">
-                  Submit
-                </Button>
+              <NavLink className="select" to={this.props.next} onClick={this.submit}>
+                {submitButton}
               </NavLink>
-              <Button className="edit" bsStyle="danger" onClick={this.pop}>
+              <Button className="edit" onClick={this.pop}>
                 Cancel
               </Button>
             </div> :
@@ -83,7 +110,7 @@ class SubmitButtonSet extends React.Component {
                   Login Again
                 </Button>
               </NavLink>
-              <Button className="edit" bsStyle="danger" onClick={this.pop}>
+              <Button className="edit" onClick={this.pop}>
                 Cancel
               </Button>
             </div>
