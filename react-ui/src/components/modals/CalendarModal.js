@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Button, Row, Col, Modal, Alert, Form, FormGroup, ControlLabel, FormControl } from 'react-bootstrap';
-import PayForm from '../forms/PayForm';
+//import PayForm from '../forms/PayForm';
 import moment from 'moment';
 
 import { initialPage } from '../data/options';
@@ -130,28 +130,7 @@ class CalendarModal extends React.Component {
           <Modal.Body>
             {upcomingStay}
 
-              {(this.props.upcoming.event)?
-                ((!this.props.upcoming.event.credit) ?
-                (this.state.payment === "credit") ?
-                  <PayForm
-                    nameValue={this.state.paymentForms.credit.name}
-                    numberValue={this.state.paymentForms.credit.number}
-                    cvvValue={this.state.paymentForms.credit.cvv}
-                    monthValue={this.state.paymentForms.credit.month}
-                    yearValue={this.state.paymentForms.credit.year}
-                    creditChange={this.handlePayFormChange}
-                  /> :
-                  <Form>
-                    {Object.keys(this.state.paymentForms[this.state.payment]).map((k) => (
-                      <FormGroup>
-                        <ControlLabel>{k}</ControlLabel>
-                        <FormControl name={k} type="text" value={this.state.paymentForms[this.state.payment][k]} onChange={this.handlePayFormChange}/>
-                      </FormGroup>
-                    ))}
-                  </Form>
-                :
-                <div></div>):
-                <div></div>}
+
 
           </Modal.Body>
           <Modal.Footer>
@@ -173,3 +152,28 @@ class CalendarModal extends React.Component {
 }
 
 export default CalendarModal;
+
+// <PayForm
+//   nameValue={this.state.paymentForms.credit.name}
+//   numberValue={this.state.paymentForms.credit.number}
+//   cvvValue={this.state.paymentForms.credit.cvv}
+//   monthValue={this.state.paymentForms.credit.month}
+//   yearValue={this.state.paymentForms.credit.year}
+//   creditChange={this.handlePayFormChange}
+// />
+
+// {(this.props.upcoming.event)?
+//   ((!this.props.upcoming.event.credit) ?
+//   (this.state.payment === "credit") ?
+//      :
+//     <Form>
+//       {Object.keys(this.state.paymentForms[this.state.payment]).map((k) => (
+//         <FormGroup>
+//           <ControlLabel>{k}</ControlLabel>
+//           <FormControl name={k} type="text" value={this.state.paymentForms[this.state.payment][k]} onChange={this.handlePayFormChange}/>
+//         </FormGroup>
+//       ))}
+//     </Form>
+//   :
+//   <div></div>):
+//   <div></div>}

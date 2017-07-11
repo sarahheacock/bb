@@ -15,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap/dist/css/bootstrap-theme.css';
 import './stylesheets/index.css';
 
-import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMessage} from './components/data/options';
+import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMessage, initialEdit} from './components/data/options';
 //=============================================================\
 
 
@@ -41,14 +41,16 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
           page: initialPage,
           user: storage.user,
           checkout: newCheckout,
-          message: initialMessage
+          message: initialMessage,
+          edit: initialEdit
         }:
         {
           data: initialData,
           page: initialPage,
           user: initialUser,
           checkout: initialCheckout,
-          message: initialMessage
+          message: initialMessage,
+          edit: initialEdit
         };
 
   const store = createStore(

@@ -8,7 +8,6 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 import Place from './localGuideTabs/Place';
 import EditButton from './buttons/EditButton';
-import EditModal from './modals/EditModal';
 import { blogID } from './data/options';
 
 
@@ -16,34 +15,16 @@ class LocalGuide extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired,
+
     getData: PropTypes.func.isRequired,
-    putData: PropTypes.func.isRequired,
-    postData: PropTypes.func.isRequired,
-    deleteData: PropTypes.func.isRequired,
-    updateState: PropTypes.func.isRequired,
-    page: PropTypes.object.isRequired
+    updateState: PropTypes.func.isRequired
   }
 
-  constructor(props){
-    super(props);
-    this.state = {
-      target: {},
-      targetType: ''
-    }
-  }
 
   componentDidMount(){
     this.props.getData(`/page/${blogID}/localGuide`, "localGuide");
   }
 
-
-  handleSelect = (e) => {
-    this.setState({
-      target: JSON.parse(e.target.name),
-      targetType: e.target.value
-    });
-  }
 
   render(){
     let tabs = <div>Loading</div>;
@@ -98,23 +79,25 @@ class LocalGuide extends React.Component {
                           user={this.props.user}
                           updateState={this.props.updateState}
                         />
-                        <Row>
+                        <Row className="main-content">
                           <Col sm={1}>
                             <EditButton
-                              handleSelect={this.handleSelect}
                               admin={this.props.user.admin}
                               updateState={this.props.updateState}
-                              name={cdata}
+                              dataObj={cdata}
                               title="Edit"
+                              pageSection="localGuide"
+                              length={this.props.data.length}
                             />
                           </Col>
                           <Col sm={1}>
                             <EditButton
-                              handleSelect={this.handleSelect}
                               admin={this.props.user.admin}
                               updateState={this.props.updateState}
-                              name={cdata}
+                              dataObj={cdata}
                               title="Delete"
+                              pageSection="localGuide"
+                              length={this.props.data.length}
                             />
                           </Col>
                         </Row>
@@ -126,28 +109,18 @@ class LocalGuide extends React.Component {
                 ));
 
                 addButton = <EditButton
-                              handleSelect={this.handleSelect}
-                              admin={this.props.user.admin}
-                              updateState={this.props.updateState}
-                              name={this.props.data[0]}
-                              title="Add"
-                            />;
+                  admin={this.props.user.admin}
+                  updateState={this.props.updateState}
+                  dataObj={this.props.data[0]}
+                  title="Add"
+                  pageSection="localGuide"
+                  length={this.props.data.length}
+                />;
             }
           });
       }
     }
 
-    let url = `/api/admin/${blogID}/page/localGuide`;
-    let editFunc = this.props.postData;
-
-    if(this.state.targetType === "Edit" && this.state.target._id !== 'undefined'){
-      url = `/api/admin/${blogID}/page/localGuide/${this.state.target._id}`;
-      editFunc = this.props.putData;
-    }
-    else if(this.state.targetType === "Delete" && this.state.target._id !== 'undefined'){
-      url = `/api/admin/${blogID}/page/localGuide/${this.state.target._id}?token=${this.props.user.token}`;
-      editFunc = this.props.deleteData;
-    }
 
     return (
       <div className="main-content">
@@ -164,16 +137,7 @@ class LocalGuide extends React.Component {
           </Tab.Container>
           </div>
           {addButton}
-          <EditModal
-            user={this.props.user}
-            modalEdit={this.props.page.edit}
-            editData={editFunc}
-            updateState={this.props.updateState}
-            url={url}
-            next="#"
-            dataObj={ {...this.state.target, modalTitle: `${this.state.targetType} Content`, length: this.props.data.length} }
-            message={this.props.message}
-          />
+
       </div>
     );
   }

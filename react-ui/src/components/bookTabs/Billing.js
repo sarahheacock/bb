@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect, NavLink } from 'react-router-dom';
 import { Form, FormControl, ControlLabel, FormGroup, Button, Col, Row, Modal, Alert } from 'react-bootstrap';
-import SignUpForm from '../forms/SignUpForm';
+//import SignUpForm from '../forms/SignUpForm';
 
 
 class Billing extends React.Component {
@@ -168,15 +168,7 @@ class Billing extends React.Component {
               </FormGroup>
             </Form>
 
-            <SignUpForm
-              line1Value={this.state.billing.line1}
-              line2Value={this.state.billing.line2}
-              cityValue={this.state.billing.city}
-              stateValue={this.state.billing.state}
-              zipValue={this.state.billing.zip}
-              countryValue={this.state.billing.country}
-              addressChange={this.onAddressChange}
-            />
+
             {alert}
           </Modal.Body>
           <Modal.Footer>
@@ -193,3 +185,13 @@ class Billing extends React.Component {
 
 
 export default Billing;
+
+// <SignUpForm
+//   line1Value={this.state.billing.line1}
+//   line2Value={this.state.billing.line2}
+//   cityValue={this.state.billing.city}
+//   stateValue={this.state.billing.state}
+//   zipValue={this.state.billing.zip}
+//   countryValue={this.state.billing.country}
+//   addressChange={this.onAddressChange}
+// />

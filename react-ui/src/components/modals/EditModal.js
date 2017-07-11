@@ -3,32 +3,37 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
 
+
 import { blogID, initialPage } from '../data/options';
 import EditForm from '../forms/EditForm';
 
 class EditModal extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
-    editData: PropTypes.func.isRequired,
-    updateState: PropTypes.func.isRequired,
-    url: PropTypes.string.isRequired,
-    next: PropTypes.string.isRequired,
-    dataObj: PropTypes.object.isRequired,
+    edit: PropTypes.object.isRequired,
     message: PropTypes.object.isRequired,
-    modalEdit: PropTypes.bool.isRequired
+    checkout: PropTypes.object.isRequired,
+
+    refundClient: PropTypes.func.isRequired,
+    chargeClient: PropTypes.func.isRequired,
+    putData: PropTypes.func.isRequired,
+    postData: PropTypes.func.isRequired,
+    deleteData: PropTypes.func.isRequired,
+
+    updateState: PropTypes.func.isRequired,
   }
 
   constructor(props){
     super(props);
     this.state = {
-      input: props.dataObj
+      input: props.edit.dataObj
     }
   }
 
   componentWillReceiveProps(nextProps){
-    if(Object.keys(nextProps.dataObj).length > 0) {
+    if(Object.keys(nextProps.edit.dataObj).length > 0) {
       this.setState({
-        input: nextProps.dataObj,
+        input: nextProps.edit.dataObj,
       });
     }
   }
@@ -42,31 +47,60 @@ class EditModal extends React.Component {
 
 
   render(){
+    //THIS IS WHERE THE MAGIC HAPPENS...
+    //DETERMINE NEXT PAGE WITH PAGESECTION AND MODALTITLE
+    const next = (this.props.pageSection !== "book-now") ?
+      "#":
+      "/book-now/billing";
+
+    //DETERMINE FUNCTION AND URL FROM EDIT.MODALTITLE
+    let url = `/api/admin/${blogID}/page/${this.props.edit.pageSection}`;
+    let editFunc = this.props.postData;
+
+    if(this.props.edit.modalTitle === "Edit Content"){
+      url = `/api/admin/${blogID}/page/${this.props.edit.pageSection}/${this.props.edit.dataObj._id}`;
+      editFunc = this.props.putData;
+    }
+    else if(this.props.edit.modalTitle === "Delete Content"){
+      url = `/api/admin/${blogID}/page/${this.props.edit.pageSection}/${this.props.edit.dataObj._id}?token=${this.props.user.token}`;
+      editFunc = this.props.deleteData;
+    }
+    else if(this.props.edit.modalTitle === "Sign Up"){
+      url = '/page/user-setup';
+    }
+    else if(this.props.edit.modalTitle === "Cancel Reservation"){
+      if(this.props.user.admin) url = '';
+      else url = '';
+      editFunc = this.props.deleteData;
+    }
 
     return (
       <div>
-        <Modal show={this.props.modalEdit}>
+        <Modal show={Object.keys(this.props.edit.dataObj).length > 0}>
           <Modal.Header>
-            <Modal.Title>{this.props.dataObj.modalTitle}</Modal.Title>
+            <Modal.Title>{this.props.edit.modalTitle}</Modal.Title>
           </Modal.Header>
 
           <Modal.Body>
             <EditForm
               formChange={this.onFormChange}
-              updateState={this.updateState}
-              url={this.props.url}
-              editData={this.props.editData}
-              edit={this.state.input}
-              message={this.props.message}
+              editData={editFunc}
               updateState={this.props.updateState}
-              next={this.props.next}
-              token={this.props.user.token}
+
+              message={this.props.message}
+              dataObj={this.state.input}
+              modalTitle={this.props.edit.modalTitle}
+              length={this.props.edit.length}
+
+              user={this.props.user}
+              next={next}
+              url={url}
             />
           </Modal.Body>
 
           <Modal.Footer>
             {
-              (this.props.dataObj.modalTitle !== "Delete Content" && this.props.dataObj.modalTitle !== "Cancel Reservation") ?
+              (this.props.edit.modalTitle !== "Delete Content" && this.props.edit.modalTitle !== "Cancel Reservation") ?
                 <div>
                   *Fill out required fields
                   <br />

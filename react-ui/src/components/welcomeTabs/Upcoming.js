@@ -6,17 +6,15 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
-import { initialPage } from '../data/options';
-import EditModal from '../modals/EditModal';
+import { initialEdit } from '../data/options';
+//import EditModal from '../modals/EditModal';
 
 class Upcoming extends React.Component {
   static propTypes = {
-    page: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired,
+
     getData: PropTypes.func.isRequired,
-    refundClient: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired
   }
 
@@ -25,7 +23,7 @@ class Upcoming extends React.Component {
     BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
     this.state = {
       month: new Date().getMonth(),
-      target: {}
+      //target: {}
     };
   }
 
@@ -40,14 +38,23 @@ class Upcoming extends React.Component {
   }
 
   handleSelect = (event) => {
-    this.state.target = event;
-    //console.log(event);
-    this.setState(this.state, () => this.props.updateState({
-      page: {
-        ...initialPage,
-        modalOne: true
+    this.props.updateState({
+      edit: {
+        ...initialEdit,
+        modalTitle: "Upcoming Stay",
+        length: 2,
+        pageSection: "welcome",
+        dataObj: event
       }
-    }));
+    })
+    // this.state.target = event;
+    // //console.log(event);
+    // this.setState(this.state, () => this.props.updateState({
+    //   page: {
+    //     ...initialPage,
+    //     modalOne: true
+    //   }
+    // }));
   }
 
   render(){
@@ -68,27 +75,30 @@ class Upcoming extends React.Component {
           onNavigate={this.navigate}
           onSelectEvent={this.handleSelect}
         />
-        <CalendarModal
-          upcoming={this.state.target}
-          message={this.props.message}
-          page={this.props.page}
-          updateState={this.props.updateState}
-          user={this.props.user}
-          refundClient={this.props.refundClient}
-        />
-        <EditModal
-          user={this.props.user}
-          modalEdit={this.props.page.edit}
-          editData={this.props.refundClient}
-          updateState={this.props.updateState}
-          url={(this.props.data[0]) ? `/api/admin/${this.props.user.id}/${this.state.target._id}?token=${this.props.user.token}` : ''}
-          next="#"
-          dataObj={ {...this.state.target, modalTitle: "Cancel Reservation", length: 2} }
-          message={this.props.message}
-        />
+
       </div>
     );
   }
 }
 
 export default Upcoming;
+
+
+// <CalendarModal
+//   upcoming={this.state.target}
+//   message={this.props.message}
+//   page={this.props.page}
+//   updateState={this.props.updateState}
+//   user={this.props.user}
+//   refundClient={this.props.refundClient}
+// />
+// <EditModal
+//   user={this.props.user}
+//   modalEdit={this.props.page.edit}
+//   editData={this.props.refundClient}
+//   updateState={this.props.updateState}
+//   url={(this.props.data[0]) ? `/api/admin/${this.props.user.id}/${this.state.target._id}?token=${this.props.user.token}` : ''}
+//   next="#"
+//   dataObj={ {...this.state.target, modalTitle: "Cancel Reservation", length: 2} }
+//   message={this.props.message}
+// />

@@ -2,14 +2,28 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'react-bootstrap';
 import MessageModal from '../components/modals/MessageModal';
-//import EditModal from '../components/modals/EditModal';
-//import AddModal from '../components/modals/AddModal';
+
+import EditModal from '../components/modals/EditModal';
 var FaLinked = require('react-icons/lib/fa/linkedin-square');
 var FaFacebook = require('react-icons/lib/fa/facebook-square');
 var FaEmail = require('react-icons/lib/fa/envelope');
 
 const Footer = (props) => (
   <footer className="text-center content">
+    <EditModal
+      user={props.user}
+      edit={props.edit}
+      message={props.message}
+      checkout={props.checkout}
+
+      chargeClient={props.chargeClient}
+      refundClient={props.refundClient}
+      putData={props.putData}
+      postData={props.postData}
+      deleteData={props.deleteData}
+
+      updateState={props.updateState}
+    />
 
     <MessageModal
       user={props.user}
@@ -43,24 +57,21 @@ const Footer = (props) => (
 
 );
 
-//<div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-
 
 export default Footer;
 
 Footer.propTypes = {
-  page: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  page: PropTypes.object.isRequired,
+  edit: PropTypes.object.isRequired,
   message: PropTypes.object.isRequired,
+  checkout: PropTypes.object.isRequired,
+
+  refundClient: PropTypes.func.isRequired,
+  chargeClient: PropTypes.func.isRequired,
   putData: PropTypes.func.isRequired,
   postData: PropTypes.func.isRequired,
-  updateState: PropTypes.func.isRequired
-};
+  deleteData: PropTypes.func.isRequired,
 
-// <AddModal
-//   user={props.user}
-//   page={props.page}
-//   message={props.message}
-//   postData={props.postData}
-//   updateState={props.updateState}
-// />
+  updateState: PropTypes.func.isRequired,
+};

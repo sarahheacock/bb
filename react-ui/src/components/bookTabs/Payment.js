@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route, Redirect, NavLink } from 'react-router-dom';
 import { Form, FormControl, ControlLabel, FormGroup, Button, Col, Row, Modal, Alert } from 'react-bootstrap';
-import PayForm from '../forms/PayForm';
-import PayValidForm from '../forms/PayValidForm';
+//import PayForm from '../forms/PayForm';
+//import PayValidForm from '../forms/PayValidForm';
 
 //if there is no payment on file, add payment and checkout.payment === true. Confirm button will bring to next page.
 //if there is payment on file, make sure cvv and exp date matches card on file
@@ -211,14 +211,7 @@ class Payment extends React.Component {
           <Modal.Title>Select Payment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <PayForm
-            nameValue={this.state.name}
-            numberValue={this.state.number}
-            cvvValue={this.state.cvv}
-            monthValue={this.state.month}
-            yearValue={this.state.year}
-            creditChange={this.onFormChange}
-          />
+
           {alert}
         </Modal.Body>
         <Modal.Footer>
@@ -233,14 +226,7 @@ class Payment extends React.Component {
           <Modal.Title>Verify Payment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <PayValidForm
-            nameValue={this.state.name}
-            numberValue={this.state.number}
-            cvvValue={this.state.cvv}
-            monthValue={this.state.month}
-            yearValue={this.state.year}
-            creditChange={this.onFormChange}
-          />
+
           {alert}
         </Modal.Body>
         <Modal.Footer>
@@ -271,3 +257,21 @@ class Payment extends React.Component {
 
 
 export default Payment;
+
+// <PayForm
+//   nameValue={this.state.name}
+//   numberValue={this.state.number}
+//   cvvValue={this.state.cvv}
+//   monthValue={this.state.month}
+//   yearValue={this.state.year}
+//   creditChange={this.onFormChange}
+// />
+
+// <PayValidForm
+//   nameValue={this.state.name}
+//   numberValue={this.state.number}
+//   cvvValue={this.state.cvv}
+//   monthValue={this.state.month}
+//   yearValue={this.state.year}
+//   creditChange={this.onFormChange}
+// />

@@ -19,12 +19,10 @@ const Routes = (props) => {
     <Switch>
       <Route path="/home" render={ () => (
         <Home
-          page={props.page}
           data={props.data}
           user={props.user}
-          message={props.message}
+
           getData={props.getData}
-          putData={props.putData}
           updateState={props.updateState}
         />) }
       />
@@ -36,39 +34,29 @@ const Routes = (props) => {
 
       <Route path="/about" render={ () => (
         <About
-          page={props.page}
           data={props.data}
           user={props.user}
-          message={props.message}
+
           getData={props.getData}
-          putData={props.putData}
           updateState={props.updateState}
         />) }
       />
 
       <Route path="/rooms" render={ () => (
         <Rooms
-          page={props.page}
           data={props.data}
           user={props.user}
-          message={props.message}
+
           getData={props.getData}
-          putData={props.putData}
-          postData={props.postData}
-          deleteData={props.deleteData}
           updateState={props.updateState}
         />) }
       />
       <Route path="/local-guide" render={ () => (
         <LocalGuide
-          page={props.page}
           data={props.data}
           user={props.user}
-          message={props.message}
+
           getData={props.getData}
-          putData={props.putData}
-          postData={props.postData}
-          deleteData={props.deleteData}
           updateState={props.updateState}
         />) }
       />
@@ -76,21 +64,17 @@ const Routes = (props) => {
       <Route path="/welcome" render={ () => ((props.user.username) ?
         ((props.user.admin) ?
           <WelcomeAdmin
-            page={props.page}
             data={props.data}
             user={props.user}
-            message={props.message}
+
             getData={props.getData}
-            refundClient={props.refundClient}
             updateState={props.updateState}
           /> :
           <Welcome
-            page={props.page}
             data={props.data}
             user={props.user}
-            message={props.message}
+
             getData={props.getData}
-            refundClient={props.refundClient}
             updateState={props.updateState}
           />) :
         <Redirect to="/login" />
@@ -100,13 +84,14 @@ const Routes = (props) => {
       <Route path="/login" render={ () => ((props.user.username) ?
         <Redirect to="/welcome" /> :
           <Login
-            modalEdit={props.page.edit}
             data={props.data}
             user={props.user}
             message={props.message}
+            roomID={props.checkout.selected.roomID}
+
+            getData={props.getData}
             postData={props.postData}
             updateState={props.updateState}
-            roomID={props.checkout.selected.roomID}
           />
 
         ) }
@@ -114,17 +99,15 @@ const Routes = (props) => {
 
       <Route path="/book-now" render={ () => (
         <Book
-          page={props.page}
           data={props.data}
           user={props.user}
           checkout={props.checkout}
-          message={props.message}
+
           getData={props.getData}
-          putData={props.putData}
-          postData={props.postData}
-          updateState={props.updateState}
-          chargeClient={props.chargeClient}
           fetchSearch={props.fetchSearch}
+          chargeClient={props.chargeClient}
+
+          updateState={props.updateState}
         />) }
       />
 
@@ -152,5 +135,4 @@ Routes.propsTypes = {
   postData: PropTypes.func.isRequired,
   deleteData: PropTypes.func.isRequired,
   fetchSearch: PropTypes.func.isRequired
-
 };

@@ -2,18 +2,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { initialPage, initialMessage } from '../data/options';
+import { initialPage, initialMessage, initialEdit } from '../data/options';
 
 import AlertMessage from './AlertMessage';
+import EditButton from './EditButton';
 
+//SUBMIT ADMIN EDITTING, USER PROFILE EDIT, CREATE USER, RESERVE, AND CANCEL RESERVATION
+//THIS IS WHERE ERROR HANDLING FOR USER AUTH, FORMS, PRE-EXISTING DATA HAPPENS
 class SubmitButtonSet extends React.Component {
   static propTypes = {
-    message: PropTypes.object.isRequired,
-    next: PropTypes.string.isRequired,
-    updateState: PropTypes.func.isRequired,
     editData: PropTypes.func.isRequired,
-    //token: PropTypes.string.isRequired,
+    updateState: PropTypes.func.isRequired,
+
     url: PropTypes.string.isRequired,
+    next: PropTypes.string.isRequired,
+    message: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+
     formItems: PropTypes.object.isRequired,
     length: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
@@ -26,42 +31,55 @@ class SubmitButtonSet extends React.Component {
       page: {
         ...initialPage
       },
+      edit: {
+        ...initialEdit
+      },
       message: {
         ...initialMessage
       }
     });
   }
 
+
   submit = (e) => {
+
     const valid = Object.keys(this.props.formItems).reduce((a, b) => {
-      return (a && this.props.formItems[b] !== "");
+      const test = (this.props.formItems[b] !== true && this.props.formItems[b] !== false) ?
+        this.props.formItems[b][0]:
+        this.props.formItems[b];
+      //console.log("test", test);
+      return (a && test !== "" && test !== undefined);
     }, true);
     console.log("valid", valid);
 
 
     //if editing page
     //`/api/admin/${blogID}/page/${this.props.section}/${this.props.dataObj._id}`
-    if(valid && (this.props.url.includes('api') || this.props.url.includes('user-setup'))){
-      if(this.props.title === "Delete Content"){
-        if(this.props.length > 1 ){
-          this.props.editData(this.props.url);
-        }
-        else {
-          this.props.updateState({
-            message: {
-              error: "You cannot delete all entries. Deleting all entries will cause errors",
-              success: ''
-            }
-          });
-        }
+    if(valid && this.props.title === "Delete Content"){
+      if(this.props.length > 1 ){
+        this.props.editData(this.props.url);
       }
       else {
-        this.props.editData(this.props.url, this.props.formItems);
+        this.props.updateState({
+          message: {
+            error: "You cannot delete all entries. Deleting all entries will cause errors",
+            success: ''
+          }
+        });
       }
     }
-    // else if(valid && this.props.url.includes('user-setup')){ //if logging in
-    //   this.props.editData(this.props.url, this.props.formItems);
-    // }
+    else if (valid && this.props.title === "Sign Up"){
+      const result = {
+        email: this.props.formItems.email,
+        password: this.props.formItems.password,
+        billing: `${this.props.formItems["Address Line 1"]}/${this.props.formItems["Address Line 2"]}/${this.props.formItems.city}/${this.props.formItems.state}/${this.props.formItems.zip}/${this.props.formItems.country}`
+      }
+      //console.log("result", result);
+      this.props.editData(this.props.url, result);
+    }
+    else if (valid){
+      this.props.editData(this.props.url, this.props.formItems);
+    }
     else {
       e.preventDefault();
       this.props.updateState({
@@ -75,9 +93,7 @@ class SubmitButtonSet extends React.Component {
 
 
   render(){
-    let submitButton = <div></div>;
-    if(this.props.formItems){
-      submitButton = (this.props.title === "Delete Content") ?
+    const submitButton = (this.props.title === "Delete Content") ?
         ((this.props.message.error) ?
           <div></div>:
           <Button className="edit" bsStyle="danger">
@@ -88,10 +104,30 @@ class SubmitButtonSet extends React.Component {
             Cancel Reservation
           </Button> :
           <Button className="edit" bsStyle="primary">
-            Submit
+            {this.props.title}
           </Button>
         );
-    }
+    const cancelButton = (this.props.title === "Login") ?
+        <EditButton
+          admin={this.props.user.admin}
+          updateState={this.props.updateState}
+          dataObj={{
+             email: '',
+             password: '',
+             "Address Line 1": '',
+             "Address Line 2": '',
+             city: '',
+             state: '',
+             zip: '',
+             country: 'United States'
+          }}
+          title="Sign Up"
+          pageSection={(this.props.next === "#") ? "login" : "book-now"}
+          length={this.props.length}
+        /> :
+        <Button className="edit" onClick={this.pop}>
+          Cancel
+        </Button>;
 
     console.log("formItems", this.props.formItems);
     return (
@@ -105,9 +141,7 @@ class SubmitButtonSet extends React.Component {
               <NavLink className="select" to={this.props.next} onClick={this.submit}>
                 {submitButton}
               </NavLink>
-              <Button className="edit" onClick={this.pop}>
-                Cancel
-              </Button>
+              {cancelButton}
             </div> :
             <div>
               <NavLink className="select" to="/login" onClick={this.pop}>

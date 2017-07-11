@@ -10,18 +10,13 @@ import LogoutButton from './buttons/LogoutButton';
 
 class WelcomeAdmin extends React.Component {
   static propTypes = {
-    page: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired,
+
     getData: PropTypes.func.isRequired,
-    refundClient: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired
   }
 
-  // componentDidMount(){
-  //   //this.props.fetchBlog("home");
-  // }
 
   render(){
 
@@ -48,11 +43,9 @@ class WelcomeAdmin extends React.Component {
               <Upcoming
                 data={this.props.data}
                 user={this.props.user}
+
                 getData={this.props.getData}
-                refundClient={this.props.refundClient}
                 updateState={this.props.updateState}
-                page={this.props.page}
-                message={this.props.message}
               />}
             />
             <Route path="/welcome/guest-directory" render={ () =>

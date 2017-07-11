@@ -20,12 +20,13 @@ class App extends Component {
     user: PropTypes.object.isRequired,
     data: PropTypes.array.isRequired,
     checkout: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired
+    message: PropTypes.object.isRequired,
+    edit: PropTypes.object.isRequired
   }
 
 
   render(){
-    const{ dispatch, user, page, checkout, data, message } = this.props;
+    const{ dispatch, user, page, checkout, data, message, edit } = this.props;
     //turns an object whose values are action creators (functions)
     //and wraps in dispatch (what causes state change)
 
@@ -44,6 +45,7 @@ class App extends Component {
     console.log("data", data);
     console.log("checkout", checkout);
     console.log("message", message);
+    console.log("edit", edit);
 
     return (
       <BrowserRouter>
@@ -59,6 +61,7 @@ class App extends Component {
             data={data}
             checkout={checkout}
             message={message}
+            edit={edit}
             refundClient={refundClient}
             chargeClient={chargeClient}
             updateState={updateState}
@@ -70,14 +73,19 @@ class App extends Component {
           />
 
           <Footer
-            page={page}
+            edit={edit}
             user={user}
-            checkout={checkout}
             message={message}
-            updateState={updateState}
+            page={page}
+            checkout={checkout}
+
+            refundClient={refundClient}
+            chargeClient={chargeClient}
             putData={putData}
             postData={postData}
             deleteData={deleteData}
+
+            updateState={updateState}
           />
         </div>
 
@@ -93,7 +101,8 @@ const mapStateToProps = state => (
     page: state.page,
     checkout: state.checkout,
     data: state.data,
-    message: state.message
+    message: state.message,
+    edit: state.edit
   }
 );
 

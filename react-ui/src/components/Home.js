@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { PageHeader, Carousel, Button } from 'react-bootstrap';
 
-import EditModal from './modals/EditModal';
 import EditButton from './buttons/EditButton';
 import { blogID } from './data/options';
 
@@ -10,15 +9,13 @@ class Home extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired,
+
     getData: PropTypes.func.isRequired,
-    putData: PropTypes.func.isRequired,
-    updateState: PropTypes.func.isRequired,
-    page: PropTypes.object.isRequired
+    updateState: PropTypes.func.isRequired
   }
 
   componentDidMount(){
-    this.props.getData(`/page/${blogID}/home`, "home");
+    this.props.getData(`/page/${blogID}/home`);
   }
 
   render(){
@@ -38,11 +35,12 @@ class Home extends React.Component {
         <Carousel.Item>Loading</Carousel.Item>;
 
       editButton = <EditButton
-                    handleSelect={(e) => {console.log(e.target);}}
                     admin={this.props.user.admin}
                     updateState={this.props.updateState}
-                    name={this.props.data[0]}
+                    dataObj={this.props.data[0]}
                     title="Edit"
+                    pageSection="home"
+                    length={this.props.data.length}
                   />;
 
       summary = (this.props.data[0]["summary"]) ?
@@ -69,16 +67,7 @@ class Home extends React.Component {
 
           </div>
         </div>
-        <EditModal
-          user={this.props.user}
-          modalEdit={this.props.page.edit}
-          editData={this.props.putData}
-          updateState={this.props.updateState}
-          url={(this.props.data[0]) ? `/api/admin/${blogID}/page/home/${this.props.data[0]["_id"]}` : ''}
-          next="#"
-          dataObj={(this.props.data[0]) ? {...this.props.data[0], modalTitle: "Edit Content", length: this.props.data.length} : {} }
-          message={this.props.message}
-        />
+
       </div>
     );
   }

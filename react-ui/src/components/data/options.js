@@ -20,8 +20,8 @@ export const initialData = [];
 export const initialPage = {
     message: false,
 		edit: false,
-
   };
+
 export const initialUser = {
     admin: false,
     id: "",
@@ -53,4 +53,11 @@ export const initialCheckout = {
 export const initialMessage = {
 	error: '',
 	success: ''
+};
+
+export const initialEdit = {
+	modalTitle: '',
+	length: 0,
+	pageSection: '',
+	dataObj: {}
 };

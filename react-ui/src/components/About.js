@@ -5,7 +5,6 @@ import { Nav, NavItem, Tab, Row, Col, PageHeader } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import EditButton from './buttons/EditButton';
-import EditModal from './modals/EditModal';
 import Nancy from './aboutTabs/Nancy';
 import { blogID } from './data/options';
 
@@ -14,32 +13,16 @@ class About extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    message: PropTypes.object.isRequired,
+
     getData: PropTypes.func.isRequired,
-    putData: PropTypes.func.isRequired,
-    updateState: PropTypes.func.isRequired,
-    page: PropTypes.object.isRequired
+    updateState: PropTypes.func.isRequired
   }
 
-  constructor(props){
-    super(props);
-    this.state = {
-      target: {},
-      targetType: ''
-    }
-  }
 
   componentDidMount(){
-    this.props.getData(`/page/${blogID}/about`, "about");
+    this.props.getData(`/page/${blogID}/about`);
   }
 
-
-  handleSelect = (e) => {
-    this.setState({
-      target: JSON.parse(e.target.name),
-      targetType: e.target.value
-    });
-  }
 
   render(){
     let tabs = <div>Loading</div>;
@@ -59,7 +42,6 @@ class About extends React.Component {
             };
 
             cat.push(create);
-            //console.log("cat", cat);
             if(cat.length === index + 1 && index > 0){
               //make sure aboutTabs are initialized
               tabs = cat.map((c, index) => (
@@ -81,11 +63,12 @@ class About extends React.Component {
                         updateState={this.props.updateState}
                       />
                       <EditButton
-                        handleSelect={this.handleSelect}
                         admin={this.props.user.admin}
                         updateState={this.props.updateState}
-                        name={c.data}
+                        dataObj={c.data}
                         title="Edit"
+                        pageSection="about"
+                        length={this.props.data.length}
                       />
                     </div>}
                   />
@@ -110,16 +93,7 @@ class About extends React.Component {
             </Row>
           </Tab.Container>
           </div>
-          <EditModal
-            user={this.props.user}
-            modalEdit={this.props.page.edit}
-            editData={this.props.putData}
-            updateState={this.props.updateState}
-            url={(this.props.data[0]) ? `/api/admin/${blogID}/page/about/${this.state.target._id}` : ''}
-            next="#"
-            dataObj={ {...this.state.target, modalTitle: "Edit Content", length: this.props.data.length} }
-            message={this.props.message}
-          />
+
       </div>
     );
   }

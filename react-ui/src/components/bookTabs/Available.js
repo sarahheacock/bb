@@ -4,36 +4,31 @@ import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import { ControlLabel, FormGroup, Row, Col, Button, Modal } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-import Login from '../Login';
+//import Login from '../Login';
+import EditButton from '../buttons/EditButton';
 
 class Available extends React.Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
-    updateCheckout: PropTypes.func.isRequired,
-    fetchSearch: PropTypes.func.isRequired,
-    select: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
     checkout: PropTypes.object.isRequired,
-    admin: PropTypes.object.isRequired,
-    makeModal: PropTypes.func.isRequired,
-    modalVisible: PropTypes.object.isRequired,
-    verifyEmail: PropTypes.func.isRequired,
-    logout: PropTypes.func.isRequired,
-    createEmail: PropTypes.func.isRequired,
-    errorMessage: PropTypes.object.isRequired
+
+    fetchSearch: PropTypes.func.isRequired,
+    updateState: PropTypes.func.isRequired,
   }
 
   constructor(props) {
     super(props);
     this.state = {
-      arrive: props.select.arrive,
-      depart: props.select.depart,
-      guests: props.select.guests,
-      roomID: props.select.roomID
+      arrive: props.checkout.selected.arrive,
+      depart: props.checkout.selected.depart,
+      guests: props.checkout.selected.guests,
+      //roomID: props.select.roomID
     };
   }
 
   componentDidMount(){
-    this.props.fetchSearch(this.props.select);
+    this.props.fetchSearch(this.props.checkout.selected);
   }
 
   handleStart = (date) => {
@@ -60,30 +55,28 @@ class Available extends React.Component {
     }, () => this.props.fetchSearch(this.state));
   }
 
-  handleSelect = (e) => {
-    this.props.updateCheckout(
-      {
-        "roomID": JSON.parse(e.target.name),
-        "guests":this.state.guests,
-        "arrive":new Date(this.state.arrive).getTime(),
-        "depart":new Date(this.state.depart).getTime()
-      },
-      {
-        ...this.props.checkout,
-        "selected": true
-      }
-    );
-    if(!this.props.admin.username){
-      this.props.makeModal({
-        login: true
-      });
-    }
+  // handleSelect = (e) => {
+  //   this.props.updateState(
+  //     {
+  //       checkout: {
+  //         "roomID": JSON.parse(e.target.name),
+  //         "guests":this.state.guests,
+  //         "arrive":new Date(this.state.arrive).getTime(),
+  //         "depart":new Date(this.state.depart).getTime()
+  //       }
+  //     }
+  //   );
+    // if(!this.props.admin.username){
+    //   this.props.makeModal({
+    //     login: true
+    //   });
+    // }
     // else if(this.props.admin.admin){
     //   this.props.makeModal({
     //     client: true
     //   });
     // }
-  }
+  // }
 
   render() {
     const guestOptions = [...new Array(6)].map((ob, i) => (
@@ -92,13 +85,13 @@ class Available extends React.Component {
       </option>
     ));
 
-    const closeButton = (this.props.admin.username !== undefined) ?
-      <div></div> :
-      <Button bsStyle="danger" onClick={(e) => this.props.makeModal({
-        login: false
-      })}>
-        Cancel
-      </Button>;
+    // const closeButton = (this.props.user.username !== undefined) ?
+    //   <div></div> :
+    //   <Button bsStyle="danger" onClick={(e) => this.props.makeModal({
+    //     login: false
+    //   })}>
+    //     Cancel
+    //   </Button>;
 
     //if client is signed in, button will be navlink to billing
     //if client is not signed in, button will be login modal
@@ -107,20 +100,29 @@ class Available extends React.Component {
     if(this.props.data[0]){
       //make sure correct data is fetched
       if(this.props.data[0]["cost"]){
+
         available = this.props.data.map(room => (
           <div className="well text-center well-option" key={`available${room._id}`}>
             <img className="room-img round" src={room.image} alt={room.name} />
             <h3>{room.title}</h3>
             <p>{`$${room.cost}.00`}</p>
-            {(this.props.admin.username) ?
-                <NavLink className="select" to="/book-now/billing">
-                  <Button bsStyle="primary" name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} onClick={this.handleSelect}>
-                    Select
-                  </Button>
-                </NavLink> :
-                <Button name={JSON.stringify({title: room.title, image: room.image, cost: room.cost, _id: room._id})} bsStyle="primary" onClick={this.handleSelect}>
-                  Select
-                </Button>}
+
+            <EditButton
+              admin={this.props.user.admin}
+              updateState={this.props.updateState}
+              dataObj={{
+                ...this.props.checkout,
+                selected: {
+                  roomID: room,
+                  arrive: this.state.arrive,
+                  depart: this.state.depart,
+                  guests: this.state.guests
+                }
+              }}
+              title="Select Room"
+              pageSection=""
+              length={2}
+            />
           </div>
         ));
       }
@@ -186,43 +188,6 @@ class Available extends React.Component {
         </form>
 
         {available}
-
-        <div>
-          {
-            (this.props.admin.admin === true) ?
-            <Modal show={this.props.modalVisible.client} >
-              <Modal.Body>
-                Hello
-              </Modal.Body>
-              <Modal.Footer>
-                <div className="text-center">
-                  <Button onClick={() => this.props.makeModal({client: false})}>
-                    Close
-                  </Button>
-                </div>
-              </Modal.Footer>
-            </Modal>:
-
-            <Modal show={this.props.modalVisible.login} >
-              <Modal.Body>
-                <Login
-                  errorMessage={this.props.errorMessage}
-                  admin={this.props.admin}
-                  verifyEmail={this.props.verifyEmail}
-                  logout={this.props.logout}
-                  createEmail={this.props.createEmail}
-                  modalVisible={this.props.modalVisible}
-                  makeModal={this.props.makeModal}
-                  checkoutSelected={this.props.checkout.selected}
-                />
-              </Modal.Body>
-              <Modal.Footer>
-                <div className="text-center">{closeButton}</div>
-              </Modal.Footer>
-            </Modal>
-          }
-        </div>
-
       </div>
 
     );
@@ -230,3 +195,39 @@ class Available extends React.Component {
 }
 
 export default Available;
+
+// <div>
+//   {
+//     (this.props.admin.admin === true) ?
+//     <Modal show={this.props.modalVisible.client} >
+//       <Modal.Body>
+//         Hello
+//       </Modal.Body>
+//       <Modal.Footer>
+//         <div className="text-center">
+//           <Button onClick={() => this.props.makeModal({client: false})}>
+//             Close
+//           </Button>
+//         </div>
+//       </Modal.Footer>
+//     </Modal>:
+//
+//     <Modal show={this.props.modalVisible.login} >
+//       <Modal.Body>
+//         <Login
+//           errorMessage={this.props.errorMessage}
+//           admin={this.props.admin}
+//           verifyEmail={this.props.verifyEmail}
+//           logout={this.props.logout}
+//           createEmail={this.props.createEmail}
+//           modalVisible={this.props.modalVisible}
+//           makeModal={this.props.makeModal}
+//           checkoutSelected={this.props.checkout.selected}
+//         />
+//       </Modal.Body>
+//       <Modal.Footer>
+//         <div className="text-center">{closeButton}</div>
+//       </Modal.Footer>
+//     </Modal>
+//   }
+//           </div>

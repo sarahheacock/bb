@@ -1,62 +1,127 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form, FormControl, ControlLabel, FormGroup } from 'react-bootstrap';
+import { Button, Form, FormControl, ControlLabel, FormGroup, Checkbox } from 'react-bootstrap';
 
+import Select from '../buttons/Select';
 import SubmitButtonSet from '../buttons/SubmitButtonSet';
+import { Months, Years, Countries } from '../data/options';
+
 
 const EditForm = (props) => {
 
-  const formItems = (Object.keys(props.edit).length < 1) ?
+  const formItems = (Object.keys(props.dataObj).length < 1) ?
     <div></div>:
-    (Object.keys(props.edit)).map((k, index) => {
-      //let value =
-      if(k !== "_id" && k !== "modalTitle" && k !== "length") {
-        return (
-          <FormGroup key={`formgroup${index}`}>
-            <ControlLabel>{k}</ControlLabel>
-            <FormControl componentClass="Textarea"
+    (props.modalTitle === "Look Up") ?
+      <Select
+        upcoming={props.dataObj}
+        admin={props.user.admin}
+        updateState={props.updateState}
+      /> :
+
+      (Object.keys(props.dataObj)).map((k, index) => {
+        //let value =
+        if(k !== "_id") {
+          const title = (k === "bold" || k === "link" || k === "Address Line 2") ?
+            `${k.charAt(0).toUpperCase()}${k.slice(1)}`:
+            `${k.charAt(0).toUpperCase()}${k.slice(1)}*`;
+
+          const type = (k === "password") ?
+            "password":
+            "text";
+
+          let formGroup = <FormGroup key={`formgroup${index}`}>
+            <ControlLabel>{title}</ControlLabel>
+            <FormControl
               name={k}
-              type="text"
-              value={
-                Array.isArray(props.edit[k]) ?
-                props.edit[k].toString() :
-                props.edit[k]
-              }
+              type={type}
+              value={props.dataObj[k].toString()}
               onChange={props.formChange}
             />
-          </FormGroup>
-        );
-      }
-    });
+          </FormGroup>;
 
-//console.log("form", props.edit);
+          if (k === "bold" || k === "summary" || k === "description") {
+            formGroup = <FormGroup key={`formgroup${index}`}>
+              <ControlLabel>{title}</ControlLabel>
+              <FormControl componentClass="Textarea"
+                name={k}
+                type={type}
+                value={props.dataObj[k].toString()}
+                onChange={props.formChange}
+              />
+            </FormGroup>;
+          }
+          else if (k === "admin"){
+            formGroup = <Checkbox className="text-center" value={props.dataObj[k]} onChange={props.formChange} name="admin">
+              Admin
+            </Checkbox>;
+          }
+          else if (k === "country" || k === "Expiration Month" || k === "Expiration Year"){
+            const options = (k === "Expiration Month") ?
+              Months.map((month) => (
+                <option value={month} key={month}>
+                  {month}
+                </option>
+              )) :
+              ((k === "Expiration Year") ?
+                Years.map((year) => (
+                  <option value={year} key={year}>
+                    {year}
+                  </option>
+                )) :
+                Countries.map((country) => (
+                  <option
+                  key={country}
+                  value={country}
+                  >
+                    {country}
+                  </option>
+                ))
+              );
+
+              formGroup = <FormControl name={k} componentClass="select" onChange={props.formChange} key={`formgroup${index}`}>
+                {options}
+              </FormControl>
+          }
+
+          return (
+            formGroup
+          );
+        }
+      });
+
+
+//console.log("form", props.dataObj);
 
   let results = {};
-  Object.keys(props.edit).forEach((key) => {
-    if(key === "_id") results.token = props.token;
-    //else if (key === "modalTitle" && props.edit.modalTitle === "Delete Content") results.length = props.dataLength
-    else if(key !== "modalTitle" && key !== "length") results[key] = props.edit[key];
+  Object.keys(props.dataObj).forEach((key) => {
+    if(key === "_id") results.token = props.user.token;
+    else if(key === "link" && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = "#";
+    else if((key === "bold" || key === "Address Line 2") && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = " ";
+    else results[key] = props.dataObj[key];
   });
 
   return (
     <Form className="content">
       {
-        (props.edit.modalTitle === "Delete Content") ?
+        (props.modalTitle === "Delete Content") ?
           <div className="text-center">Are you sure you want to delete this content?</div>:
-          ((props.title.modalTitle === "Cancel Reservation") ?
+          ((props.modalTitle === "Cancel Reservation") ?
             <div className="text-center">Are you sure you want to Cancel your Reservation?</div>:
             <div>{formItems}</div>)
       }
       <div className="text-center">
         <SubmitButtonSet
-          url={props.url}
           editData={props.editData}
-          message={props.message}
-          next={props.next}
           updateState={props.updateState}
+
+          url={props.url}
+          next={props.next}
+          message={props.message}
+          user={props.user}
+
           formItems={results}
-          title={props.edit.modalTitle}
-          length={props.edit.length}
+          length={props.length}
+          title={props.modalTitle}
         />
       </div>
     </Form>
@@ -70,9 +135,14 @@ EditForm.propTypes = {
   formChange: PropTypes.func.isRequired,
   editData: PropTypes.func.isRequired,
   updateState: PropTypes.func.isRequired,
-  edit: PropTypes.object.isRequired,
+
   message: PropTypes.object.isRequired,
-  token: PropTypes.string.isRequired,
+  user: PropTypes.object.isRequired,
+  dataObj: PropTypes.object.isRequired,
+  modalTitle: PropTypes.string.isRequired,
+  length: PropTypes.number.isRequired,
+
+  //token: PropTypes.string.isRequired,
   next: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
 };

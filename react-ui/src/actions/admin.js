@@ -2,7 +2,7 @@ import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
 import {blogID, key} from '../config';
-import {initialPage, initialUser, initialCheckout, initialMessage} from '../components/data/options';
+import {initialPage, initialUser, initialCheckout, initialMessage, initialEdit} from '../components/data/options';
 var CryptoJS = require("crypto-js");
 
 // const key = '0s3W7DOZkYFzEtLS';
@@ -22,20 +22,28 @@ export const updateState = (newState) => {
 }
 
 
-export const getData = (url, thisPage) => {
+export const getData = (url) => {
   return (dispatch) => {
 
     return axios.get(url)
       .then(response => {
         console.log("response", response.data);
+        if(response.data.success === false){
+          dispatch(updateState({
+            user: initialUser,
+            checkout: initialCheckout,
+            message: {
+              error: "Session expired. Log back in again to continue.",
+              success: ""
+            }
+          }));
+        }
+
         dispatch(updateState({
-          page: {
-            ...initialPage,
-            page: thisPage
-          },
-          message: {
-            ...initialMessage
-          },
+          //user: initialUser,
+          page: initialPage,
+          edit: initialEdit,
+          message: initialMessage,
           data: response.data,
         }));
       })
@@ -60,12 +68,8 @@ export const putData = (url, newData) => {
         console.log("response data", response.data);
         if(response.data.success === false){
           dispatch(updateState({
-            user: {
-              ...initialUser,
-            },
-            checkout: {
-              ...initialCheckout
-            },
+            user: initialUser,
+            checkout: initialCheckout,
             message: {
               error: "Session expired. Log back in again to continue.",
               success: ""
@@ -74,12 +78,9 @@ export const putData = (url, newData) => {
         }
         else {
           dispatch(updateState({
-            message: {
-              ...initialMessage
-            },
-            page: {
-              ...initialPage
-            },
+            page: initialPage,
+            edit: initialEdit,
+            message: initialMessage,
             data: response.data,
           }));
         }
@@ -107,12 +108,8 @@ export const postData = (url, newData) => {
         console.log("response data", response.data);
         if(response.data.success === false){
           dispatch(updateState({
-            user: {
-              ...initialUser,
-            },
-            checkout: {
-              ...initialCheckout
-            },
+            user: initialUser,
+            checkout: initialCheckout,
             message: {
               error: "Session expired. Log back in again to continue.",
               success: ''
@@ -130,12 +127,9 @@ export const postData = (url, newData) => {
           }
           else if (url.includes('login')) { //if posting login
             dispatch(updateState({
-              message: {
-                ...initialMessage
-              },
-              page: {
-                ...initialPage
-              },
+              page: initialPage,
+              edit: initialEdit,
+              message: initialMessage,
               user: response.data
             }));
           }
@@ -147,12 +141,9 @@ export const postData = (url, newData) => {
           }
           else if (url.includes('page')) { //if posting new page
             dispatch(updateState({
-              message: {
-                ...initialMessage
-              },
-              page: {
-                ...initialPage
-              },
+              page: initialPage,
+              edit: initialEdit,
+              message: initialMessage,
               data: response.data
             }));
           }
@@ -162,12 +153,9 @@ export const postData = (url, newData) => {
                 "success": "Thank you",
                 "error": ""
               },
-              page: {
-                ...initialPage
-              },
-              checkout: {
-                ...initialCheckout
-              }
+              page: initialPage,
+              edit: initialEdit,
+              checkout: initialCheckout,
             }));
           }
         }
@@ -218,12 +206,8 @@ export const deleteData = (url) => {
       console.log("response data", response.data);
       if(response.data.success === false){
         dispatch(updateState({
-          user: {
-            ...initialUser,
-          },
-          checkout: {
-            ...initialCheckout
-          },
+          user: initialUser,
+          checkout: initialCheckout,
           message: {
             error: "Session expired. Log back in again to continue.",
             success: ''
@@ -232,9 +216,9 @@ export const deleteData = (url) => {
       }
       else {
         dispatch(updateState({
-          page: {
-            ...initialPage
-          },
+          page: initialPage,
+          edit: initialEdit,
+          message: initialMessage,
           data: response.data,
         }));
       }
@@ -289,29 +273,31 @@ export const filterSearch = (data, results) => {
       .then(response => {
         console.log("response data", response.data);
         //filter rooms that have too low maximum occupancy
-        let availableRooms = [];
-
-        //filter rooms that are not available for each date
-        response.data.forEach((o,j) => {
-          //with date[0] find the index with the correct roomID
-          const i = results[0].map((f, index) => {if(o._id === f.roomID) return index; });
-          const index = i[0];
-          //for each date at index...
-          //determine if reserved < o.available
-          let lookup = false;
-          if(o.maximumOccupancy >= data.guests) {
-
-            lookup = results.reduce((a,b) => {
-              return ((b[index]["reserved"] < o.available) && a);
-            }, true);
-
-          }
-
-          if(lookup){
-            availableRooms.push({...o, cost: o.cost * data.days});
-          }
-        });
-        dispatch(updateState({data: availableRooms}));
+        // let availableRooms = [];
+        //
+        // //filter rooms that are not available for each date
+        // response.data.forEach((o,j) => {
+        //   //with date[0] find the index with the correct roomID
+        //   const i = results[0].map((f, index) => {if(o._id === f.roomID) return index; });
+        //   const index = i[0];
+        //   //for each date at index...
+        //   //determine if reserved < o.available
+        //   let lookup = false;
+        //   if(o.maximumOccupancy >= data.guests) {
+        //
+        //     lookup = results.reduce((a,b) => {
+        //       console.log(b[index]);
+        //       return ((b[index]["reserved"] < o.available) && a);
+        //     }, true);
+        //
+        //   }
+        //
+        //   if(lookup){
+        //     availableRooms.push({...o, cost: o.cost * data.days});
+        //   }
+        // });
+        // console.log(availableRooms);
+        dispatch(updateState({data: response.data}));
 
       })
       .catch(error => {

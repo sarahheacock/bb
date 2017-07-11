@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { initialPage } from '../data/options';
+import { initialEdit } from '../data/options';
 
 const EditButton = (props) => {
   const style = (props.title === "Edit") ?
@@ -13,33 +13,52 @@ const EditButton = (props) => {
         "default"));
 
   let result = {};
-  Object.keys(props.name).forEach((key) => {
-    if(props.title === "Add") result[key] = '';
-    else if(props.title === "Delete" && key !== "_id") ;
-    else result[key] = props.name[key];
+  Object.keys(props.dataObj).forEach((key) => {
+    if(props.title === "Add" && key !== "_id") result[key] = '';
+    else if((props.title === "Delete" || props.title === "Cancel Reservation") && key !== "_id") ;
+    else result[key] = props.dataObj[key];
   });
 
-  return (
-    <div className="text-center">
-      {
-        (props.admin) ?
-          <Button bsStyle={style} onClick={ (e) => {
-            props.handleSelect(e);
-            props.updateState({
-              page: {
-                ...initialPage,
-                modalVisible: {
-                  ...initialPage.modalVisible,
-                  edit: true
-                }
-              }
-            });
-          }} name={JSON.stringify(result)} value={props.title}>
-            {props.title}
-          </Button> :
-          <div></div>
+  const modalTitle = (props.title === "Edit" || props.title === "Add" || props.title === "Delete") ?
+    `${props.title} Content`:
+    props.title;
+
+  const button = (props.admin === false && (props.title === "Edit" || props.title === "Add" || props.title === "Delete")) ?
+    <div></div> :
+    <Button bsStyle={style} onClick={ (e) => {
+      if(props.title === "Select Room"){
+        props.updateState({
+          edit: {
+            ...initialEdit,
+            modalTitle: "Login",
+            length: 2,
+            pageSection: "",
+            dataObj: {
+              username: '',
+              password: '',
+              admin: false
+            }
+          },
+          checkout: result
+        });
       }
-    </div>
+      else {
+        props.updateState({
+          edit: {
+            ...initialEdit,
+            modalTitle: modalTitle,
+            length: props.length,
+            pageSection: props.pageSection,
+            dataObj: result
+          }
+        })
+      }
+    }} value={result} name={modalTitle}>
+      {props.title}
+    </Button>;
+
+  return (
+    button
   );
 }
 
@@ -48,10 +67,11 @@ export default EditButton;
 
 EditButton.propTypes = {
   admin: PropTypes.bool.isRequired,
-  handleSelect: PropTypes.func.isRequired,
-  name: PropTypes.object.isRequired,
+  dataObj: PropTypes.object.isRequired,
+
   updateState: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired
-  //pageSection: PropTypes.string.isRequired,
-  //dataObj: PropTypes.object.isRequired
+
+  title: PropTypes.string.isRequired,
+  pageSection: PropTypes.string.isRequired,
+  length: PropTypes.number.isRequired
 };
