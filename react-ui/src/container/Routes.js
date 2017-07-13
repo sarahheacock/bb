@@ -102,6 +102,7 @@ const Routes = (props) => {
           data={props.data}
           user={props.user}
           checkout={props.checkout}
+          checkEdit={props.checkEdit}
 
           getData={props.getData}
           fetchSearch={props.fetchSearch}
@@ -124,6 +125,7 @@ export default Routes;
 Routes.propsTypes = {
   page: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  checkEdit: PropTypes.bool.isRequired,
   data: PropTypes.array.isRequired,
   checkout: PropTypes.object.isRequired,
   message: PropTypes.object.isRequired,

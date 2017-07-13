@@ -15,6 +15,13 @@ var AvailableSchema = new Schema({
   free: {type: [FreeSchema], default: [FreeSchema]}
 });
 
+AvailableSchema.pre('save', function(next){
+  this.free.sort(function(a, b){
+    return a.roomID - b.roomID;
+  });
+  next();
+});
+
 AvailableSchema.statics.updateDates = function(req, callback) {
   var end = parseInt(req.end) - (24*60*60*1000);
   var begin = parseInt(req.start);
@@ -58,6 +65,8 @@ AvailableSchema.statics.updateDates = function(req, callback) {
     });
   }
 }
+
+
 
 
 

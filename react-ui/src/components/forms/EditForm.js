@@ -25,33 +25,30 @@ const EditForm = (props) => {
             `${k.charAt(0).toUpperCase()}${k.slice(1)}`:
             `${k.charAt(0).toUpperCase()}${k.slice(1)}*`;
 
-          const type = (k === "password") ?
+          const type = (k === "password" || k === "verify Password") ?
             "password":
-            "text";
+            ((k === "bold" || k === "summary" || k === "description") ?
+              "textarea":
+              "text"
+            );
 
-          let formGroup = <FormGroup key={`formgroup${index}`}>
-            <ControlLabel>{title}</ControlLabel>
-            <FormControl
-              name={k}
+
+          const valid = ((props.message.error === "Passwords must match" && (k === "password" || k === "verify Password")) ||
+          (props.message.error === "Fill out required fields" && !props.dataObj[k]) ||
+          (props.message.error === "Invalid Expiration Date" && k.includes("Expiration"))) ?
+            "warning":
+            "null";
+
+
+          let formGroup = <FormControl
               type={type}
-              value={props.dataObj[k].toString()}
+              name={k}
+              value={(props.dataObj[k]) ? props.dataObj[k].toString() : ''}
               onChange={props.formChange}
-            />
-          </FormGroup>;
+            />;
 
-          if (k === "bold" || k === "summary" || k === "description") {
-            formGroup = <FormGroup key={`formgroup${index}`}>
-              <ControlLabel>{title}</ControlLabel>
-              <FormControl componentClass="Textarea"
-                name={k}
-                type={type}
-                value={props.dataObj[k].toString()}
-                onChange={props.formChange}
-              />
-            </FormGroup>;
-          }
-          else if (k === "admin"){
-            formGroup = <Checkbox className="text-center" value={props.dataObj[k]} onChange={props.formChange} name="admin">
+          if (k === "admin"){
+            formGroup = <Checkbox value={props.dataObj[k]} onChange={props.formChange} name="admin">
               Admin
             </Checkbox>;
           }
@@ -84,7 +81,10 @@ const EditForm = (props) => {
           }
 
           return (
-            formGroup
+            <FormGroup key={`formgroup${index}`} controlID={`control${index}`} validationState={valid}>
+              <ControlLabel>{title}</ControlLabel>
+              {formGroup}
+            </FormGroup>
           );
         }
       });
@@ -97,8 +97,10 @@ const EditForm = (props) => {
     if(key === "_id") results.token = props.user.token;
     else if(key === "link" && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = "#";
     else if((key === "bold" || key === "Address Line 2") && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = " ";
+    else if (key === "username" && props.dataObj.admin === false) results.email = props.dataObj[key];
     else results[key] = props.dataObj[key];
   });
+
 
   return (
     <Form className="content">

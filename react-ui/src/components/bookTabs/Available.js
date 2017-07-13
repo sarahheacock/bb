@@ -6,6 +6,8 @@ import { ControlLabel, FormGroup, Row, Col, Button, Modal } from 'react-bootstra
 import { NavLink } from 'react-router-dom';
 //import Login from '../Login';
 import EditButton from '../buttons/EditButton';
+import ContinueButton from '../buttons/ContinueButton';
+
 
 class Available extends React.Component {
   static propTypes = {
@@ -85,14 +87,6 @@ class Available extends React.Component {
       </option>
     ));
 
-    // const closeButton = (this.props.user.username !== undefined) ?
-    //   <div></div> :
-    //   <Button bsStyle="danger" onClick={(e) => this.props.makeModal({
-    //     login: false
-    //   })}>
-    //     Cancel
-    //   </Button>;
-
     //if client is signed in, button will be navlink to billing
     //if client is not signed in, button will be login modal
     //make sure data is defined
@@ -107,22 +101,42 @@ class Available extends React.Component {
             <h3>{room.title}</h3>
             <p>{`$${room.cost}.00`}</p>
 
-            <EditButton
-              admin={this.props.user.admin}
-              updateState={this.props.updateState}
-              dataObj={{
-                ...this.props.checkout,
-                selected: {
-                  roomID: room,
-                  arrive: this.state.arrive,
-                  depart: this.state.depart,
-                  guests: this.state.guests
-                }
-              }}
-              title="Select Room"
-              pageSection=""
-              length={2}
-            />
+            {
+              (this.props.user.username) ?
+                <ContinueButton
+                  dataObj={{
+                    checkout: {
+                      ...this.props.checkout,
+                      selected: {
+                        roomID: room,
+                        arrive: this.state.arrive,
+                        depart: this.state.depart,
+                        guests: this.state.guests
+                      }
+                    }
+                  }}
+                  title="Select Room"
+                  updateState={this.props.updateState}
+                  checkout={this.props.checkout}
+                  user={this.props.user}
+                />:
+                <EditButton
+                  admin={this.props.user.admin}
+                  updateState={this.props.updateState}
+                  dataObj={{
+                    ...this.props.checkout,
+                    selected: {
+                      roomID: room,
+                      arrive: this.state.arrive,
+                      depart: this.state.depart,
+                      guests: this.state.guests
+                    }
+                  }}
+                  title="Select Room"
+                  pageSection=""
+                  length={2}
+                />
+            }
           </div>
         ));
       }

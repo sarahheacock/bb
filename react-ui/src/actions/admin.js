@@ -22,7 +22,7 @@ export const updateState = (newState) => {
 }
 
 
-export const getData = (url) => {
+export const getData = (url, thisPage) => {
   return (dispatch) => {
 
     return axios.get(url)
@@ -38,6 +38,19 @@ export const getData = (url) => {
             }
           }));
         }
+
+        // if(thisPage === "payment"){
+        //   dispatch(updateState({
+        //     //user: initialUser,
+        //     page: initialPage,
+        //     edit: {
+        //       ...initialEdit,
+        //       dataObj:
+        //     },
+        //     message: initialMessage,
+        //     data: response.data,
+        //   }));
+        // }
 
         dispatch(updateState({
           //user: initialUser,
@@ -61,6 +74,8 @@ export const getData = (url) => {
 };
 
 export const putData = (url, newData) => {
+  console.log("url", url);
+  console.log("newData", newData)
   return (dispatch) => {
 
     return axios.put(url, newData)
@@ -77,11 +92,12 @@ export const putData = (url, newData) => {
           }));
         }
         else {
+          const res = (Array.isArray(response.data)) ? response.data : [response.data];
           dispatch(updateState({
             page: initialPage,
             edit: initialEdit,
             message: initialMessage,
-            data: response.data,
+            data: res,
           }));
         }
       })
@@ -297,7 +313,12 @@ export const filterSearch = (data, results) => {
         //   }
         // });
         // console.log(availableRooms);
-        dispatch(updateState({data: response.data}));
+        dispatch(updateState({
+          data: response.data,
+          message: initialMessage,
+          edit: initialEdit,
+          page: initialPage
+        }));
 
       })
       .catch(error => {
@@ -329,7 +350,7 @@ export const fetchSearch = (data) => {
     //USE ARRAY TO CALL AVAILABILITY FOR THAT DAY
     return dateArr.forEach((date) => {
       //returns a promise
-      axios.get(`/rooms/${blogID}&${date}`)
+      axios.get(`/rooms/${blogID}/${date}`)
       .then(response => {
 
         results.push(response.data.free);
@@ -341,12 +362,11 @@ export const fetchSearch = (data) => {
       })
       .catch((error) => {
         if(error.message.includes("404")){
-          axios.post(`/rooms/`,{
-            pageID: blogID,
-            date: new Date(date)
+          axios.post("/", {
+            "pageID": blogID,
+            "date": date
           })
           .then(res => {
-
             results.push(res.data.free);
             if(results.length === dateArr.length){
               dispatch(filterSearch({...data, days: dateArr.length}, results));

@@ -11,40 +11,45 @@ var ObjectID = require("mongodb").ObjectID
 var config = require('../configure/config');
 
 
+roomRoutes.param("pageID", function(req, res, next, id){
+
+  var day = new Date();
+  day.setHours(1);
+
+  Available.remove({ date: {$lt: day}}).exec(function(err){
+    if(err) return next(err);
+    req.page = id;
+    next();
+  })
+});
+
 roomRoutes.param("date", function(req, res, next, id){
+  //console.log(req.page.length)
+  //if(req.page.length === undefined) req.date = []; return next();
+  Available.findOne({ date: new Date(parseInt(id)), pageID: req.page }).exec(function(err, doc){
+    if(err){
+      return next(err);
+    }
 
-    var day = new Date();
-    day.setHours(1);
+    if(!doc){
+      err = new Error("date not found");
+      err.status = 404;
+      //req.date = [];
+      return next(err);
+    }
 
-    var arr = id.split("&");
-
-    Available.remove({ date: {$lt: day}}).exec(function(err){
-      if(err) return next(err);
-
-      Available.findOne({ pageID: arr[0], date: arr[1] }).exec(function(err, doc){
-        if(err || !doc){
-          err = new Error("not found");
-          err.status = 404;
-          return next(err);
-        }
-
-        req.date = doc;
-        next();
-      })
-    })
+    req.date = doc;
+    next();
+  })
 });
 
 
 
-//===================GET ROOMS================================
 
-roomRoutes.get("/:date", function(req, res, next){
-    res.json(req.date);
-});
 
 //===================ADD DATES===================================
 roomRoutes.post("/", function(req, res, next){
-  //res.json(req.date);
+
   Page.findById(req.body.pageID, function(err, doc){
     if(err) return next(err);
     if(!doc){
@@ -53,21 +58,34 @@ roomRoutes.post("/", function(req, res, next){
       return next(err);
     }
     var newAvailable = doc.rooms.map(function(d){
-      return {roomID: d._id};
+      return {roomID: d._id, reserved: 0};
     });
+
     var room = new Available({
       pageID: req.body.pageID,
-      date: req.body.date,
+      date: new Date(parseInt(req.body.date)),
       free: newAvailable
     });
-    room.save(function(err, user){
+
+    room.save(function(err, r){
       if(err) return next(err);
       res.status(201);
-      res.json(room);
+      res.json(r);
     });
   });
 
 });
+
+roomRoutes.get("/:pageID", function(req, res, next){
+    res.json(req.page);
+});
+
+roomRoutes.get("/:pageID/:date", function(req, res, next){
+    res.json(req.date);
+});
+
+
+//===================GET ROOMS================================
 
 //================EDIT ROOMS====================================
 // roomRoutes.put("/:date/:roomID/reserve-:dir", function(req, res, next){

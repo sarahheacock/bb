@@ -62,6 +62,7 @@ class App extends Component {
             checkout={checkout}
             message={message}
             edit={edit}
+            checkEdit={(Object.keys(edit.dataObj).length < 1)}
             refundClient={refundClient}
             chargeClient={chargeClient}
             updateState={updateState}

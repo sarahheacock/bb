@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { initialEdit } from '../data/options';
+import { initialEdit, initialMessage } from '../data/options';
 
 const EditButton = (props) => {
   const style = (props.title === "Edit") ?
@@ -27,19 +27,28 @@ const EditButton = (props) => {
     <div></div> :
     <Button bsStyle={style} onClick={ (e) => {
       if(props.title === "Select Room"){
+
         props.updateState({
           edit: {
             ...initialEdit,
-            modalTitle: "Login",
-            length: 2,
-            pageSection: "",
-            dataObj: {
-              username: '',
-              password: '',
-              admin: false
-            }
+              modalTitle: "Login",
+              length: 2,
+              pageSection: "",
+              dataObj: {
+                username: '',
+                password: '',
+                admin: false
+              }
           },
+          message: initialMessage,
           checkout: result
+        });
+      }
+      else if(props.title === "Continue"){
+
+        props.updateState({
+          ...props.dataObj,
+          message: initialMessage,
         });
       }
       else {
@@ -50,7 +59,8 @@ const EditButton = (props) => {
             length: props.length,
             pageSection: props.pageSection,
             dataObj: result
-          }
+          },
+          message: initialMessage
         })
       }
     }} value={result} name={modalTitle}>

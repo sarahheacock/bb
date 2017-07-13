@@ -16,6 +16,8 @@ class Book extends React.Component {
     data: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
     checkout: PropTypes.object.isRequired,
+    checkEdit: PropTypes.bool.isRequired,
+
 
     getData: PropTypes.func.isRequired,
     fetchSearch: PropTypes.func.isRequired,
@@ -26,6 +28,14 @@ class Book extends React.Component {
 
 
   render(){
+    const roomSelected = Object.keys(this.props.checkout.selected.roomID).length > 0 && !(!this.props.user.username);
+    const billed = !(!this.props.checkout.billing.email);
+    const paid = !(!this.props.checkout.payment.number);
+
+    console.log("book roomSelected", roomSelected);
+    console.log("book billed", billed);
+    console.log("book paid", paid);
+
     return (
       <div className="main-content">
         <PageHeader>Book Now</PageHeader>
@@ -39,7 +49,7 @@ class Book extends React.Component {
                 <LinkContainer to="/book-now/availability">
                   <NavItem className="tab">I.  Check Availability</NavItem>
                 </LinkContainer>
-                <LinkContainer to="/book-now/confirmation" disabled={(Object.keys(this.props.checkout.selected.roomID) < 1)}>
+                <LinkContainer to="/book-now/confirmation" disabled={!(roomSelected)}>
                   <NavItem className="tab">II.  Confirmation</NavItem>
                 </LinkContainer>
               </Nav>:
@@ -48,13 +58,13 @@ class Book extends React.Component {
                 <LinkContainer to="/book-now/availability">
                   <NavItem className="tab">I.  Check Availability</NavItem>
                 </LinkContainer>
-                <LinkContainer to="/book-now/billing" disabled={(Object.keys(this.props.checkout.selected.roomID) < 1 || this.props.admin.username === "")}>
+                <LinkContainer to="/book-now/billing" disabled={!(roomSelected)}>
                   <NavItem className="tab" >II.  Billing</NavItem>
                 </LinkContainer>
-                <LinkContainer to="/book-now/payment" disabled={!(this.props.checkout.billing)}>
+                <LinkContainer to="/book-now/payment" disabled={!(billed)}>
                   <NavItem className="tab">III.  Payment</NavItem>
                 </LinkContainer>
-                <LinkContainer to="/book-now/confirmation" disabled={(this.props.checkout.payment.number === undefined)}>
+                <LinkContainer to="/book-now/confirmation" disabled={!(paid)}>
                   <NavItem className="tab">IV.  Confirmation</NavItem>
                 </LinkContainer>
               </Nav>
@@ -81,23 +91,20 @@ class Book extends React.Component {
                 /> }
               />
               <Route exact path="/book-now/billing" render={ () =>
-                <Redirect to="/book-now/confirmation" /> }
+                <Redirect to="/book-now/availability" /> }
               />
               <Route exact path="/book-now/payment" render={ () =>
-                <Redirect to="/book-now/confirmation" /> }
+                <Redirect to="/book-now/availability" /> }
               />
-              <Route path="/book-now/confirmation/" render={ () => (Object.keys(this.props.checkout.selected.roomID) > 0) ?
+              <Route path="/book-now/confirmation/" render={ () => (roomSelected) ?
                 <Confirmation
-                  select={this.props.select}
-                  fetchClient={this.props.fetchClient}
-                  admin={this.props.admin}
                   data={this.props.data}
-                  makeModal={this.props.makeModal}
-                  modalVisible={this.props.modalVisible}
-                  errorMessage={this.props.errorMessage}
-                  chargeClient={this.props.chargeClient}
+                  user={this.props.user}
+                  checkout={this.props.checkout}
+
+                  updateState={this.props.updateState}
                 /> :
-                <Redirect to="/welcome" />
+                <Redirect to="/book-now/availability" />
                 }
               />
               </Col>  :
@@ -108,62 +115,45 @@ class Book extends React.Component {
                 <Route path="/book-now/availability/" render={ () =>
                   <Available
                     data={this.props.data}
-                    fetchSearch={this.props.fetchSearch}
-                    select={this.props.select}
+                    user={this.props.user}
                     checkout={this.props.checkout}
-                    updateCheckout={this.props.updateCheckout}
-                    admin={this.props.admin}
-                    makeModal={this.props.makeModal}
-                    modalVisible={this.props.modalVisible}
-                    verifyEmail={this.props.verifyEmail}
-                    logout={this.props.logout}
-                    createEmail={this.props.createEmail}
-                    errorMessage={this.props.errorMessage}
+
+                    fetchSearch={this.props.fetchSearch}
+                    updateState={this.props.updateState}
                   /> }
                 />
-                <Route path="/book-now/billing/" render={ () => (Object.keys(this.props.checkout.selected.roomID) > 0 && this.props.admin.username !== "") ?
+                <Route path="/book-now/billing/" render={ () => (roomSelected) ?
                   <Billing
-                    makeModal={this.props.makeModal}
-                    updateCheckout={this.props.updateCheckout}
-                    checkout={this.props.checkout}
-                    select={this.props.select}
-                    fetchClient={this.props.fetchClient}
-                    admin={this.props.admin}
                     data={this.props.data}
-                    modalVisible={this.props.modalVisible}
-                    errorMessage={this.props.errorMessage}
-                    updateEmail={this.props.updateEmail}
+                    user={this.props.user}
+                    checkout={this.props.checkout}
+
+                    getData={this.props.getData}
+                    updateState={this.props.updateState}
                   />:
                   <Redirect to="/book-now/availability" />}
                 />
-                <Route path="/book-now/payment/" render={ () => (this.props.checkout.billing) ?
+                <Route path="/book-now/payment/" render={ () => (billed) ?
                   <Payment
-                    makeModal={this.props.makeModal}
-                    updateCheckout={this.props.updateCheckout}
-                    checkout={this.props.checkout}
-                    select={this.props.select}
-                    fetchClient={this.props.fetchClient}
-                    admin={this.props.admin}
                     data={this.props.data}
-                    modalVisible={this.props.modalVisible}
-                    errorMessage={this.props.errorMessage}
-                    updateEmail={this.props.updateEmail}
-                    verifyPayment={this.props.verifyPayment}
+                    user={this.props.user}
+                    checkout={this.props.checkout}
+                    checkEdit={this.props.checkEdit}
+
+                    getData={this.props.getData}
+                    updateState={this.props.updateState}
                   /> :
                     <Redirect to="/book-now/billing" /> }
                 />
-                <Route path="/book-now/confirmation/" render={ () => (this.props.checkout.payment.number !== "") ?
+                <Route path="/book-now/confirmation/" render={ () => (paid) ?
                   <Confirmation
-                    select={this.props.select}
-                    fetchClient={this.props.fetchClient}
-                    admin={this.props.admin}
                     data={this.props.data}
-                    makeModal={this.props.makeModal}
-                    modalVisible={this.props.modalVisible}
-                    errorMessage={this.props.errorMessage}
-                    chargeClient={this.props.chargeClient}
+                    user={this.props.user}
+                    checkout={this.props.checkout}
+
+                    updateState={this.props.updateState}
                   /> :
-                  <Redirect to="/welcome" />
+                  <Redirect to="/book-now/payment" />
                   }
                 />
               </Col>

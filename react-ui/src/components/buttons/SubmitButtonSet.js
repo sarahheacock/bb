@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { initialPage, initialMessage, initialEdit } from '../data/options';
+import { initialPage, initialMessage, initialEdit, initialCheckout } from '../data/options';
 
 import AlertMessage from './AlertMessage';
 import EditButton from './EditButton';
+//import ContinueButton from './ContinueButton';
 
 //SUBMIT ADMIN EDITTING, USER PROFILE EDIT, CREATE USER, RESERVE, AND CANCEL RESERVATION
 //THIS IS WHERE ERROR HANDLING FOR USER AUTH, FORMS, PRE-EXISTING DATA HAPPENS
@@ -50,7 +51,6 @@ class SubmitButtonSet extends React.Component {
       //console.log("test", test);
       return (a && test !== "" && test !== undefined);
     }, true);
-    console.log("valid", valid);
 
 
     //if editing page
@@ -75,7 +75,61 @@ class SubmitButtonSet extends React.Component {
         billing: `${this.props.formItems["Address Line 1"]}/${this.props.formItems["Address Line 2"]}/${this.props.formItems.city}/${this.props.formItems.state}/${this.props.formItems.zip}/${this.props.formItems.country}`
       }
       //console.log("result", result);
+      const passwordValid = (this.props.formItems["verify Password"]) ?
+        this.props.formItems["verify Password"] === this.props.formItems["password"] :
+        true;
+
+      if(passwordValid){
+        this.props.editData(this.props.url, result);
+      }
+      else {
+        e.preventDefault();
+        this.props.updateState({
+          message: {
+            ...initialMessage,
+            error: "Passwords must match"
+          }
+        });
+      }
+    }
+    else if (valid && this.props.title === "Edit Billing"){
+      const result = {
+        email: this.props.formItems.email,
+        billing: `${this.props.formItems["Address Line 1"]}/${this.props.formItems["Address Line 2"]}/${this.props.formItems.city}/${this.props.formItems.state}/${this.props.formItems.zip}/${this.props.formItems.country}`
+      }
+      //console.log("result", result);
       this.props.editData(this.props.url, result);
+    }
+    else if (valid && this.props.title === "Edit Payment"){
+      const result = {
+        credit: {
+          name: this.props.formItems["Name on Card"],
+          number: this.props.formItems.number
+        }
+      }
+
+      const d = new Date();
+      const currentYear = d.getFullYear();
+      const currentMonth = d.getMonth() + 1;
+
+      const month = this.props.formItems["Expiration Month"].split(' ');
+      const expMonth = parseInt(month[1]);
+      const expYear = parseInt(this.props.formItems["Expiration Year"]);
+
+      //if expiration date is valid
+      if(expYear > currentYear || expMonth > currentMonth){
+        this.props.editData(this.props.url, result);
+      }
+      else {
+        e.preventDefault();
+        this.props.updateState({
+          message: {
+            ...initialMessage,
+            error: "Invalid Expiration Date"
+          }
+        });
+      }
+
     }
     else if (valid){
       this.props.editData(this.props.url, this.props.formItems);
@@ -114,12 +168,8 @@ class SubmitButtonSet extends React.Component {
           dataObj={{
              email: '',
              password: '',
-             "Address Line 1": '',
-             "Address Line 2": '',
-             city: '',
-             state: '',
-             zip: '',
-             country: 'United States'
+             "verify Password": '',
+             ...initialCheckout.billing.address
           }}
           title="Sign Up"
           pageSection={(this.props.next === "#") ? "login" : "book-now"}
