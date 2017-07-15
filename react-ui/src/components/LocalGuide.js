@@ -82,7 +82,7 @@ class LocalGuide extends React.Component {
                         <Row className="main-content">
                           <Col sm={1}>
                             <EditButton
-                              admin={this.props.user.admin}
+                              user={this.props.user}
                               updateState={this.props.updateState}
                               dataObj={cdata}
                               title="Edit"
@@ -92,7 +92,7 @@ class LocalGuide extends React.Component {
                           </Col>
                           <Col sm={1}>
                             <EditButton
-                              admin={this.props.user.admin}
+                              user={this.props.user}
                               updateState={this.props.updateState}
                               dataObj={cdata}
                               title="Delete"
@@ -109,7 +109,7 @@ class LocalGuide extends React.Component {
                 ));
 
                 addButton = <EditButton
-                  admin={this.props.user.admin}
+                  user={this.props.user}
                   updateState={this.props.updateState}
                   dataObj={this.props.data[0]}
                   title="Add"

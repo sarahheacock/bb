@@ -45,7 +45,7 @@ class Rooms extends React.Component {
                   <Row>
                     <Col sm={1}>
                       <EditButton
-                        admin={this.props.user.admin}
+                        user={this.props.user}
                         updateState={this.props.updateState}
                         dataObj={article}
                         title="Edit"
@@ -55,7 +55,7 @@ class Rooms extends React.Component {
                     </Col>
                     <Col sm={1}>
                       <EditButton
-                        admin={this.props.user.admin}
+                        user={this.props.user}
                         updateState={this.props.updateState}
                         dataObj={article}
                         title="Delete"
@@ -71,7 +71,7 @@ class Rooms extends React.Component {
             ));
 
         addButton = <EditButton
-          admin={this.props.user.admin}
+          user={this.props.user}
           updateState={this.props.updateState}
           dataObj={this.props.data[0]}
           title="Add"

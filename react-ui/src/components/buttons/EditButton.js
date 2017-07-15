@@ -54,9 +54,9 @@ const EditButton = (props) => {
     //if trying to delete last room or local, send error
     if(props.title === "Delete" && props.length < 2) message.error = "You cannot delete all entries. Deleting all entries will cause errors";
 
-    if(props.title === "Delete") url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}?token=${props.user.token}`;
-    else if(props.title === "Add") url = `/api/admin/${blogID}/page/${props.pageSection}?token=${props.user.token}`;
-    else if(props.title === "Edit") url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}`;
+    if(props.title === "Delete" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}?token=${props.user.token}`;
+    else if(props.title === "Add" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}?token=${props.user.token}`;
+    else if(props.title === "Edit" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}`;
   }
 
   //======BOOKING PAGE-SECTIONS===========
@@ -66,7 +66,6 @@ const EditButton = (props) => {
     //so we have to update by hand in availability
     next="/book-now/billing";
     checkout = Object.assign({}, props.dataObj);
-    url=`/locked/user/${props.user.id}?token=${props.user.token}`;
     //if NOT logged in, go to login modal to initialize checkout
     if(!props.user.username) modalTitle="Login";
     else if(props.user.admin) next="/book-now/confirmation";
@@ -74,7 +73,7 @@ const EditButton = (props) => {
 
   else if(props.pageSection === "billing"){
     next = "/book-now/payment";
-    url=`/locked/user/${props.user.id}?token=${props.user.token}`;
+    if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
     //edit button for going editing billing
     if(props.title === "Edit Billing"){
       dataObj = Object.assign({}, {
@@ -95,7 +94,7 @@ const EditButton = (props) => {
 
   else if(props.pageSection === "payment"){
     next = "/book-now/confirmation";
-    url=`/locked/user/${props.user.id}?token=${props.user.token}`;
+    if(props.user.token)url=`/locked/user/${props.user.id}?token=${props.user.token}`;
     //edit button for going editing billing
     if(props.title === "Edit Payment"){
       dataObj = Object.assign({}, {

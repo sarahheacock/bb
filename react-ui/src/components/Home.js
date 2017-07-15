@@ -35,7 +35,7 @@ class Home extends React.Component {
         <Carousel.Item>Loading</Carousel.Item>;
 
       editButton = <EditButton
-                    admin={this.props.user.admin}
+                    user={this.props.user}
                     updateState={this.props.updateState}
                     dataObj={this.props.data[0]}
                     title="Edit"
