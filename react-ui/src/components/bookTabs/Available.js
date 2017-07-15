@@ -86,7 +86,8 @@ class Available extends React.Component {
                     roomID: room,
                     arrive: this.state.arrive,
                     depart: this.state.depart,
-                    guests: this.state.guests
+                    guests: this.state.guests,
+                    cost: room.cost
                   }
                 }}
                 title="Select Room"

@@ -31,10 +31,10 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
   };
 
   const storage = JSON.parse(localStorage.info);
-  const newCheckout = initialCheckout;
-  // const newCheckout = (storage.checkout.selected.arrive < NOW) ?
-  //   initialCheckout :
-  //   storage.checkout;
+  //const newCheckout = initialCheckout;
+  const newCheckout = (storage.checkout.selected.arrive < NOW) ?
+    initialCheckout :
+    storage.checkout;
 
   const initial = (localStorage.info !== undefined) ?
         {

@@ -11,7 +11,7 @@ const NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + "
 var UpcomingSchema = new Schema({
   start: Number,
   end: Number,
-  title: String,
+  title: String, //email and name of customer
   month: Number,
   event: {
     guests: Number,

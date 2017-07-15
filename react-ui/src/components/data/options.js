@@ -33,7 +33,8 @@ export const initialCheckout = {
       roomID: {},
       arrive: NOW,
       depart: NOW + 24*60*60*1000,
-      guests: 2
+      guests: 2,
+			cost: 0
     },
     billing: {
       name: '',

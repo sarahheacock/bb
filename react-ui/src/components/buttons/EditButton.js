@@ -8,14 +8,14 @@ const EditButton = (props) => {
   //=====STYLE OF BUTTON DEPENDING ON BUTTON TITLE====================================================
   const style = (props.title === "Edit") ?
     "info":
-    ((props.title === "Add" || "Continue" || "Select Room") ?
+    ((props.title === "Add" || props.title === "Continue" || props.title === "Select Room") ?
       "primary":
       ((props.title === "Delete") ?
         "danger":
         "default"));
 
 
-  //=====WHAT THE BUTTON WILL EDIT==========================================
+  //=====DETERMINE NEXT AND MODAL-TITLE FROM PAGE-SECTION==========================================
 
   //NEED if launching modal
   let modalTitle = '';
@@ -24,22 +24,76 @@ const EditButton = (props) => {
   let dataObj = {};
 
   //DO NOT NEED
+  //only use checkout in availability
+  //only change message for delete error
   let checkout = {};
   let message = initialMessage;
 
-
+  //props.dataObj is {}
   if(props.pageSection === "login"){
     next = "/welcome";
-    modalTitle = props.title; //Login
+    if(props.title === "Sign Up" || props.title === "Login") modalTitle = props.title; //Login or Sign Up
   }
-  else if (props.pageSection === "welcome"){
-    //NEED TO ADD!
-  }
-  //====ADMIN PAGE EDITING==============
   //dataObj will be the selected data point
+  else if (props.pageSection === "welcome"){
+    next = "#";
+    if(props.title === "Cancel Reservation") modalTitle = props.title;
+  }
+  //====admin page editting==============
+  //props.dataObj will be the selected data point
   else if(!(!props.user.token) &&
   (props.pageSection === "home" || props.pageSection === "about" || props.pageSection === "rooms"|| props.pageSection === "localGuide")){
+    next = '#';
+    modalTitle = `${props.title} Content`;
 
+    //if trying to delete last room or local, send error
+    if(props.title === "Delete" && props.length < 2) message.error = "You cannot delete all entries. Deleting all entries will cause errors";
+
+  }
+  //======booking pageSections===========
+  //props.dataObj will always be the current checkout
+  else if(props.pageSection === "availability"){
+    //checkout.selected is the only prop that is not directly linked to user info
+    //so we have to update by hand in availability
+    next="/book-now/billing";
+    checkout = Object.assign({}, props.dataObj);
+    //if NOT logged in, go to login modal to initialize checkout
+    if(!props.user.username){
+      if(props.title === "Sign Up") modalTitle = props.title;
+      else if(props.title === "Select Room") modalTitle = "Login";
+    }
+  }
+
+  else if(props.pageSection === "billing"){
+    next = "/book-now/payment";
+    //edit button for going editing billing
+    //edit button for moving to payment and launching payment edit
+    if(props.title === "Edit Billing") modalTitle = props.title; //Edit Billing
+    else if(props.title === "Continue") modalTitle = "Edit Payment";
+  }
+
+  else if(props.pageSection === "payment"){
+    next = "/book-now/confirmation";
+    //edit button for going editing billing
+    if(props.title === "Edit Payment") modalTitle = props.title; //Edit Payment
+  }
+
+  else if(props.pageSection === "confirmation"){
+    next = "/welcome";
+    if(props.title === "Confirm Reservation") modalTitle = props.title;
+  }
+
+
+  //======GET DATAOBJ AND URL FROM modalTitle==========================
+
+  //props.dataObj is a data instance============
+  if(modalTitle === "Cancel Reservation"){
+    //ADD LATER!!!!
+
+
+
+  }
+  else if(modalTitle.includes("Content")){
     let result = {};
     Object.keys(props.dataObj).forEach((key) => {
       if(props.title === "Add" && key !== "_id") result[key] = '';
@@ -47,88 +101,58 @@ const EditButton = (props) => {
       else result[key] = props.dataObj[key];
     });
     dataObj = Object.assign({}, result);
-    next = '#';
-    modalTitle = `${props.title} Content`;
-
-    //if the editting is for admin page
-    //if trying to delete last room or local, send error
-    if(props.title === "Delete" && props.length < 2) message.error = "You cannot delete all entries. Deleting all entries will cause errors";
 
     if(props.title === "Delete" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}?token=${props.user.token}`;
     else if(props.title === "Add" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}?token=${props.user.token}`;
     else if(props.title === "Edit" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}`;
   }
-
-  //======BOOKING PAGE-SECTIONS===========
-  //dataObj will always be the current checkout
-  else if(props.pageSection === "availability"){
-    //checkout.selected is the only prop that is not directly linked to user info
-    //so we have to update by hand in availability
-    next="/book-now/billing";
-    checkout = Object.assign({}, props.dataObj);
-    //if NOT logged in, go to login modal to initialize checkout
-    if(!props.user.username) modalTitle="Login";
-    else if(props.user.admin) next="/book-now/confirmation";
-  }
-
-  else if(props.pageSection === "billing"){
-    next = "/book-now/payment";
-    if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
-    //edit button for going editing billing
-    if(props.title === "Edit Billing"){
-      dataObj = Object.assign({}, {
-        email: props.dataObj.billing.email,
-        ...props.dataObj.billing.address
-      });
-      modalTitle = props.title; //Edit Billing
-    }
-    //edit button for moving to payment and launching payment edit
-    else if(props.title === "Continue"){
-      dataObj = Object.assign({}, {
-        ...initialCheckout.payment,
-        ...props.dataObj.payment
-      });
-      modalTitle = "Edit Payment";
-    }
-  }
-
-  else if(props.pageSection === "payment"){
-    next = "/book-now/confirmation";
-    if(props.user.token)url=`/locked/user/${props.user.id}?token=${props.user.token}`;
-    //edit button for going editing billing
-    if(props.title === "Edit Payment"){
-      dataObj = Object.assign({}, {
-        ...initialCheckout.payment,
-        ...props.dataObj.payment
-      });
-      modalTitle = props.title; //Edit Payment
-    }
-  }
-
-  else if(props.pageSection === "confirmation"){
-    //NEED TO ADD LATER!!!
-  }
-
-  //======SIGN UP / LOGIN==========
-  //next and modalTitle are already determined in login and availability
-  if(modalTitle === "Sign Up" || props.title === "Sign Up"){
+  //props.dataObj is {}==========================
+  else if(modalTitle === "Sign Up"){
     //next already determined
     //need url and dataObj
-    dataObj = {
+    dataObj = Object.assign({}, {
        email: '',
        password: '',
        "verify Password": '',
        ...initialCheckout.billing.address
-    };
+    });
     url = "/page/user-setup";
   }
   else if(modalTitle === "Login"){
-    dataObj = {
+    dataObj = Object.assign({}, {
       username: '',
       password: '',
       admin: false
-    };
-    url = "/login"; //actually have to determine this later
+    });
+    url = "/locked/userlogin"; //have to change this in EditModal if admin login
+  }
+  //dataObj is the checkout state=====================
+  else if(modalTitle === "Edit Billing"){
+    dataObj = Object.assign({}, {
+      email: props.dataObj.billing.email,
+      ...props.dataObj.billing.address
+    });
+    if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
+  }
+  else if(modalTitle === "Edit Payment"){
+    dataObj = Object.assign({}, {
+      ...initialCheckout.payment,
+      ...props.dataObj.payment
+    });
+    if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
+  }
+  else if(modalTitle === "Confirm Reservation"){
+    //make sure we are logged in first
+    if(this.props.user.username){
+      dataObj = Object.assign({}, props.dataObj);
+      if(this.props.user.admin === true){ //admin confirmation
+        url = `/api/admin/${props.user.id}?token=${props.user.token}`;
+      }
+      else { //user confirmation
+        //MAY NEED TO CHANGE LATER IS CHARGE_CLIENT NEEDS MORE INFO
+        url = `/locked/user/${props.user.id}?token=${props.user.token}`;
+      }
+    }
   }
 
 
@@ -137,15 +161,13 @@ const EditButton = (props) => {
   let content = {
     message: message
   };
+
   //if we intitialize checkout, add it to content
   //should only be with availibility select button
-  if(Object.keys(checkout).length < 1) content.checkout = checkout;
-  //we may not need a modal between availability and billing
-  //we will not need a modal between payment and confirmation
-  // if(props.pageSection === "availability" && !(!(props.user.token))) content.edit = {};
-  // else if(props.pageSection === "payment" && props.title === "Continue") content.edit = {};
-  if(Object.keys(dataObj).length < 1) content.edit = initialEdit;
-  else content.edit = {
+  if(Object.keys(checkout).length > 0) content.checkout = checkout;
+
+  if(Object.keys(dataObj).length < 1 && next !== "") content.edit = initialEdit;
+  else if(Object.keys(dataObj).length > 0) content.edit = {
     ...initialEdit,
     modalTitle: modalTitle,
     url: url,
@@ -159,7 +181,7 @@ const EditButton = (props) => {
   //...otherwise wait
   const button = (props.user.admin === false && (props.title === "Edit" || props.title === "Add" || props.title === "Delete")) ?
     <div></div> :
-    <NavLink to={(Object.keys(dataObj).length < 1) ? next : "#"} onClick={ (e) => {
+    <NavLink to={(Object.keys(dataObj).length < 1 && next !== "") ? next : "#"} onClick={ (e) => {
       props.updateState(content);
     }}>
       <Button bsStyle={style}>

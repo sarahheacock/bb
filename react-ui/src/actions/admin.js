@@ -62,6 +62,7 @@ export const getData = (url, thisPage) => {
         // else { //if we are getting user/admin upcoming or page info
           dispatch(updateState({
             //checkout: initialCheckout,
+            //user: initialUser,
             page: initialPage,
             edit: initialEdit,
             message: initialMessage,

@@ -28,6 +28,7 @@ class EditModal extends React.Component {
     let newData = this.props.edit.dataObj;
     if(e.target.name === "carousel") newData[e.target.name] = value.split(',').map((c) => c.trim());
     else newData[e.target.name] = value;
+    console.log("newData", newData);
 
     this.props.updateState({
       edit: {
@@ -39,50 +40,7 @@ class EditModal extends React.Component {
 
 
   render(){
-    //THIS IS WHERE THE MAGIC HAPPENS...
-    //DETERMINE NEXT PAGE WITH PAGESECTION AND MODALTITLE
-    // let next = "#";
-    //
-    // //DETERMINE FUNCTION AND URL FROM EDIT.MODALTITLE
-    // let url = `/api/admin/${blogID}/page/${this.props.edit.pageSection}`;
-    // let editFunc = this.props.postData;
-    //
-    // if(this.props.edit.modalTitle === "Edit Content"){
-    //   url = `/api/admin/${blogID}/page/${this.props.edit.pageSection}/${this.props.edit.dataObj._id}`;
-    //   editFunc = this.props.putData;
-    // }
-    // else if(this.props.edit.modalTitle === "Delete Content"){
-    //   url = `/api/admin/${blogID}/page/${this.props.edit.pageSection}/${this.props.edit.dataObj._id}?token=${this.props.user.token}`;
-    //   editFunc = this.props.deleteData;
-    // }
-    // else if(this.props.edit.modalTitle === "Sign Up"){
-    //   url = '/page/user-setup';
-    //
-    //   if(Object.keys(this.props.checkout.selected.roomID).length > 0) next = "/book-now/billing";
-    //
-    // }
-    // else if(this.props.edit.modalTitle === "Login"){
-    //   url = '/locked/userlogin';
-    //
-    //   if(this.props.edit.dataObj.admin) url = '/api/login';
-    //   if(Object.keys(this.props.checkout.selected.roomID).length > 0 && this.props.edit.dataObj.admin === false) next = "/book-now/billing";
-    //   if(Object.keys(this.props.checkout.selected.roomID).length > 0 && this.props.edit.dataObj.admin === true) next = "/book-now/confirmation";
-    //
-    // }
-    // else if(this.props.edit.modalTitle === "Cancel Reservation"){
-    //   if(this.props.user.admin) url = '';
-    //   else url = '';
-    //   editFunc = this.props.deleteData;
-    // }
-    // else if(this.props.edit.modalTitle === "Edit Billing"){
-    //   url = `/locked/user/${this.props.user.id}?token=${this.props.user.token}`;
-    //   editFunc = this.props.putData;
-    // }
-    // else if(this.props.edit.modalTitle === "Edit Payment"){
-    //   url = `/locked/user/${this.props.user.id}?token=${this.props.user.token}`;
-    //   editFunc = this.props.putData;
-    //   next = "/book-now/payment";
-    // }
+    
     const title = this.props.edit.modalTitle;
     let editFunc = this.props.postData;
     if(title.includes("Edit")){
@@ -94,6 +52,12 @@ class EditModal extends React.Component {
     else if(title.includes("Confirm")){
       editFunc = this.props.chargeClient;
     }
+
+    //need to change the url if we are logging in
+    //and the admin state is true
+    const url = (title === "Login" && this.props.edit.dataObj.admin) ?
+      "/api/login":
+      this.props.edit.url;
 
     return (
       <div>
@@ -108,16 +72,14 @@ class EditModal extends React.Component {
               editData={editFunc}
               updateState={this.props.updateState}
 
-              dataObj={this.props.edit.dataObj}
-              modalTitle={this.props.edit.modalTitle}
-              next={this.props.edit.next}
-              url={this.props.edit.url}
-              //length={this.props.edit.length}
-
               message={this.props.message}
               user={this.props.user}
-              // next={next}
-              // url={url}
+              checkout={this.props.checkout}
+              dataObj={this.props.edit.dataObj}
+
+              modalTitle={this.props.edit.modalTitle}
+              next={this.props.edit.next}
+              url={url}
             />
           </Modal.Body>
 

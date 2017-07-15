@@ -162,19 +162,33 @@ lockedUserRoutes.put('/:userID/', mid.authorizeUser, function(req, res, next){
 });
 
 //create upcoming
+//req.body = current checkout state {selected:..., billing:...., payment:....}
 lockedUserRoutes.post("/:userID", mid.authorizeUser, function(req, res, next){
-    var upcoming = new Upcoming(req.body);
-    upcoming.title = req.user.email;
-    upcoming.event.pageID = req.user.pageID;
-    upcoming.event.userID = req.user._id;
-    upcoming.month = new Date(parseInt(req.body.start)).getMonth();
+    var newUpcoming = {
+      start: req.body.selected.arrive,
+      end: req.body.selected.depart,
+      title: req.user.email,
+      month: new Date(parseInt(req.body.selected.arrive)).getMonth(),
+      event: {
+        guests: req.body.selected.guests,
+        roomID: req.body.selected.roomID._id,
+        userID: req.user._id,
+        pageID: req.user.pageID,
+        paid: req.body.payment.number,
+        cost: req.body.selected.cost
+      }
+    };
+
+    var upcoming = new Upcoming(newUpcoming);
 
     upcoming.save(function(err, up){
       if(err) return next(err);
+      //input for Available updateDates====
       req.start = req.body.start;
       req.end = req.body.end;
       req.roomID = req.body.event.roomID;
       req.dir = true;
+      //====================================
       //req.upcoming.push(up);
       next();
     });

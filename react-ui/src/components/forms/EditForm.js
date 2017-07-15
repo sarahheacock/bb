@@ -4,13 +4,19 @@ import { Button, Form, FormControl, ControlLabel, FormGroup, Checkbox } from 're
 
 import Select from '../buttons/Select';
 import SubmitButtonSet from '../buttons/SubmitButtonSet';
-import { Months, Years, Countries } from '../data/options';
+import { Months, Years, Countries, initialCheckout } from '../data/options';
 
 
 const EditForm = (props) => {
+  //=======ERROR MESSAGES=========================================
+  const formError = "*Fill out required fields";
+  const passwordError = "Passwords must match";
+  const expError = "Invalid Expiration Date";
 
+  //======ALL OF THE FORM GROUPS===================================
   const formItems = (Object.keys(props.dataObj).length < 1) ?
-    <div></div>:
+    <div></div>: //confirmation will not dataObj={}
+
     (props.modalTitle === "Look Up") ?
       <Select
         upcoming={props.dataObj}
@@ -31,12 +37,12 @@ const EditForm = (props) => {
 
           const compClass = (k === "bold" || k === "summary" || k === "description" || k === "carousel") ?
             "textarea":
-            null;
+            "input";
 
 
-          const valid = ((props.message.error === "Passwords must match" && (k === "password" || k === "verify Password")) ||
-          (props.message.error === "Fill out required fields" && !props.dataObj[k]) ||
-          (props.message.error === "Invalid Expiration Date" && k.includes("Expiration"))) ?
+          const valid = ((props.message.error === passwordError && (k === "password" || k === "verify Password")) ||
+          (props.message.error === formError && !props.dataObj[k]) ||
+          (props.message.error === expError && k.includes("Expiration"))) ?
             "warning":
             null;
 
@@ -82,7 +88,7 @@ const EditForm = (props) => {
           }
 
           return (
-            <FormGroup key={`formgroup${index}`} controlID={`control${index}`} validationState={valid}>
+            <FormGroup key={`formgroup${index}`} validationState={valid}>
               <ControlLabel>{title}</ControlLabel>
               {formGroup}
             </FormGroup>
@@ -91,16 +97,82 @@ const EditForm = (props) => {
       });
 
 
-//console.log("form", props.dataObj);
 
+  //==========REFORMAT SUMBITTED DATA=============================
   let results = {};
-  Object.keys(props.dataObj).forEach((key) => {
-    if(key === "_id") results.token = props.user.token;
-    else if(key === "link" && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = "#";
-    else if((key === "bold" || key === "Address Line 2") && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = " ";
-    else if (key === "username" && props.dataObj.admin === false) results.email = props.dataObj[key];
-    else results[key] = props.dataObj[key];
-  });
+
+  //format into checkout if editting user info in booking
+  if(props.modalTitle === "Edit Billing"){
+    //put address back into separate object
+    let newAddress = {};
+    (Object.keys(initialCheckout.billing.address)).forEach((k) => {
+      newAddress[k] = props.dataObj[k];
+    });
+
+    results = Object.assign({}, {
+      ...props.checkout,
+      billing: {
+        ...props.checkout.billing,
+        email: props.dataObj.email,
+        address: newAddress
+      }
+    });
+  }
+  else if(props.modalTitle === "Edit Payment"){
+    results = Object.assign({}, {
+      ...props.checkout,
+      payment: {
+        ...props.checkout.payment,
+        ...props.dataObj
+      }
+    });
+  }
+  else { //make sure unrequired fields are defaulted
+    Object.keys(props.dataObj).forEach((key) => {
+      if(key === "_id") results.token = props.user.token;
+      else if(key === "link" && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = "#";
+      //else if((key === "bold" || key === "Address Line 2") && (props.dataObj[key] === "" || props.dataObj[key] === undefined)) results[key] = " ";
+      else if (key === "username" && props.dataObj.admin === false) results.email = props.dataObj[key];
+      else results[key] = props.dataObj[key];
+    });
+  }
+
+  //================ERROR HANDLING===================================
+  //used for all forms to make sure required fields are filled
+  const formValid = Object.keys(props.dataObj).reduce((a, b) => {
+    const test = (props.dataObj[b] !== true && props.dataObj[b] !== false) ?
+      props.dataObj[b][0]:
+      props.dataObj[b];
+
+    //required value filled
+    //or unrequired fields
+    return ((a && test !== "" && test !== undefined) ||
+    (a && (b === "bold" || b === "Address Line 2" || b === "link")));
+  }, true);
+
+  //used for sign up to make sure passwords match
+  const passwordValid = (props.dataObj["verify Password"]) ?
+    props.dataObj["verify Password"] === props.dataObj["password"] :
+    true;
+
+  //if expiration date is invalid for payment form
+  const d = new Date();
+  const currentYear = d.getFullYear();
+  const currentMonth = d.getMonth() + 1;
+
+  const expValid = (props.dataObj["Expiration Month"]) ?
+    (parseInt(this.props.formItems["Expiration Year"]) > currentYear || this.props.formItems["Expiration Month"].split(' ')[1] > currentMonth):
+    true;
+
+  let message = Object.assign({}, props.message);
+  if(message.error === ''){
+    if(!formValid) message.error = formError;
+    else if(!passwordValid) message.error = passwordError;
+    else if(!expValid) message.error = expError;
+  }
+
+
+  //============================================================
 
 
   return (
@@ -117,14 +189,13 @@ const EditForm = (props) => {
           editData={props.editData}
           updateState={props.updateState}
 
-          url={props.url}
-          next={props.next}
-          message={props.message}
+          message={message}
           user={props.user}
-
           formItems={results}
-          //length={props.length}
+
           title={props.modalTitle}
+          next={props.next}
+          url={props.url}
         />
       </div>
     </Form>
@@ -141,11 +212,10 @@ EditForm.propTypes = {
 
   message: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  checkout: PropTypes.object.isRequired,
   dataObj: PropTypes.object.isRequired,
-  modalTitle: PropTypes.string.isRequired,
-  //length: PropTypes.number.isRequired,
 
-  //token: PropTypes.string.isRequired,
+  modalTitle: PropTypes.string.isRequired,
   next: PropTypes.string.isRequired,
   url: PropTypes.string.isRequired,
 };

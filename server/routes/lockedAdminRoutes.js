@@ -123,9 +123,21 @@ lockedAdminRoutes.param("sectionID", function(req, res, next, id){
 //====================EDIT UPCOMING===========================================================
 //create upcoming
 lockedAdminRoutes.post("/:pageID/", mid.authorizeAdmin, function(req, res, next){
-  var upcoming = new Upcoming(req.body);
-  upcoming.event.pageID = req.page._id;
-  upcoming.month = new Date(parseInt(req.body.start)).getMonth();
+  var newUpcoming = {
+    start: req.body.selected.arrive,
+    end: req.body.selected.depart,
+    title: req.body.billing.email,
+    month: new Date(parseInt(req.body.selected.arrive)).getMonth(),
+    event: {
+      guests: req.body.selected.guests,
+      roomID: req.body.selected.roomID._id,
+      pageID: req.page._id,
+      cost: req.body.selected.cost
+    }
+  };
+  var upcoming = new Upcoming(newUpcoming);
+  //upcoming.event.pageID = req.page._id;
+  //upcoming.month = new Date(parseInt(req.body.start)).getMonth();
 
   upcoming.save(function(err, up){
     if(err) return next(err);

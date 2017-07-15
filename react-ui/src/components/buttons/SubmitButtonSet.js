@@ -21,8 +21,7 @@ class SubmitButtonSet extends React.Component {
     user: PropTypes.object.isRequired,
 
     formItems: PropTypes.object.isRequired,
-    //length: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired
   }
 
 
@@ -43,106 +42,13 @@ class SubmitButtonSet extends React.Component {
 
 
   submit = (e) => {
-
-    const valid = Object.keys(this.props.formItems).reduce((a, b) => {
-      const test = (this.props.formItems[b] !== true && this.props.formItems[b] !== false) ?
-        this.props.formItems[b][0]:
-        this.props.formItems[b];
-      //console.log("test", test);
-      return (a && test !== "" && test !== undefined);
-    }, true);
-
-
-    //if editing page
-    //`/api/admin/${blogID}/page/${this.props.section}/${this.props.dataObj._id}`
-    if(valid && this.props.title === "Delete Content"){
-      //if(!this.props.message.error){
-        this.props.editData(this.props.url);
-      //}
-      // else {
-      //   this.props.updateState({
-      //     message: {
-      //       error: "You cannot delete all entries. Deleting all entries will cause errors",
-      //       success: ''
-      //     }
-      //   });
-      // }
-    }
-    else if (valid && this.props.title === "Sign Up"){
-      const result = {
-        email: this.props.formItems.email,
-        password: this.props.formItems.password,
-        billing: `${this.props.formItems["Address Line 1"]}/${this.props.formItems["Address Line 2"]}/${this.props.formItems.city}/${this.props.formItems.state}/${this.props.formItems.zip}/${this.props.formItems.country}`
-      }
-      //console.log("result", result);
-      const passwordValid = (this.props.formItems["verify Password"]) ?
-        this.props.formItems["verify Password"] === this.props.formItems["password"] :
-        true;
-
-      if(passwordValid){
-        this.props.editData(this.props.url, result);
-      }
-      else {
-        e.preventDefault();
-        this.props.updateState({
-          message: {
-            ...initialMessage,
-            error: "Passwords must match"
-          }
-        });
-      }
-    }
-    else if (valid && this.props.title === "Edit Billing"){
-      const result = {
-        email: this.props.formItems.email,
-        billing: `${this.props.formItems["Address Line 1"]}/${this.props.formItems["Address Line 2"]}/${this.props.formItems.city}/${this.props.formItems.state}/${this.props.formItems.zip}/${this.props.formItems.country}`
-      }
-      //console.log("result", result);
-      this.props.editData(this.props.url, result);
-    }
-    else if (valid && this.props.title === "Edit Payment"){
-      const result = {
-        credit: {
-          name: this.props.formItems["Name on Card"],
-          number: this.props.formItems.number
-        }
-      }
-
-      const d = new Date();
-      const currentYear = d.getFullYear();
-      const currentMonth = d.getMonth() + 1;
-
-      const month = this.props.formItems["Expiration Month"].split(' ');
-      const expMonth = parseInt(month[1]);
-      const expYear = parseInt(this.props.formItems["Expiration Year"]);
-
-      //if expiration date is valid
-      if(expYear > currentYear || expMonth > currentMonth){
-        this.props.editData(this.props.url, result);
-        //this.props.updateState({checkout:})
-      }
-      else {
-        e.preventDefault();
-        this.props.updateState({
-          message: {
-            ...initialMessage,
-            error: "Invalid Expiration Date"
-          }
-        });
-      }
-
-    }
-    else if (valid){
-      this.props.editData(this.props.url, this.props.formItems);
+    if(this.props.message.error === ""){ //if there is no error with the forms
+      if(this.props.title === "Delete Content") this.props.editData(this.props.url);
+      else this.props.editData(this.props.url, this.props.formItems);
     }
     else {
-      e.preventDefault();
-      this.props.updateState({
-        message: {
-          ...initialMessage,
-          error: "Fill out required fields"
-        }
-      });
+      e.preventDefault();//prevent navLink
+      this.props.updateState({message: this.props.message});
     }
   }
 
@@ -154,14 +60,11 @@ class SubmitButtonSet extends React.Component {
           <Button className="edit" bsStyle="danger">
             Delete
           </Button>) :
-        ((this.props.title === "Cancel Reservation") ?
-          <Button className="edit" bsStyle="danger">
-            Cancel Reservation
-          </Button> :
-          <Button className="edit" bsStyle="primary">
-            {this.props.title}
-          </Button>
-        );
+
+        <Button className="edit" bsStyle="primary">
+          {this.props.title}
+        </Button>;
+
     const cancelButton = (this.props.title === "Login") ?
         <EditButton
           user={this.props.user}
@@ -176,6 +79,7 @@ class SubmitButtonSet extends React.Component {
         </Button>;
 
     console.log("formItems", this.props.formItems);
+
     return (
       <div className="text-center">
         <AlertMessage

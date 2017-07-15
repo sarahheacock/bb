@@ -78,7 +78,16 @@ pageRoutes.post("/sayHello", function(req, res) {
 
 //create user
 pageRoutes.post('/user-setup', function(req, res, next) {
-  var user = new User(req.body);
+  var billing = Object.key(req.body.billing).map(function(b){
+    return req.body.billing[b];
+  }).join("/");
+
+  var user = new User({
+    email: req.body.email,
+    password: req.body.password,
+    billing: billing
+  });
+  
   user.save(function(err, user){
     if(err) return next(err);
     res.status(201);
