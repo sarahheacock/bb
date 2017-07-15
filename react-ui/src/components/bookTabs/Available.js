@@ -24,8 +24,7 @@ class Available extends React.Component {
     this.state = {
       arrive: props.checkout.selected.arrive,
       depart: props.checkout.selected.depart,
-      guests: props.checkout.selected.guests,
-      //roomID: props.select.roomID
+      guests: props.checkout.selected.guests
     };
   }
 
@@ -57,28 +56,6 @@ class Available extends React.Component {
     }, () => this.props.fetchSearch(this.state));
   }
 
-  // handleSelect = (e) => {
-  //   this.props.updateState(
-  //     {
-  //       checkout: {
-  //         "roomID": JSON.parse(e.target.name),
-  //         "guests":this.state.guests,
-  //         "arrive":new Date(this.state.arrive).getTime(),
-  //         "depart":new Date(this.state.depart).getTime()
-  //       }
-  //     }
-  //   );
-    // if(!this.props.admin.username){
-    //   this.props.makeModal({
-    //     login: true
-    //   });
-    // }
-    // else if(this.props.admin.admin){
-    //   this.props.makeModal({
-    //     client: true
-    //   });
-    // }
-  // }
 
   render() {
     const guestOptions = [...new Array(6)].map((ob, i) => (
@@ -100,43 +77,22 @@ class Available extends React.Component {
             <img className="room-img round" src={room.image} alt={room.name} />
             <h3>{room.title}</h3>
             <p>{`$${room.cost}.00`}</p>
-
-            {
-              (this.props.user.username) ?
-                <ContinueButton
-                  dataObj={{
-                    checkout: {
-                      ...this.props.checkout,
-                      selected: {
-                        roomID: room,
-                        arrive: this.state.arrive,
-                        depart: this.state.depart,
-                        guests: this.state.guests
-                      }
-                    }
-                  }}
-                  title="Select Room"
-                  updateState={this.props.updateState}
-                  checkout={this.props.checkout}
-                  user={this.props.user}
-                />:
-                <EditButton
-                  admin={this.props.user.admin}
-                  updateState={this.props.updateState}
-                  dataObj={{
-                    ...this.props.checkout,
-                    selected: {
-                      roomID: room,
-                      arrive: this.state.arrive,
-                      depart: this.state.depart,
-                      guests: this.state.guests
-                    }
-                  }}
-                  title="Select Room"
-                  pageSection=""
-                  length={2}
-                />
-            }
+              <EditButton
+                user={this.props.user}
+                updateState={this.props.updateState}
+                dataObj={{
+                  ...this.props.checkout,
+                  selected: {
+                    roomID: room,
+                    arrive: this.state.arrive,
+                    depart: this.state.depart,
+                    guests: this.state.guests
+                  }
+                }}
+                title="Select Room"
+                pageSection="availability"
+                length={2}
+              />
           </div>
         ));
       }

@@ -29,8 +29,8 @@ class Book extends React.Component {
 
   render(){
     const roomSelected = Object.keys(this.props.checkout.selected.roomID).length > 0 && !(!this.props.user.username);
-    const billed = !(!this.props.checkout.billing.email);
-    const paid = !(!this.props.checkout.payment.number);
+    const billed = (this.props.checkout.billing.billed);
+    const paid = !(!this.props.checkout.payment.CVV);
 
     console.log("book roomSelected", roomSelected);
     console.log("book billed", billed);
@@ -124,7 +124,6 @@ class Book extends React.Component {
                 />
                 <Route path="/book-now/billing/" render={ () => (roomSelected) ?
                   <Billing
-                    data={this.props.data}
                     user={this.props.user}
                     checkout={this.props.checkout}
 

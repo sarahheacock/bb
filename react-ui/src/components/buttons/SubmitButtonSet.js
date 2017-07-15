@@ -21,7 +21,7 @@ class SubmitButtonSet extends React.Component {
     user: PropTypes.object.isRequired,
 
     formItems: PropTypes.object.isRequired,
-    length: PropTypes.number.isRequired,
+    //length: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired,
   }
 
@@ -56,17 +56,17 @@ class SubmitButtonSet extends React.Component {
     //if editing page
     //`/api/admin/${blogID}/page/${this.props.section}/${this.props.dataObj._id}`
     if(valid && this.props.title === "Delete Content"){
-      if(this.props.length > 1 ){
+      //if(!this.props.message.error){
         this.props.editData(this.props.url);
-      }
-      else {
-        this.props.updateState({
-          message: {
-            error: "You cannot delete all entries. Deleting all entries will cause errors",
-            success: ''
-          }
-        });
-      }
+      //}
+      // else {
+      //   this.props.updateState({
+      //     message: {
+      //       error: "You cannot delete all entries. Deleting all entries will cause errors",
+      //       success: ''
+      //     }
+      //   });
+      // }
     }
     else if (valid && this.props.title === "Sign Up"){
       const result = {
@@ -119,6 +119,7 @@ class SubmitButtonSet extends React.Component {
       //if expiration date is valid
       if(expYear > currentYear || expMonth > currentMonth){
         this.props.editData(this.props.url, result);
+        //this.props.updateState({checkout:})
       }
       else {
         e.preventDefault();
@@ -163,17 +164,12 @@ class SubmitButtonSet extends React.Component {
         );
     const cancelButton = (this.props.title === "Login") ?
         <EditButton
-          admin={this.props.user.admin}
+          user={this.props.user}
           updateState={this.props.updateState}
-          dataObj={{
-             email: '',
-             password: '',
-             "verify Password": '',
-             ...initialCheckout.billing.address
-          }}
+          dataObj={{}}
           title="Sign Up"
-          pageSection={(this.props.next === "#") ? "login" : "book-now"}
-          length={this.props.length}
+          pageSection={(this.props.next === "/welcome") ? "login" : "availability"}
+          length={2}
         /> :
         <Button className="edit" onClick={this.pop}>
           Cancel

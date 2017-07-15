@@ -107,29 +107,57 @@ function formatOutput(req, res){
     upcoming: []
   }];
 }
+
+function formatUser(req, res){
+  var username = req.user.email.split("@");
+  var billArr = req.user.billing.split('/');
+  var d = new Date();
+
+  var billObj = {};
+  ["Address Line 1", "Address Line 2", "city", "state", "zip", "country"].forEach(function(add, i){
+    billObj[add] = billArr[i]
+  });
+
+  return {
+    billing: {
+      email: req.user.email,
+      name: username[0],
+      address: billObj
+    },
+    payment: {
+      "Name on Card": req.user.credit.name,
+      number: req.user.credit.number,
+    }
+  };
+}
 //================GET AND EDIT USER=====================================================
 lockedUserRoutes.get("/:userID", mid.authorizeUser, function(req, res, next){
-  console.log(req.user);
-  res.json([req.user]);
+  res.json(formatUser(req, res));
 });
 
 //edit user info
 lockedUserRoutes.put('/:userID/', mid.authorizeUser, function(req, res, next){
-  if(req.body.email){
-    req.user.email = req.body.email;
+  if(req.body.payment){
+    req.user.email = req.body.payment.email;
+    req.user.credit = {
+      name: req.body.payment["Name on Card"],
+      number: req.body.payment["number"],
+    }
   }
   if(req.body.billing){
-    req.user.billing = req.body.billing;
-  }
-  if(req.body.credit){
-    req.user.credit = req.body.credit;
+    var billing = req.body.billing;
+    var billString = Object.keys(billing.address).map(function(b){
+      return billing.address[b];
+    }).join('/');
+    req.user.billing = billString;
+    req.user.email = billing.email;
   }
 
   req.user.save(function(err, user){
     if(err) return next(err);
     res.status(200);
-    res.json(req.user);
-    //res.json(getDetails(req, res));
+    res.json(formatUser(req, res));
+    //res.json(req.user);
   })
 });
 

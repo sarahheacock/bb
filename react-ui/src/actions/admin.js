@@ -2,7 +2,7 @@ import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
 import {blogID, key} from '../config';
-import {initialPage, initialUser, initialCheckout, initialMessage, initialEdit} from '../components/data/options';
+import {initialPage, initialUser, initialCheckout, initialMessage, initialEdit, initialData} from '../components/data/options';
 var CryptoJS = require("crypto-js");
 
 // const key = '0s3W7DOZkYFzEtLS';
@@ -39,26 +39,36 @@ export const getData = (url, thisPage) => {
           }));
         }
 
-        // if(thisPage === "payment"){
+        // else if(url.length <= 37 && url.contains("/locked/user")){
+        //   //we are getting user checkout info
         //   dispatch(updateState({
-        //     //user: initialUser,
         //     page: initialPage,
-        //     edit: {
-        //       ...initialEdit,
-        //       dataObj:
-        //     },
+        //     edit: initialEdit,
         //     message: initialMessage,
-        //     data: response.data,
+        //     data: initialData,
+        //     checkout: {
+        //       selected: newData.selected,
+        //       billing: {
+        //         ...newData.billing,
+        //         ...response.data.billing
+        //       },
+        //       payment: {
+        //         ...newData.payment,
+        //         ...response.data.payment
+        //       }
+        //     }
         //   }));
         // }
+        // else { //if we are getting user/admin upcoming or page info
+          dispatch(updateState({
+            checkout: initialCheckout,
+            page: initialPage,
+            edit: initialEdit,
+            message: initialMessage,
+            data: response.data,
+          }));
+        // }
 
-        dispatch(updateState({
-          //user: initialUser,
-          page: initialPage,
-          edit: initialEdit,
-          message: initialMessage,
-          data: response.data,
-        }));
       })
       .catch(error => {
         console.log("error", error);
@@ -88,6 +98,26 @@ export const putData = (url, newData) => {
             message: {
               error: "Session expired. Log back in again to continue.",
               success: ""
+            }
+          }));
+        }
+        else if(url.length <= 37 && url.contains("/locked/user")){
+          //we are editing information on book page
+          dispatch(updateState({
+            page: initialPage,
+            edit: initialEdit,
+            message: initialMessage,
+            data: initialData,
+            checkout: {
+              selected: newData.selected,
+              billing: {
+                ...newData.billing,
+                ...response.data.billing
+              },
+              payment: {
+                ...newData.payment,
+                ...response.data.payment
+              }
             }
           }));
         }
@@ -142,12 +172,34 @@ export const postData = (url, newData) => {
             }));
           }
           else if (url.includes('login')) { //if posting login
-            dispatch(updateState({
-              page: initialPage,
-              edit: initialEdit,
-              message: initialMessage,
-              user: response.data
-            }));
+            if(response.data.admin){
+              dispatch(updateState({
+                page: initialPage,
+                edit: initialEdit,
+                message: initialMessage,
+                user: response.data
+              }));
+            }
+            else {
+              dispatch(updateState({
+                page: initialPage,
+                edit: initialEdit,
+                message: initialMessage,
+                user: response.data.user,
+                checkout: {
+                  ...initialCheckout,
+                  billing: {
+                    ...initialCheckout.billing,
+                    ...response.data.billing
+                  },
+                  payment: {
+                    ...initialCheckout.payment,
+                    ...response.data.payment
+                  }
+                },
+
+              }));
+            }
           }
           else if (url.includes('user-setup')) { //if signing up, login
             dispatch(postData('/locked/userlogin', {
@@ -362,7 +414,7 @@ export const fetchSearch = (data) => {
       })
       .catch((error) => {
         if(error.message.includes("404")){
-          axios.post("/", {
+          axios.post("/rooms", {
             "pageID": blogID,
             "date": date
           })

@@ -136,12 +136,30 @@ userAuthRoutes.post('/userlogin', function(req, res, next) {
         });
 
         var username = user.email.split("@");
+        var billArr = user.billing.split('/');
+        var d = new Date();
+
+        var billObj = {};
+        ["Address Line 1", "Address Line 2", "city", "state", "zip", "country"].forEach(function(add, i){
+          billObj[add] = billArr[i]
+        });
+
         res.json({
-          admin: false,
-          token: token,
-          id: user._id,
-          username: username[0]
-          //pageID: user._id
+          user: {
+            admin: false,
+            token: token,
+            id: user._id,
+            username: username[0]
+          },
+          billing: {
+            name: username[0],
+            email: user.email,
+            address: billObj
+          },
+          payment: {
+      			"Name on Card": user.credit.name,
+            number: user.credit.number,
+          }
         });
       }
     });

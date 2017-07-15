@@ -19,28 +19,29 @@ const EditForm = (props) => {
       /> :
 
       (Object.keys(props.dataObj)).map((k, index) => {
-        //let value =
-        if(k !== "_id") {
+        //all values that we do not want a form entry for
+        if(k !== "_id" && k !== "billed") {
           const title = (k === "bold" || k === "link" || k === "Address Line 2") ?
             `${k.charAt(0).toUpperCase()}${k.slice(1)}`:
             `${k.charAt(0).toUpperCase()}${k.slice(1)}*`;
 
           const type = (k === "password" || k === "verify Password") ?
             "password":
-            ((k === "bold" || k === "summary" || k === "description") ?
-              "textarea":
-              "text"
-            );
+            "text";
+
+          const compClass = (k === "bold" || k === "summary" || k === "description" || k === "carousel") ?
+            "textarea":
+            null;
 
 
           const valid = ((props.message.error === "Passwords must match" && (k === "password" || k === "verify Password")) ||
           (props.message.error === "Fill out required fields" && !props.dataObj[k]) ||
           (props.message.error === "Invalid Expiration Date" && k.includes("Expiration"))) ?
             "warning":
-            "null";
+            null;
 
 
-          let formGroup = <FormControl
+          let formGroup = <FormControl componentClass={compClass}
               type={type}
               name={k}
               value={(props.dataObj[k]) ? props.dataObj[k].toString() : ''}
@@ -122,7 +123,7 @@ const EditForm = (props) => {
           user={props.user}
 
           formItems={results}
-          length={props.length}
+          //length={props.length}
           title={props.modalTitle}
         />
       </div>
@@ -142,7 +143,7 @@ EditForm.propTypes = {
   user: PropTypes.object.isRequired,
   dataObj: PropTypes.object.isRequired,
   modalTitle: PropTypes.string.isRequired,
-  length: PropTypes.number.isRequired,
+  //length: PropTypes.number.isRequired,
 
   //token: PropTypes.string.isRequired,
   next: PropTypes.string.isRequired,

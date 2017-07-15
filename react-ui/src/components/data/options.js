@@ -45,7 +45,8 @@ export const initialCheckout = {
 				state: '',
 				zip: '',
 				country: 'United States'
-			}
+			},
+			billed: false
     },
     payment: {
 			"Name on Card": '',
@@ -64,7 +65,8 @@ export const initialMessage = {
 
 export const initialEdit = {
 	modalTitle: '',
-	length: 0,
-	pageSection: '',
+	url: '',
+	next: '',
+	//pageSection: '',
 	dataObj: {}
 };

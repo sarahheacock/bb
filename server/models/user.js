@@ -105,6 +105,7 @@ UserSchema.statics.authenticate = function(email, password, callback) {
 }
 
 
+
 UserSchema.pre("save", function(next){
   var user = this;
   if(user.password.length <= 16){
@@ -121,6 +122,15 @@ UserSchema.pre("save", function(next){
     next();
   }
 });
+
+var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
+//var UpcomingFile = mongoose.model("UpcomingFile", UpcomingFileSchema);
+var User = mongoose.model("User", UserSchema);
+
+module.exports = {
+  User: User,
+  Upcoming: Upcoming
+};
 
 
 //CREATE ANOTHER SCHEMA TO ORGANIZE UPCOMING BY USERID AND MONTH
@@ -182,13 +192,3 @@ UserSchema.pre("save", function(next){
 //     });
 //   });
 // });
-
-
-var Upcoming = mongoose.model("Upcoming", UpcomingSchema);
-//var UpcomingFile = mongoose.model("UpcomingFile", UpcomingFileSchema);
-var User = mongoose.model("User", UserSchema);
-
-module.exports = {
-  User: User,
-  Upcoming: Upcoming
-};

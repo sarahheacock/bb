@@ -48,13 +48,13 @@ class Payment extends React.Component {
 
     if(this.props.data[0]){
       if(this.props.data[0]["credit"]){
-    
+
         client = <div className="well text-center">
-          <h3>{credit["name"]}</h3>
+          <h3>{this.props.data[0]["name"]}</h3>
           <EditButton
             admin={this.props.user.admin}
             updateState={this.props.updateState}
-            dataObj={{...editObj}}
+            dataObj={this.props.checkout.payment}
             title="Edit Payment"
             pageSection="book-now"
             length={2}
