@@ -2,7 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
+
 import { blogID, initialEdit, initialMessage, initialCheckout } from '../data/options';
+var FaEmail = require('react-icons/lib/fa/envelope');
 
 const EditButton = (props) => {
   //=====STYLE OF BUTTON DEPENDING ON BUTTON TITLE====================================================
@@ -30,7 +32,11 @@ const EditButton = (props) => {
   let message = initialMessage;
 
   //props.dataObj is {}
-  if(props.pageSection === "login"){
+  if(props.pageSection === ""){
+    next = "#";
+    if(props.title === "Login" || props.title === "Send Message") modalTitle = props.title; //Login
+  }
+  else if(props.pageSection === "login"){
     next = "/welcome";
     if(props.title === "Sign Up" || props.title === "Login") modalTitle = props.title; //Login or Sign Up
   }
@@ -58,24 +64,34 @@ const EditButton = (props) => {
     next="/book-now/billing";
     checkout = Object.assign({}, props.dataObj);
     //if NOT logged in, go to login modal to initialize checkout
-    if(!props.user.username){
+    if(!props.user.token){
       if(props.title === "Sign Up") modalTitle = props.title;
       else if(props.title === "Select Room") modalTitle = "Login";
     }
   }
 
   else if(props.pageSection === "billing"){
-    next = "/book-now/payment";
     //edit button for going editing billing
     //edit button for moving to payment and launching payment edit
-    if(props.title === "Edit Billing") modalTitle = props.title; //Edit Billing
-    else if(props.title === "Continue") modalTitle = "Edit Payment";
+    if(props.title === "Edit Billing"){
+      modalTitle = props.title; //Edit Billing
+      next = "#"
+    }
+    else if(props.title === "Continue"){
+      modalTitle = "Edit Payment";
+      next = "/book-now/payment";
+    }
   }
 
   else if(props.pageSection === "payment"){
-    next = "/book-now/confirmation";
     //edit button for going editing billing
-    if(props.title === "Edit Payment") modalTitle = props.title; //Edit Payment
+    if(props.title === "Edit Payment"){
+      modalTitle = props.title; //Edit Payment
+      next = "#"
+    }
+    else if(props.title === "Continue"){
+      next = "/book-now/confirmation";
+    }
   }
 
   else if(props.pageSection === "confirmation"){
@@ -126,19 +142,18 @@ const EditButton = (props) => {
     });
     url = "/locked/userlogin"; //have to change this in EditModal if admin login
   }
-  //dataObj is the checkout state=====================
-  else if(modalTitle === "Edit Billing"){
+  else if(modalTitle === "Send Message"){
     dataObj = Object.assign({}, {
-      email: props.dataObj.billing.email,
-      ...props.dataObj.billing.address
-    });
-    if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
+     name: '',
+     email: '',
+     phone: '',
+     message: ''
+   });
+   url = "/page/sayHello";
   }
-  else if(modalTitle === "Edit Payment"){
-    dataObj = Object.assign({}, {
-      ...initialCheckout.payment,
-      ...props.dataObj.payment
-    });
+  //dataObj is the checkout state=====================
+  else if(modalTitle === "Edit Billing" || "Edit Payment"){
+    dataObj = Object.assign({}, props.dataObj);
     if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
   }
   else if(modalTitle === "Confirm Reservation"){
@@ -166,7 +181,7 @@ const EditButton = (props) => {
   //should only be with availibility select button
   if(Object.keys(checkout).length > 0) content.checkout = checkout;
 
-  if(Object.keys(dataObj).length < 1 && next !== "") content.edit = initialEdit;
+  if(modalTitle === "" && next !== "") content.edit = initialEdit;
   else if(Object.keys(dataObj).length > 0) content.edit = {
     ...initialEdit,
     modalTitle: modalTitle,
@@ -179,14 +194,19 @@ const EditButton = (props) => {
   //page editing buttons are hidden
   //if we are not updating edit, then navLink to next page
   //...otherwise wait
+
   const button = (props.user.admin === false && (props.title === "Edit" || props.title === "Add" || props.title === "Delete")) ?
     <div></div> :
-    <NavLink to={(Object.keys(dataObj).length < 1 && next !== "") ? next : "#"} onClick={ (e) => {
+    <NavLink to={((modalTitle === "" && next !== "") ? next : "#")} onClick={ (e) => {
       props.updateState(content);
     }}>
-      <Button bsStyle={style}>
-        {props.title}
-      </Button>
+      {(modalTitle === "Send Message") ?
+        <a href="#">
+          <FaEmail className="link faemail" />
+        </a> :
+        <Button bsStyle={style}>
+          {props.title}
+        </Button>}
     </NavLink>;
 
 

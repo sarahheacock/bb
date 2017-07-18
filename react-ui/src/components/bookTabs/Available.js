@@ -6,7 +6,7 @@ import { ControlLabel, FormGroup, Row, Col, Button, Modal } from 'react-bootstra
 import { NavLink } from 'react-router-dom';
 //import Login from '../Login';
 import EditButton from '../buttons/EditButton';
-import ContinueButton from '../buttons/ContinueButton';
+
 
 
 class Available extends React.Component {
@@ -166,39 +166,3 @@ class Available extends React.Component {
 }
 
 export default Available;
-
-// <div>
-//   {
-//     (this.props.admin.admin === true) ?
-//     <Modal show={this.props.modalVisible.client} >
-//       <Modal.Body>
-//         Hello
-//       </Modal.Body>
-//       <Modal.Footer>
-//         <div className="text-center">
-//           <Button onClick={() => this.props.makeModal({client: false})}>
-//             Close
-//           </Button>
-//         </div>
-//       </Modal.Footer>
-//     </Modal>:
-//
-//     <Modal show={this.props.modalVisible.login} >
-//       <Modal.Body>
-//         <Login
-//           errorMessage={this.props.errorMessage}
-//           admin={this.props.admin}
-//           verifyEmail={this.props.verifyEmail}
-//           logout={this.props.logout}
-//           createEmail={this.props.createEmail}
-//           modalVisible={this.props.modalVisible}
-//           makeModal={this.props.makeModal}
-//           checkoutSelected={this.props.checkout.selected}
-//         />
-//       </Modal.Body>
-//       <Modal.Footer>
-//         <div className="text-center">{closeButton}</div>
-//       </Modal.Footer>
-//     </Modal>
-//   }
-//           </div>

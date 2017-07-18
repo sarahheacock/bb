@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { initialPage, initialMessage, initialEdit, initialCheckout } from '../data/options';
+import { initialMessage, initialEdit, initialCheckout, initialUser } from '../data/options';
 
 import AlertMessage from './AlertMessage';
 import EditButton from './EditButton';
@@ -28,15 +28,17 @@ class SubmitButtonSet extends React.Component {
 
   pop = (e) => {
     this.props.updateState({
-      page: {
-        ...initialPage
-      },
-      edit: {
-        ...initialEdit
-      },
-      message: {
-        ...initialMessage
-      }
+      edit: initialEdit,
+      message: initialMessage
+    });
+  }
+
+  logout = (e) => {
+    this.props.updateState({
+      edit: initialEdit,
+      message: initialMessage,
+      user: initialUser,
+      checkout: initialCheckout
     });
   }
 
@@ -94,12 +96,15 @@ class SubmitButtonSet extends React.Component {
               {cancelButton}
             </div> :
             <div>
-              <NavLink className="select" to="/login" onClick={this.pop}>
-                <Button className="edit" bsStyle="info">
-                  Login Again
-                </Button>
-              </NavLink>
-              <Button className="edit" onClick={this.pop}>
+              <EditButton
+                user={this.props.user}
+                updateState={this.props.updateState}
+                dataObj={{}}
+                title="Login"
+                pageSection={""}
+                length={2}
+              />
+              <Button className="edit" onClick={this.logout}>
                 Cancel
               </Button>
             </div>

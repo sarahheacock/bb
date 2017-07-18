@@ -2,90 +2,49 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import EditButton from '../buttons/EditButton';
-import ContinueButton from '../buttons/ContinueButton';
-import { initialCheckout, initialEdit } from '../data/options';
 
 
-class Payment extends React.Component {
-  static propTypes = {
-    data: PropTypes.array.isRequired,
-    user: PropTypes.object.isRequired,
-    checkout: PropTypes.object.isRequired,
-    checkEdit: PropTypes.bool.isRequired,
+const Payment = (props) => {
 
-    getData: PropTypes.func.isRequired,
-    updateState: PropTypes.func.isRequired,
-  }
+    const payment = props.checkout.payment;
+    const paymentInfo = Object.keys(payment).map((k) => (
+      <p><b>{`${k.charAt(0).toUpperCase()}${k.slice(1)}: `}</b>{payment[k]}</p>
+    ));
 
-
-  componentDidMount() {
-    this.props.getData(`/locked/user/${this.props.user.id}?token=${this.props.user.token}`);
-  }
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   if(this.state.restart){
-  //
-  //
-  //     console.log("checkEdit", this.props.checkEdit);
-  //     if(this.props.checkEdit){
-  //       this.setState({restart: false}, () => this.props.updateState({
-  //         edit: {
-  //           length: 2,
-  //           modalTitle: "Edit Payment",
-  //           pageSection: "",
-  //           dataObj: this.state.editObj
-  //         }
-  //       }));
-  //     }
-  //   }
-  // }
-
-
-  render(){
-    // console.log("state", this.state);
-    let client = <div></div>;
-    let continueButton = <div></div>;
-
-    if(this.props.data[0]){
-      if(this.props.data[0]["credit"]){
-
-        client = <div className="well text-center">
-          <h3>{this.props.data[0]["name"]}</h3>
+    return (
+      <div className="main-content">
+        <div className="well text-center">
+          <div>{paymentInfo}</div>
           <EditButton
-            admin={this.props.user.admin}
-            updateState={this.props.updateState}
-            dataObj={this.props.checkout.payment}
+            user={props.user}
+            updateState={props.updateState}
+            dataObj={props.checkout}
             title="Edit Payment"
-            pageSection="book-now"
+            pageSection="payment"
             length={2}
           />
         </div>
 
-        continueButton = <div className="text-center">
-
-          <ContinueButton
-            dataObj={{
-              checkout: {
-                ...this.props.checkout,
-                payment: this.props.data[0]["credit"]
-              }
-            }}
+        <div className="text-center">
+          <EditButton
+            user={props.user}
+            updateState={props.updateState}
+            dataObj={props.checkout}
             title="Continue"
-            updateState={this.props.updateState}
-            checkout={this.props.checkout}
-            user={this.props.user}
+            pageSection="payment"
+            length={2}
           />
-        </div>;
-      }
-    }
-
-    return (
-      <div className="main-content">
-
+        </div>
       </div>
     );
-  }
 }
 
 
 export default Payment;
+
+Payment.propsTypes = {
+  user: PropTypes.object.isRequired,
+  checkout: PropTypes.object.isRequired,
+
+  updateState: PropTypes.func.isRequired,
+};

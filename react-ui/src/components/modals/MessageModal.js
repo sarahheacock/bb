@@ -3,13 +3,12 @@ import PropTypes from 'prop-types';
 import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from 'react-bootstrap';
 
 import AlertMessage from '../buttons/AlertMessage';
-import { initialPage } from '../data/options';
+//import { initialPage } from '../data/options';
 
 
 class MessageModal extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
-    page: PropTypes.object.isRequired,
     message: PropTypes.object.isRequired,
     postData: PropTypes.func.isRequired,
     updateState: PropTypes.func.isRequired
@@ -49,7 +48,7 @@ class MessageModal extends React.Component {
     this.state.phone = '';
     this.state.message = '';
     this.setState(this.state);
-    this.props.updateState({ page: initialPage });
+    //this.props.updateState({ page: initialPage });
     //this.props.resetMessage;
   }
 
@@ -71,7 +70,7 @@ class MessageModal extends React.Component {
 
     return (
       <div>
-        <Modal show={this.props.page.message}>
+        <Modal show={false}>
           <Modal.Header>
             <Modal.Title>Leave Us a Message</Modal.Title>
           </Modal.Header>

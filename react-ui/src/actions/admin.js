@@ -2,7 +2,7 @@ import * as AdminActionTypes from '../actiontypes/admin';
 import axios from 'axios';
 
 import {blogID, key} from '../config';
-import {initialPage, initialUser, initialCheckout, initialMessage, initialEdit, initialData} from '../components/data/options';
+import {initialUser, initialCheckout, initialMessage, initialEdit, initialData} from '../components/data/options';
 var CryptoJS = require("crypto-js");
 
 // const key = '0s3W7DOZkYFzEtLS';
@@ -39,36 +39,11 @@ export const getData = (url, thisPage) => {
           }));
         }
 
-        // else if(url.length <= 37 && url.contains("/locked/user")){
-        //   //we are getting user checkout info
-        //   dispatch(updateState({
-        //     page: initialPage,
-        //     edit: initialEdit,
-        //     message: initialMessage,
-        //     data: initialData,
-        //     checkout: {
-        //       selected: newData.selected,
-        //       billing: {
-        //         ...newData.billing,
-        //         ...response.data.billing
-        //       },
-        //       payment: {
-        //         ...newData.payment,
-        //         ...response.data.payment
-        //       }
-        //     }
-        //   }));
-        // }
-        // else { //if we are getting user/admin upcoming or page info
-          dispatch(updateState({
-            //checkout: initialCheckout,
-            //user: initialUser,
-            page: initialPage,
-            edit: initialEdit,
-            message: initialMessage,
-            data: response.data,
-          }));
-        // }
+        dispatch(updateState({
+          edit: initialEdit,
+          message: initialMessage,
+          data: response.data,
+        }));
 
       })
       .catch(error => {
@@ -85,8 +60,7 @@ export const getData = (url, thisPage) => {
 };
 
 export const putData = (url, newData) => {
-  console.log("url", url);
-  console.log("newData", newData)
+
   return (dispatch) => {
 
     return axios.put(url, newData)
@@ -94,8 +68,6 @@ export const putData = (url, newData) => {
         console.log("response data", response.data);
         if(response.data.success === false){
           dispatch(updateState({
-            user: initialUser,
-            checkout: initialCheckout,
             message: {
               error: "Session expired. Log back in again to continue.",
               success: ""
@@ -105,27 +77,23 @@ export const putData = (url, newData) => {
         else if(url.length <= 37 && url.contains("/locked/user")){
           //we are editing information on book page
           dispatch(updateState({
-            page: initialPage,
             edit: initialEdit,
             message: initialMessage,
             data: initialData,
-            checkout: {
-              selected: newData.selected,
-              billing: {
-                ...newData.billing,
-                ...response.data.billing
-              },
-              payment: {
-                ...newData.payment,
-                ...response.data.payment
-              }
+            billing: {
+              ...newData.billing,
+              ...response.data.billing
+            },
+            payment: {
+              ...newData.payment,
+              ...response.data.payment
             }
+
           }));
         }
         else {
           const res = (Array.isArray(response.data)) ? response.data : [response.data];
           dispatch(updateState({
-            page: initialPage,
             edit: initialEdit,
             message: initialMessage,
             data: res,
@@ -152,11 +120,10 @@ export const postData = (url, newData) => {
 
     return axios.post(url, newData)
       .then(response => {
+        console.log("newData", newData);
         console.log("response data", response.data);
         if(response.data.success === false){
           dispatch(updateState({
-            user: initialUser,
-            checkout: initialCheckout,
             message: {
               error: "Session expired. Log back in again to continue.",
               success: ''
@@ -175,7 +142,6 @@ export const postData = (url, newData) => {
           else if (url.includes('login')) { //if posting login
             if(response.data.admin){
               dispatch(updateState({
-                page: initialPage,
                 edit: initialEdit,
                 message: initialMessage,
                 user: response.data
@@ -183,21 +149,17 @@ export const postData = (url, newData) => {
             }
             else {
               dispatch(updateState({
-                page: initialPage,
                 edit: initialEdit,
                 message: initialMessage,
                 user: response.data.user,
-                checkout: {
-                  ...initialCheckout,
-                  billing: {
-                    ...initialCheckout.billing,
-                    ...response.data.billing
-                  },
-                  payment: {
-                    ...initialCheckout.payment,
-                    ...response.data.payment
-                  }
+                billing: {
+                  ...initialCheckout.billing,
+                  ...response.data.billing
                 },
+                payment: {
+                  ...initialCheckout.payment,
+                  ...response.data.payment
+                }
 
               }));
             }
@@ -210,7 +172,6 @@ export const postData = (url, newData) => {
           }
           else if (url.includes('page')) { //if posting new page
             dispatch(updateState({
-              page: initialPage,
               edit: initialEdit,
               message: initialMessage,
               data: response.data
@@ -222,7 +183,6 @@ export const postData = (url, newData) => {
                 "success": "Thank you",
                 "error": ""
               },
-              page: initialPage,
               edit: initialEdit,
               checkout: initialCheckout,
             }));
@@ -275,8 +235,8 @@ export const deleteData = (url) => {
       console.log("response data", response.data);
       if(response.data.success === false){
         dispatch(updateState({
-          user: initialUser,
-          checkout: initialCheckout,
+          // user: initialUser,
+          // checkout: initialCheckout,
           message: {
             error: "Session expired. Log back in again to continue.",
             success: ''
@@ -285,7 +245,6 @@ export const deleteData = (url) => {
       }
       else {
         dispatch(updateState({
-          page: initialPage,
           edit: initialEdit,
           message: initialMessage,
           data: response.data,
@@ -369,8 +328,7 @@ export const filterSearch = (data, results) => {
         dispatch(updateState({
           data: response.data,
           message: initialMessage,
-          edit: initialEdit,
-          page: initialPage
+          edit: initialEdit
         }));
 
       })

@@ -26,8 +26,25 @@ class EditModal extends React.Component {
   onFormChange = (e) => {
     let value = e.target.value;
     let newData = this.props.edit.dataObj;
-    if(e.target.name === "carousel") newData[e.target.name] = value.split(',').map((c) => c.trim());
-    else newData[e.target.name] = value;
+    const name = e.target.name;
+
+    if(name === "carousel"){
+      newData[name] = value.split(',').map((c) => c.trim());
+    }
+    else if(this.props.edit.modalTitle === "Edit Billing"){
+      if(name === "name" || name === "email"){
+        newData["billing"][name] = value;
+      }
+      else {
+        newData["billing"]["address"][name] = value;
+      }
+    }
+    else if(this.props.edit.modalTitle === "Edit Payment"){
+      newData["payment"][name] = value;
+    }
+    else {
+      newData[e.target.name] = value;
+    }
     console.log("newData", newData);
 
     this.props.updateState({
@@ -40,7 +57,7 @@ class EditModal extends React.Component {
 
 
   render(){
-    
+
     const title = this.props.edit.modalTitle;
     let editFunc = this.props.postData;
     if(title.includes("Edit")){

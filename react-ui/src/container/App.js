@@ -39,7 +39,7 @@ class App extends Component {
     const refundClient = bindActionCreators(AdminActionCreators.refundClient, dispatch);
     const chargeClient = bindActionCreators(AdminActionCreators.chargeClient, dispatch);
 
-
+    console.log("");
     console.log("user", user);
     console.log("page", page);
     console.log("data", data);
@@ -56,13 +56,12 @@ class App extends Component {
           />
 
           <Routes
-            page={page}
             user={user}
             data={data}
             checkout={checkout}
             message={message}
             edit={edit}
-            checkEdit={(Object.keys(edit.dataObj).length < 1)}
+
             refundClient={refundClient}
             chargeClient={chargeClient}
             updateState={updateState}
@@ -77,7 +76,6 @@ class App extends Component {
             edit={edit}
             user={user}
             message={message}
-            page={page}
             checkout={checkout}
 
             refundClient={refundClient}

@@ -17,10 +17,10 @@ const temp = new Date().toString().split(' ');
 export const NOW = new Date(temp[0] + " " + temp[1] + " " + temp[2] + " " + temp[3] + " 10:00:00").getTime();
 
 export const initialData = [];
-export const initialPage = {
-    message: false,
-		edit: false,
-  };
+// export const initialPage = {
+//     message: false,
+// 		edit: false,
+//   };
 
 export const initialUser = {
     admin: false,
@@ -46,8 +46,7 @@ export const initialCheckout = {
 				state: '',
 				zip: '',
 				country: 'United States'
-			},
-			billed: false
+			}
     },
     payment: {
 			"Name on Card": '',

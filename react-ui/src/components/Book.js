@@ -29,12 +29,12 @@ class Book extends React.Component {
 
   render(){
     const roomSelected = Object.keys(this.props.checkout.selected.roomID).length > 0 && !(!this.props.user.username);
-    const billed = (this.props.checkout.billing.billed);
+    const billed = !(!this.props.checkout.billing.address);
     const paid = !(!this.props.checkout.payment.CVV);
 
-    console.log("book roomSelected", roomSelected);
-    console.log("book billed", billed);
-    console.log("book paid", paid);
+    // console.log("book roomSelected", roomSelected);
+    // console.log("book billed", billed);
+    // console.log("book paid", paid);
 
     return (
       <div className="main-content">

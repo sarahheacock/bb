@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Row } from 'react-bootstrap';
-import MessageModal from '../components/modals/MessageModal';
-
+//import MessageModal from '../components/modals/MessageModal';
 import EditModal from '../components/modals/EditModal';
+import EditButton from '../components/buttons/EditButton';
 var FaLinked = require('react-icons/lib/fa/linkedin-square');
 var FaFacebook = require('react-icons/lib/fa/facebook-square');
-var FaEmail = require('react-icons/lib/fa/envelope');
 
 const Footer = (props) => (
   <footer className="text-center content">
@@ -25,13 +24,7 @@ const Footer = (props) => (
       updateState={props.updateState}
     />
 
-    <MessageModal
-      user={props.user}
-      page={props.page}
-      message={props.message}
-      postData={props.postData}
-      updateState={props.updateState}
-    />
+
     <Row className="clearfix">
       <Col sm={6}>
         <h3>Around the Web</h3>
@@ -47,9 +40,14 @@ const Footer = (props) => (
       <Col sm={6}>
         <h3>Get More Info</h3>
         <h3>
-          <a href="#" onClick={() => props.makeModal({"message": true})}>
-            <FaEmail className="link faemail" />
-          </a>
+          <EditButton
+            user={props.user}
+            updateState={props.updateState}
+            dataObj={{}}
+            title="Send Message"
+            pageSection=""
+            length={2}
+          />
         </h3>
       </Col>
     </Row>

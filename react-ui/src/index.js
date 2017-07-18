@@ -22,8 +22,14 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
 
   const saveState = (state) => {
     try {
-      const serializedState = JSON.stringify({user: state.user, checkout: state.checkout, page: state.page});
-      localStorage.setItem('info', serializedState);
+      if(state.message.error !== "Session expired. Log back in again to continue."){
+        const serializedState = JSON.stringify({user: state.user, checkout: state.checkout});
+        localStorage.setItem('info', serializedState);
+      }
+      else { //do not save session if logged out
+        const serializedInitial = JSON.stringify({user: initialUser, checkout: initialCheckout});
+        localStorage.setItem('info', serializedInitial);
+      }
     }
     catch(err){
 
@@ -31,7 +37,7 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
   };
 
   const storage = JSON.parse(localStorage.info);
-  //const newCheckout = initialCheckout;
+  // const newCheckout = initialCheckout;
   const newCheckout = (storage.checkout.selected.arrive < NOW) ?
     initialCheckout :
     storage.checkout;
@@ -39,7 +45,6 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
   const initial = (localStorage.info !== undefined) ?
         {
           data: initialData,
-          page: initialPage,
           user: storage.user,
           checkout: newCheckout,
           message: initialMessage,
@@ -47,7 +52,6 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
         }:
         {
           data: initialData,
-          page: initialPage,
           user: initialUser,
           checkout: initialCheckout,
           message: initialMessage,
@@ -58,7 +62,6 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
     AdminReducer, initial, applyMiddleware(thunk)
     // AdminReducer, {
     //   data: initialData,
-    //   page: initialPage,
     //   user: initialUser,
     //   checkout: initialCheckout,
     //   message: initialMessage

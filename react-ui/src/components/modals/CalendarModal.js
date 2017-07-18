@@ -4,7 +4,7 @@ import { PageHeader, Button, Row, Col, Modal, Alert, Form, FormGroup, ControlLab
 //import PayForm from '../forms/PayForm';
 import moment from 'moment';
 
-import { initialPage } from '../data/options';
+//import { initialPage } from '../data/options';
 import SubmitButtonSet from '../buttons/SubmitButtonSet';
 
 class CalendarModal extends React.Component {
@@ -44,12 +44,12 @@ class CalendarModal extends React.Component {
   }
 
   handleCancel = (e) => {
-    this.props.updateState({
-      page: {
-        ...initialPage,
-        delete: true
-      }
-    });
+    // this.props.updateState({
+    //   page: {
+    //     ...initialPage,
+    //     delete: true
+    //   }
+    // });
 
     // refundClient({
     //   user: this.props.user,

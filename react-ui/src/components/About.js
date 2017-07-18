@@ -63,7 +63,7 @@ class About extends React.Component {
                         updateState={this.props.updateState}
                       />
                       <EditButton
-                        admin={this.props.user.admin}
+                        user={this.props.user}
                         updateState={this.props.updateState}
                         dataObj={c.data}
                         title="Edit"
