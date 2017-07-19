@@ -120,8 +120,8 @@ export const postData = (url, newData) => {
 
     return axios.post(url, newData)
       .then(response => {
-        console.log("newData", newData);
-        console.log("response data", response.data);
+        // console.log("newData", newData);
+        // console.log("response data", response.data);
         if(response.data.success === false){
           dispatch(updateState({
             message: {
@@ -140,14 +140,14 @@ export const postData = (url, newData) => {
             }));
           }
           else if (url.includes('login')) { //if posting login
-            if(response.data.admin){
+            if(url.includes('api')){
               dispatch(updateState({
                 edit: initialEdit,
                 message: initialMessage,
                 user: response.data
               }));
             }
-            else {
+            else if(url.includes('locked')){
               dispatch(updateState({
                 edit: initialEdit,
                 message: initialMessage,
@@ -326,9 +326,7 @@ export const filterSearch = (data, results) => {
         // });
         // console.log(availableRooms);
         dispatch(updateState({
-          data: response.data,
-          message: initialMessage,
-          edit: initialEdit
+          data: response.data
         }));
 
       })

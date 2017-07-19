@@ -7,6 +7,8 @@ import { Modal, Button, Form, FormControl, ControlLabel, FormGroup, Alert } from
 import { blogID, initialPage } from '../data/options';
 import EditForm from '../forms/EditForm';
 
+//function
+
 class EditModal extends React.Component {
   static propTypes = {
     user: PropTypes.object.isRequired,
@@ -23,37 +25,40 @@ class EditModal extends React.Component {
     updateState: PropTypes.func.isRequired,
   }
 
-  onFormChange = (e) => {
-    let value = e.target.value;
-    let newData = this.props.edit.dataObj;
-    const name = e.target.name;
 
-    if(name === "carousel"){
-      newData[name] = value.split(',').map((c) => c.trim());
-    }
-    else if(this.props.edit.modalTitle === "Edit Billing"){
-      if(name === "name" || name === "email"){
-        newData["billing"][name] = value;
-      }
-      else {
-        newData["billing"]["address"][name] = value;
-      }
-    }
-    else if(this.props.edit.modalTitle === "Edit Payment"){
-      newData["payment"][name] = value;
-    }
-    else {
-      newData[e.target.name] = value;
-    }
-    console.log("newData", newData);
+
+
+  onFormChange = (e) => {
+    console.log("hi");
+
+    //const newData = this.props.edit.dataObj;
+    const name = e.target.name;
+    const value = (name === "carousel") ? e.target.value.split(',').map((c) => c.trim()) : e.target.value;
+
+
+    this.findObjectByLabel(this.props.edit.dataObj, name, value);
 
     this.props.updateState({
       edit: {
-        ...this.props.edit,
-        dataObj: newData
+        ...this.props.edit
       }
     });
+
   }
+
+  findObjectByLabel = (obj, label, value) => {
+    const keyArr = Object.keys(obj);
+
+    if(keyArr.includes(label)) {
+      obj[label] = value;
+      return obj;
+    }
+    for(let i = 0; i < keyArr.length; i++){
+      //console.log("hi", obj[keyArr[i]]);
+      if(typeof obj[keyArr[i]] === 'object') return this.findObjectByLabel(obj[keyArr[i]], label, value);
+    }
+    return null;
+  };
 
 
   render(){

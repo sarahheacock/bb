@@ -24,7 +24,18 @@ class SubmitButtonSet extends React.Component {
     title: PropTypes.string.isRequired
   }
 
-
+  // shouldComponentUpdate(nextProps){
+  //
+  // }
+  //
+  // componentWillUpdate(nextProps){
+  //
+  // }
+  // componentDidUpdate(prevProps){
+  //   if(Object.keys(this.props.formItems).length > 0){
+  //     this.props.updateState({message: this.props.message});
+  //   }
+  // }
 
   pop = (e) => {
     this.props.updateState({
@@ -44,13 +55,13 @@ class SubmitButtonSet extends React.Component {
 
 
   submit = (e) => {
+
     if(this.props.message.error === ""){ //if there is no error with the forms
       if(this.props.title === "Delete Content") this.props.editData(this.props.url);
       else this.props.editData(this.props.url, this.props.formItems);
     }
     else {
       e.preventDefault();//prevent navLink
-      this.props.updateState({message: this.props.message});
     }
   }
 

@@ -63,6 +63,7 @@ import {NOW, initialData, initialPage, initialUser, initialCheckout, initialMess
     // AdminReducer, {
     //   data: initialData,
     //   user: initialUser,
+    //   edit: initialEdit,
     //   checkout: initialCheckout,
     //   message: initialMessage
     // }, applyMiddleware(thunk)

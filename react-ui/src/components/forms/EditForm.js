@@ -15,21 +15,21 @@ const EditForm = (props) => {
 
   //======KEYS USED TO CREATE FORM================================
   let thisObj = {};
-  if(props.modalTitle === "Edit Billing"){
-    thisObj = Object.assign({}, {
-      email: props.dataObj.billing.email,
-      ...props.dataObj.billing.address
-    });
-  }
-  else if(props.modalTitle === "Edit Payment"){
-    thisObj = {
-      ...initialCheckout.payment,
-      ...props.dataObj.payment
-    };
-  }
-  else {
-    thisObj = {...props.dataObj};
-  }
+
+  //flatten dataObj
+  //this only works for up to triple nested
+  Object.keys(props.dataObj).forEach((k) => {
+    if(typeof props.dataObj[k] === 'object'){
+      Object.keys(props.dataObj[k]).forEach((key) => {
+        if(typeof props.dataObj[k][key] === 'object') Object.keys(props.dataObj[k][key]).forEach((three) => (thisObj[three] = props.dataObj[k][key][three]));
+        else thisObj[key] = props.dataObj[k][key];
+      });
+    }
+    else {
+      thisObj[k] = props.dataObj[k];
+    }
+  });
+
 
   //======ALL OF THE FORM GROUPS===================================
   const formItems = (Object.keys(thisObj).length < 1) ?
@@ -144,13 +144,13 @@ const EditForm = (props) => {
   //================ERROR HANDLING===================================
   //used for all forms to make sure required fields are filled
   const formValid = Object.keys(thisObj).reduce((a, b) => {
-    const test = (thisObj[b] !== true && thisObj[b] !== false) ?
-      thisObj[b][0]:
-      thisObj[b];
+    // const test = (thisObj[b] !== true && thisObj[b] !== false) ?
+    //   thisObj[b][0]:
+    //   thisObj[b];
 
     //required value filled
     //or unrequired fields
-    return ((a && test !== "" && test !== undefined) ||
+    return ((a && thisObj[b] !== "" && thisObj[b] !== undefined) ||
     (a && (b === "bold" || b === "Address Line 2" || b === "link" || b === "phone")));
   }, true);
 
@@ -169,11 +169,18 @@ const EditForm = (props) => {
     true;
 
   let message = Object.assign({}, props.message);
-  if(message.error === ''){
+  //if(message.error === ''){
     if(!formValid) message.error = formError;
     else if(!passwordValid) message.error = passwordError;
     else if(!expValid) message.error = expError;
-  }
+    else if(message.error === formError || message.error === passwordError || message.error === expError){
+      message.error = '';
+    }
+  // }
+  // else {
+  //   message.error = '';
+  // }
+
 
 
   //============================================================

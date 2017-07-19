@@ -7,6 +7,7 @@ import { blogID, initialEdit, initialMessage, initialCheckout } from '../data/op
 var FaEmail = require('react-icons/lib/fa/envelope');
 
 const EditButton = (props) => {
+  console.log("props", props);
   //=====STYLE OF BUTTON DEPENDING ON BUTTON TITLE====================================================
   const style = (props.title === "Edit") ?
     "info":
@@ -29,7 +30,7 @@ const EditButton = (props) => {
   //only use checkout in availability
   //only change message for delete error
   let checkout = {};
-  let message = initialMessage;
+  let message = {...initialMessage};
 
   //props.dataObj is {}
   if(props.pageSection === ""){
@@ -51,9 +52,6 @@ const EditButton = (props) => {
   (props.pageSection === "home" || props.pageSection === "about" || props.pageSection === "rooms"|| props.pageSection === "localGuide")){
     next = '#';
     modalTitle = `${props.title} Content`;
-
-    //if trying to delete last room or local, send error
-    if(props.title === "Delete" && props.length < 2) message.error = "You cannot delete all entries. Deleting all entries will cause errors";
 
   }
   //======booking pageSections===========
@@ -117,6 +115,9 @@ const EditButton = (props) => {
       else result[key] = props.dataObj[key];
     });
     dataObj = Object.assign({}, result);
+    //if trying to delete last room or local, send error
+    if(modalTitle === "Delete Content" && props.length < 2) message.error = "You cannot delete all entries. Deleting all entries will cause errors";
+
 
     if(props.title === "Delete" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}/${props.dataObj._id}?token=${props.user.token}`;
     else if(props.title === "Add" && props.user.token) url = `/api/admin/${blogID}/page/${props.pageSection}?token=${props.user.token}`;
@@ -130,7 +131,7 @@ const EditButton = (props) => {
        email: '',
        password: '',
        "verify Password": '',
-       ...initialCheckout.billing.address
+       billing: initialCheckout.billing.address
     });
     url = "/page/user-setup";
   }
@@ -153,7 +154,9 @@ const EditButton = (props) => {
   }
   //dataObj is the checkout state=====================
   else if(modalTitle === "Edit Billing" || "Edit Payment"){
-    dataObj = Object.assign({}, props.dataObj);
+    if(modalTitle === "Edit Billing") dataObj = Object.assign({}, {billing: props.dataObj.billing});
+    else dataObj = Object.assign({}, {payment: props.dataObj.payment});
+
     if(props.user.token) url=`/locked/user/${props.user.id}?token=${props.user.token}`;
   }
   else if(modalTitle === "Confirm Reservation"){
